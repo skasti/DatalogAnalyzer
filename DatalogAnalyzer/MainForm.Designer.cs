@@ -60,8 +60,7 @@
             this.chart1.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(8, 8);
-            this.chart1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chart1.Location = new System.Drawing.Point(12, 12);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
             series1.ChartArea = "ChartArea1";
@@ -98,17 +97,17 @@
             this.chart1.Series.Add(series4);
             this.chart1.Series.Add(series5);
             this.chart1.Series.Add(series6);
-            this.chart1.Size = new System.Drawing.Size(989, 391);
+            this.chart1.Size = new System.Drawing.Size(1484, 602);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
+            this.chart1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chart1_MouseUp);
             // 
             // LoadSampleButton
             // 
             this.LoadSampleButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.LoadSampleButton.Location = new System.Drawing.Point(8, 403);
-            this.LoadSampleButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LoadSampleButton.Location = new System.Drawing.Point(12, 620);
             this.LoadSampleButton.Name = "LoadSampleButton";
-            this.LoadSampleButton.Size = new System.Drawing.Size(93, 27);
+            this.LoadSampleButton.Size = new System.Drawing.Size(140, 42);
             this.LoadSampleButton.TabIndex = 1;
             this.LoadSampleButton.Text = "Load Sample";
             this.LoadSampleButton.UseVisualStyleBackColor = true;
@@ -118,11 +117,10 @@
             // 
             this.logWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.logWindow.Location = new System.Drawing.Point(8, 434);
-            this.logWindow.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logWindow.Location = new System.Drawing.Point(12, 668);
             this.logWindow.Name = "logWindow";
             this.logWindow.ReadOnly = true;
-            this.logWindow.Size = new System.Drawing.Size(989, 99);
+            this.logWindow.Size = new System.Drawing.Size(1482, 150);
             this.logWindow.TabIndex = 2;
             this.logWindow.Text = "";
             // 
@@ -137,10 +135,9 @@
             this.toggleDelta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleDelta.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleDelta.ForeColor = System.Drawing.Color.White;
-            this.toggleDelta.Location = new System.Drawing.Point(922, 403);
-            this.toggleDelta.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.toggleDelta.Location = new System.Drawing.Point(1383, 620);
             this.toggleDelta.Name = "toggleDelta";
-            this.toggleDelta.Size = new System.Drawing.Size(75, 27);
+            this.toggleDelta.Size = new System.Drawing.Size(112, 42);
             this.toggleDelta.TabIndex = 3;
             this.toggleDelta.Text = "Delta";
             this.toggleDelta.UseVisualStyleBackColor = true;
@@ -148,14 +145,13 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 544);
+            this.ClientSize = new System.Drawing.Size(1512, 837);
             this.Controls.Add(this.toggleDelta);
             this.Controls.Add(this.logWindow);
             this.Controls.Add(this.LoadSampleButton);
             this.Controls.Add(this.chart1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "SR Datalog Analyzer";
             this.Load += new System.EventHandler(this.MainForm_Load);

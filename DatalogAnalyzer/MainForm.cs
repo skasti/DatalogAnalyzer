@@ -77,12 +77,17 @@ namespace DatalogAnalyzer
                     for (int i = 0; i < CurrentLog.ValueCount; i++)
                         ChannelScale.Add(1.0);
 
+                    ChannelScale[0] = 0.0408;
+
                     ChannelScale[CurrentLog.ValueCount - 2] = 0.01;
                     ChannelScale[CurrentLog.ValueCount - 1] = 0.036;
 
                     ChannelZero = new List<double>(CurrentLog.ValueCount);
+                    
                     for (int i = 0; i < CurrentLog.ValueCount; i++)
                         ChannelZero.Add(0.0);
+
+                    ChannelZero[0] = 325.0;
 
                     GraphStart = TimeSpan.Zero;
                     GraphStop = CurrentLog.Length;
@@ -142,7 +147,7 @@ namespace DatalogAnalyzer
                     if (i < logEntry.Values.Count && ChannelEnabled[i])
                     {
                         chart1.Series[i].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                            logEntry.Values[i] * ChannelScale[i] - ChannelZero[i]);
+                            (logEntry.Values[i] - ChannelZero[i]) * ChannelScale[i]);
                     }
                 }
 
@@ -253,6 +258,14 @@ namespace DatalogAnalyzer
             _showDelta = !_showDelta;
             toggleDelta.BackColor = _showDelta ? _enabledColor : _disabledColor;
             RefreshGraph();
+        }
+
+        private void chart1_MouseUp(object sender, MouseEventArgs e)
+        {
+            var x = chart1.ChartAreas[0].CursorX.Position;
+            var y = chart1.ChartAreas[0].CursorY.Position;
+
+            Log.Info("Cursor: [{0},{1}]", x, y);
         }
     }
 }
