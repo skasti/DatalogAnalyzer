@@ -21,8 +21,8 @@ namespace DatalogAnalyzer
         private bool _showDelta = true;
         private List<bool> ChannelEnabled { get; set; }
         private List<Button> _channelToggleButtons = new List<Button>();
-        private List<double> ChannelScale { get; set; }
-        private List<double> ChannelZero { get; set; } 
+
+        private List<ChannelConfig> _config = new List<ChannelConfig>(); 
 
         private TimeSpan BaseInterval { get; set; }
         private TimeSpan Interval
@@ -73,21 +73,15 @@ namespace DatalogAnalyzer
 
                     InitializeChannelEnable();
 
-                    ChannelScale = new List<double>(CurrentLog.ValueCount);
+                    _config.Clear();
+
                     for (int i = 0; i < CurrentLog.ValueCount; i++)
-                        ChannelScale.Add(1.0);
+                        _config.Add(new ChannelConfig(i));
 
-                    ChannelScale[0] = 0.0408;
 
-                    ChannelScale[CurrentLog.ValueCount - 2] = 0.01;
-                    ChannelScale[CurrentLog.ValueCount - 1] = 0.036;
-
-                    ChannelZero = new List<double>(CurrentLog.ValueCount);
-                    
-                    for (int i = 0; i < CurrentLog.ValueCount; i++)
-                        ChannelZero.Add(0.0);
-
-                    ChannelZero[0] = 325.0;
+                    _config[0] = new ChannelConfig("Front Fork", 665.0, 0.2571428571428571, 100.0);
+                    _config[CurrentLog.ValueCount - 2] = new ChannelConfig("Speed Accuracy (m/s)", 0.0, 0.01, 0.0);
+                    _config[CurrentLog.ValueCount - 1] = new ChannelConfig("Speed (kmh)", 0.0, 0.036, 0.0);
 
                     GraphStart = TimeSpan.Zero;
                     GraphStop = CurrentLog.Length;
@@ -108,11 +102,11 @@ namespace DatalogAnalyzer
 
             chart1.Series.Clear();
 
-            while (chart1.Series.Count < CurrentLog.ValueCount)
+            foreach (var channelConfig in _config)
             {
                 chart1.Series.Add(new Series
                 {
-                    Name = $"Channel {chart1.Series.Count + 1}",
+                    Name = channelConfig.Name,
                     ChartType = SeriesChartType.Line
                 });
             }
@@ -146,8 +140,9 @@ namespace DatalogAnalyzer
                 {
                     if (i < logEntry.Values.Count && ChannelEnabled[i])
                     {
-                        chart1.Series[i].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                            (logEntry.Values[i] - ChannelZero[i]) * ChannelScale[i]);
+                        chart1.Series[i].Points.AddXY(
+                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, 
+                            _config[i].Process(logEntry.Values[i]));
                     }
                 }
 
@@ -266,6 +261,13 @@ namespace DatalogAnalyzer
             var y = chart1.ChartAreas[0].CursorY.Position;
 
             Log.Info("Cursor: [{0},{1}]", x, y);
+        }
+
+        private void settingsBtn_Click(object sender, EventArgs e)
+        {
+            var form = new ChannelConfigForm(_config);
+            form.OnApply += (o, args) => RefreshGraph();
+            form.ShowDialog(this);
         }
     }
 }

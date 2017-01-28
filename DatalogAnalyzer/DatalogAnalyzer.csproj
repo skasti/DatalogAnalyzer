@@ -47,6 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelConfig.cs" />
+    <Compile Include="ChannelConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChannelConfigForm.Designer.cs">
+      <DependentUpon>ChannelConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLog.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="LogEntry.cs" />
@@ -60,6 +67,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ChannelConfigForm.resx">
+      <DependentUpon>ChannelConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
