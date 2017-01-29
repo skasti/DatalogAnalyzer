@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GMap.NET;
+using GMap.NET.WindowsForms;
 
 namespace DatalogAnalyzer
 {
@@ -77,11 +79,10 @@ namespace DatalogAnalyzer
 
                     for (int i = 0; i < CurrentLog.ValueCount; i++)
                         _config.Add(new ChannelConfig(i));
-
-
+                    
                     _config[0] = new ChannelConfig("Front Fork", 665.0, 0.2571428571428571, 100.0);
-                    _config[CurrentLog.ValueCount - 2] = new ChannelConfig("Speed Accuracy (m/s)", 0.0, 0.01, 0.0);
-                    _config[CurrentLog.ValueCount - 1] = new ChannelConfig("Speed (kmh)", 0.0, 0.036, 0.0);
+
+                    RenderTrack();
 
                     GraphStart = TimeSpan.Zero;
                     GraphStop = CurrentLog.Length;
@@ -93,6 +94,49 @@ namespace DatalogAnalyzer
                     Log.Error("Failed to load log from \"{0}\" with error: {1}", openFileDialog.FileName, ex);
                 }
             }
+        }
+
+        private void RenderTrack()
+        {
+            var latitudes = CurrentLog.Entries.Select(e => e.Latitude);
+            var minLat = latitudes.Min();
+            var maxLat = latitudes.Max();
+
+            var longitudes = CurrentLog.Entries.Select(e => e.Longitude);
+            var minLon = longitudes.Min();
+            var maxLon = longitudes.Max();
+
+            Log.Info("Lat: {0} to {1}", minLat, maxLat);
+            Log.Info("Lon: {0} to {1}", minLon, maxLon);
+
+            gMap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
+
+            var route = new GMapRoute("Route");
+
+
+            var prevLat = 0.0;
+            var prevLong = 0.0;
+            foreach (var logEntry in CurrentLog.Entries)
+            {
+                if ((logEntry.Latitude == prevLat) && (logEntry.Longitude == prevLong))
+                    continue;
+
+                if (logEntry.FixType != 3)
+                    continue;
+
+                if (logEntry.HorizontalAccuracy > 20)
+                    continue;
+
+                prevLat = logEntry.Latitude;
+                prevLong = logEntry.Longitude;
+
+                route.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+            }
+
+            var overlay = new GMapOverlay();
+            overlay.Routes.Add(route);
+
+            gMap.Overlays.Add(overlay);
         }
 
         private void RefreshGraph()
@@ -110,6 +154,18 @@ namespace DatalogAnalyzer
                     ChartType = SeriesChartType.Line
                 });
             }
+
+            chart1.Series.Add(new Series
+            {
+                Name = "Speed (km/h)",
+                ChartType = SeriesChartType.Line
+            });
+
+            chart1.Series.Add(new Series
+            {
+                Name = "Speed Accuracy (m/s)",
+                ChartType = SeriesChartType.Line
+            });
 
             chart1.Series.Add(new Series
             {
@@ -145,6 +201,17 @@ namespace DatalogAnalyzer
                             _config[i].Process(logEntry.Values[i]));
                     }
                 }
+
+                if (logEntry.SpeedAccuracy < 5.0)
+                {
+                    chart1.Series[CurrentLog.ValueCount + 0].Points.AddXY(
+                        logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                        logEntry.Speed);
+                }
+
+                chart1.Series[CurrentLog.ValueCount + 1].Points.AddXY(
+                    logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                    logEntry.SpeedAccuracy);
 
                 if (_showDelta)
                 {

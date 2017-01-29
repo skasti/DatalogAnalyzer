@@ -53,14 +53,7 @@ namespace DatalogAnalyzer
 
                     previous = micros;
 
-                    var values = new List<double>(ValueCount + 1);
-
-                    for (var i = 0; i < ValueCount; i++)
-                    {
-                        values.Add(reader.ReadUInt16());
-                    }
-
-                    var entry = new LogEntry(micros, delta, values);
+                    var entry = new LogEntry(ValueCount, micros, delta, reader);
 
                     entries.Add(entry);
                 }
