@@ -77,5 +77,19 @@ namespace DatalogAnalyzer
         }
 
         public int ValueCount { get; }
+
+        public LogEntry GetClosestEntry(double timeSpan)
+        {
+            var sortedEntries = Entries.ToList();
+            sortedEntries.Sort((a, b) =>
+            {
+                var aD = Math.Abs(timeSpan - a.GetTimeSpan(LogStart).TotalSeconds);
+                var bD = Math.Abs(timeSpan - b.GetTimeSpan(LogStart).TotalSeconds);
+
+                return aD.CompareTo(bD);
+            });
+
+            return sortedEntries.First();
+        }
     }
 }

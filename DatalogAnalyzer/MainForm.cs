@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET;
 using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 
 namespace DatalogAnalyzer
 {
@@ -34,6 +35,9 @@ namespace DatalogAnalyzer
 
         private readonly Color _enabledColor = Color.ForestGreen;
         private readonly Color _disabledColor = Color.Crimson;
+
+        private GMapOverlay mapOverlay = null;
+        private GMapMarker mapMarker = null;
 
         public MainForm()
         {
@@ -127,16 +131,25 @@ namespace DatalogAnalyzer
                 if (logEntry.HorizontalAccuracy > 20)
                     continue;
 
+                if (logEntry.SpeedAccuracy > 5)
+                    continue;
+
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
                 route.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
             }
 
-            var overlay = new GMapOverlay();
-            overlay.Routes.Add(route);
+            if (mapOverlay == null)
+            {
+                mapOverlay = new GMapOverlay();
+                gMap.Overlays.Add(mapOverlay);
+            }
 
-            gMap.Overlays.Add(overlay);
+            mapOverlay.Clear();
+            mapOverlay.Routes.Add(route);
+
+            mapMarker = null;
         }
 
         private void RefreshGraph()
@@ -324,10 +337,26 @@ namespace DatalogAnalyzer
 
         private void chart1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (CurrentLog == null)
+                return;
+
             var x = chart1.ChartAreas[0].CursorX.Position;
             var y = chart1.ChartAreas[0].CursorY.Position;
 
             Log.Info("Cursor: [{0},{1}]", x, y);
+
+            var closestEntry = CurrentLog.GetClosestEntry(x);
+
+            if (mapMarker == null)
+            {
+                mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude),
+                    GMarkerGoogleType.red_pushpin);
+                mapOverlay.Markers.Add(mapMarker);
+            }
+            else
+            {
+                mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
+            }
         }
 
         private void settingsBtn_Click(object sender, EventArgs e)
