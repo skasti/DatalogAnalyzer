@@ -18,7 +18,7 @@ namespace DatalogAnalyzer
         {
             Microseconds = microseconds;
             Timestamp = new DateTime(ticks: timestamp);
-            AdjustedTimestamp = Timestamp.AddMicros(-Microseconds);
+            AdjustedTimestamp = Timestamp;///AddMicros(-Microseconds);
         }
 
         public uint Microseconds { get; }
