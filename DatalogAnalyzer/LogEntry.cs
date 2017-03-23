@@ -62,12 +62,12 @@ namespace DatalogAnalyzer
 
         public DateTime GetTimeStamp(LogStart logStart)
         {
-            return logStart.AdjustedTimestamp.AddMicros(Microseconds);
+            return logStart.Timestamp.AddMicros(Microseconds);
         }
 
         public TimeSpan GetTimeSpan(LogStart logStart)
         {
-            return GetTimeStamp(logStart) - logStart.AdjustedTimestamp;
+            return GetTimeStamp(logStart) - logStart.Timestamp;
         }
     }
 }
