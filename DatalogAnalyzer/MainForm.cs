@@ -229,7 +229,7 @@ namespace DatalogAnalyzer
                 if (_showDelta)
                 {
                     chart1.Series.Last().Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                        logEntry.Delta);
+                        Math.Min(logEntry.Delta / 1000, 100));
                 }
             }
         }
