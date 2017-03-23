@@ -42,14 +42,17 @@ namespace DatalogAnalyzer
                     var delta = micros - previous;
                     deltaSum += delta;
 
-                    if (delta < smallestDelta)
-                        smallestDelta = delta;
+                    if (entries.Count > 1)
+                    {
+                        if (delta < smallestDelta)
+                            smallestDelta = delta;
 
-                    if (delta > largestDelta)
-                        largestDelta = delta;
+                        if (delta > largestDelta)
+                            largestDelta = delta;
 
-                    if (delta > largeDeltaThreshold)
-                        largeDeltas++;
+                        if (delta > largeDeltaThreshold)
+                            largeDeltas++;
+                    }
 
                     previous = micros;
 
