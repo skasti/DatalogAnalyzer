@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,10 +11,16 @@ namespace DatalogAnalyzer
     public class DataLog
     {
         public LogStart LogStart { get; }
-        public IEnumerable<LogEntry> Entries { get; }
-
+        public List<LogEntry> Entries { get; }
+        public int ValueCount { get; }
         public TimeSpan Length => Entries?.LastOrDefault()?.GetTimeSpan(LogStart) ?? TimeSpan.Zero;
 
+        public DataLog(LogStart logStart, List<LogEntry> entries)
+        {
+            LogStart = logStart;
+            Entries = entries;
+            ValueCount = entries.Select(e => e.Values.Count).Max();
+        }
         public DataLog(string fileName)
         {
             var stream = File.OpenRead(fileName);
@@ -79,8 +86,6 @@ namespace DatalogAnalyzer
                         entries.Last().GetTimeSpan(LogStart).TotalSeconds);
         }
 
-        public int ValueCount { get; }
-
         public LogEntry GetClosestEntry(double timeSpan)
         {
             var sortedEntries = Entries.ToList();
@@ -93,6 +98,29 @@ namespace DatalogAnalyzer
             });
 
             return sortedEntries.First();
+        }
+
+        public DataLog SubSet(LogEntry start, LogEntry end = null)
+        {
+            var startIndex = Entries.IndexOf(start);
+            var endIndex = Entries.IndexOf(end);
+
+            var count = endIndex - startIndex + 1;
+
+            return SubSet(startIndex, count);
+        }
+
+        public DataLog SubSet(int startIndex, int count = 0)
+        {
+            if (count == 0)
+                count = Entries.Count - startIndex;
+
+            var entries = Entries.GetRange(startIndex, count);
+            var firstEntry = entries.FirstOrDefault();
+
+            var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).Ticks);
+
+            return new DataLog(logStart, entries.Skip(1).ToList());
         }
     }
 }

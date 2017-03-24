@@ -75,29 +75,32 @@ namespace DatalogAnalyzer
                 try
                 {
                     logWindow.Clear();
-                    CurrentLog = new DataLog(openFileDialog.FileName);
-
-                    InitializeChannelEnable();
-
-                    _config.Clear();
-
-                    for (int i = 0; i < CurrentLog.ValueCount; i++)
-                        _config.Add(new ChannelConfig(i));
-                    
-                    _config[0] = new ChannelConfig("Front Fork", 665.0, 0.2571428571428571, 100.0);
-
-                    RenderTrack();
-
-                    GraphStart = TimeSpan.Zero;
-                    GraphStop = CurrentLog.Length;
-                    BaseInterval = Interval;
-                    RefreshGraph();
+                    LoadLog(new DataLog(openFileDialog.FileName));
                 }
                 catch (Exception ex)
                 {
                     Log.Error("Failed to load log from \"{0}\" with error: {1}", openFileDialog.FileName, ex);
                 }
             }
+        }
+
+        private void LoadLog(DataLog newLog)
+        {
+            CurrentLog = newLog;
+
+            InitializeChannelEnable();
+
+            _config.Clear();
+
+            for (int i = 0; i < CurrentLog.ValueCount; i++)
+                _config.Add(new ChannelConfig(i));
+
+            RenderTrack();
+
+            GraphStart = TimeSpan.Zero;
+            GraphStop = CurrentLog.Length;
+            BaseInterval = Interval;
+            RefreshGraph();
         }
 
         private void RenderTrack()
@@ -364,6 +367,19 @@ namespace DatalogAnalyzer
             var form = new ChannelConfigForm(_config);
             form.OnApply += (o, args) => RefreshGraph();
             form.ShowDialog(this);
+        }
+
+        private void splitButton_Click(object sender, EventArgs e)
+        {
+            var cursor = chart1.ChartAreas[0].CursorX.Position;
+
+            if (cursor < 1)
+                return;
+
+            var closestEntry = CurrentLog.GetClosestEntry(cursor);
+            var lastEntry = CurrentLog.Entries.Last();
+
+            LoadLog(CurrentLog.SubSet(closestEntry, lastEntry));
         }
     }
 }
