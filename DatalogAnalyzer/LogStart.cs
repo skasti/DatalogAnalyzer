@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,5 +23,11 @@ namespace DatalogAnalyzer
 
         public uint Microseconds { get; }
         public DateTime Timestamp { get; }
+
+        public void WriteToStream(BinaryWriter writer)
+        {
+            writer.Write((UInt32)Microseconds);
+            writer.Write((UInt32)Timestamp.Ticks);
+        }
     }
 }

@@ -38,6 +38,14 @@ namespace DatalogAnalyzer
 
         private GMapOverlay mapOverlay = null;
         private GMapMarker mapMarker = null;
+        private GMapRoute mapRoute = null;
+
+        private GMapMarker cursorMarker = null;
+        private bool _cursorSticky = false;
+
+        private PointLatLng StartFinish_A = PointLatLng.Empty;
+        private PointLatLng StartFinish_B = PointLatLng.Empty;
+        private GMapRoute StartFinishLine = null;
 
         public MainForm()
         {
@@ -98,7 +106,7 @@ namespace DatalogAnalyzer
 
             gMap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
 
-            var route = new GMapRoute("Route");
+            mapRoute = new GMapRoute("Route");
 
 
             var prevLat = 0.0;
@@ -120,7 +128,7 @@ namespace DatalogAnalyzer
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
-                route.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                mapRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
             }
 
             if (mapOverlay == null)
@@ -130,7 +138,9 @@ namespace DatalogAnalyzer
             }
 
             mapOverlay.Clear();
-            mapOverlay.Routes.Add(route);
+            mapOverlay.Routes.Add(mapRoute);
+
+            gMap.ZoomAndCenterRoute(mapRoute);
 
             mapMarker = null;
         }
@@ -423,6 +433,110 @@ namespace DatalogAnalyzer
             _showSpeed = !_showSpeed;
             toggleSpeed.BackColor = _showSpeed ? _enabledColor : _disabledColor;
             RefreshGraph();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var removableDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
+
+            var dataLoggerCards = removableDrives.Where(d => d.RootDirectory.GetFiles("*.LOG").Any()).ToList();
+
+            if (dataLoggerCards.Any())
+                openFileDialog.InitialDirectory = dataLoggerCards.First().RootDirectory.ToString();
+
+            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                try
+                {
+                    CurrentLog.Save(saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Failed to save log to \"{0}\" with error: {1}", saveFileDialog.FileName, ex);
+                }
+            }
+        }
+
+        private void MoveCursor(int x, int y)
+        {
+            var newPosition = gMap.FromLocalToLatLng(x, y);
+
+            if (cursorMarker == null)
+            {
+                cursorMarker = new GMarkerCross(newPosition);
+                mapOverlay.Markers.Add(cursorMarker);
+            }
+            else
+            {
+                cursorMarker.Position = newPosition;
+            }
+        }
+
+        private void gMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            _cursorSticky = true;
+            MoveCursor(e.X, e.Y);
+        }
+
+        private void gMap_MouseLeave(object sender, EventArgs e)
+        {
+            _cursorSticky = false;
+        }
+
+        private void gMap_MouseUp(object sender, MouseEventArgs e)
+        {
+            _cursorSticky = false;
+        }
+
+        private void gMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_cursorSticky)
+                return;
+
+            MoveCursor(e.X, e.Y);
+        }
+
+        private void aToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cursorMarker == null)
+                return;
+
+            StartFinish_A = cursorMarker.Position;
+
+            if ((StartFinish_B != PointLatLng.Empty) && (StartFinish_A != StartFinish_B))
+            {
+                UpdateStartFinish();
+            }
+        }
+
+        private void UpdateStartFinish()
+        {
+            if (StartFinishLine == null)
+            {
+                StartFinishLine = new GMapRoute("Start/Finish");
+                StartFinishLine.Points.Add(StartFinish_A);
+                StartFinishLine.Points.Add(StartFinish_B);
+
+                mapOverlay.Routes.Add(StartFinishLine);
+            }
+            else
+            {
+                StartFinishLine.Points[0] = StartFinish_A;
+                StartFinishLine.Points[1] = StartFinish_B;
+            }
+        }
+
+        private void pointBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cursorMarker == null)
+                return;
+
+            StartFinish_B = cursorMarker.Position;
+
+            if ((StartFinish_A != PointLatLng.Empty) && (StartFinish_A != StartFinish_B))
+            {
+                UpdateStartFinish();
+            }
         }
     }
 }

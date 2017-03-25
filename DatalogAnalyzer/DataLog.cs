@@ -21,6 +21,7 @@ namespace DatalogAnalyzer
             Entries = entries;
             ValueCount = entries.Select(e => e.Values.Count).Max();
         }
+
         public DataLog(string fileName)
         {
             var stream = File.OpenRead(fileName);
@@ -45,7 +46,7 @@ namespace DatalogAnalyzer
                 try
                 {
                     var micros = reader.ReadUInt32();
-                
+
                     var delta = micros - previous;
                     deltaSum += delta;
 
@@ -75,15 +76,44 @@ namespace DatalogAnalyzer
 
             Entries = entries;
 
-            Log.Info("DataLog - Loaded {0} samples ({7} seconds)\navg delta: {1} micros\nsmallest delta: {2}\nlargest delta: {3}\ndeltas over {4} micros: {5} ({6}%)", 
-                        Entries.Count(), 
-                        deltaSum / (ulong)Entries.Count(), 
-                        smallestDelta, 
-                        largestDelta, 
-                        largeDeltaThreshold, 
-                        largeDeltas, 
-                        ((double)largeDeltas / entries.Count) * 100.0, 
-                        entries.Last().GetTimeSpan(LogStart).TotalSeconds);
+            Log.Info(
+                "DataLog - Loaded {0} samples ({7} seconds)\navg delta: {1} micros\nsmallest delta: {2}\nlargest delta: {3}\ndeltas over {4} micros: {5} ({6}%)",
+                Entries.Count(),
+                deltaSum/(ulong) Entries.Count(),
+                smallestDelta,
+                largestDelta,
+                largeDeltaThreshold,
+                largeDeltas,
+                ((double) largeDeltas/entries.Count)*100.0,
+                entries.Last().GetTimeSpan(LogStart).TotalSeconds);
+        }
+
+        public void Save(string fileName)
+        {
+            var stream = File.Create(fileName);
+            var writer = new BinaryWriter(stream);
+
+            WriteToStream(writer);
+        }
+
+        public void WriteToStream(BinaryWriter writer)
+        {
+            try
+            {
+                LogStart.WriteToStream(writer);
+
+                writer.Write((UInt16)ValueCount);
+
+                foreach (var logEntry in Entries)
+                {
+                    logEntry.WriteToStream(writer);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to write to stream: {0}", ex);
+            }
+            
         }
 
         public LogEntry GetClosestEntry(double timeSpan)

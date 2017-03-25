@@ -46,6 +46,26 @@ namespace DatalogAnalyzer
             }
         }
 
+        public void WriteToStream(BinaryWriter writer)
+        {
+            writer.Write((UInt32)Microseconds);
+            writer.Write((UInt16)(Speed / 0.0036));
+            writer.Write((UInt16)(SpeedAccuracy / 0.01));
+            writer.Write((Int32)(Longitude / 0.0000001));
+            writer.Write((Int32)(Latitude / 0.0000001));
+            writer.Write((Int32)Altitude);
+
+            writer.Write((UInt32)(HorizontalAccuracy / 0.001));
+            writer.Write((UInt32)(VerticalAccuracy / 0.001));
+
+            writer.Write((byte)(FixType));
+
+            foreach (var value in Values)
+            {
+                writer.Write((UInt16)value);
+            }
+        }
+
         public uint Microseconds { get; }
         public uint Delta { get; }
 
@@ -62,7 +82,7 @@ namespace DatalogAnalyzer
 
         public DateTime GetTimeStamp(LogStart logStart)
         {
-            return logStart.Timestamp.AddMicros(Microseconds);
+            return logStart.Timestamp.AddMicros(Microseconds - logStart.Microseconds);
         }
 
         public TimeSpan GetTimeSpan(LogStart logStart)
