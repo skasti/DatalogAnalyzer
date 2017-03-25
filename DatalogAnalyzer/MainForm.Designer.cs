@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series43 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint22 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint23 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.01D, 150D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint24 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.02D, 140D);
-            System.Windows.Forms.DataVisualization.Charting.Series series44 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series45 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series46 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series47 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series48 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series61 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint31 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint32 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.01D, 150D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint33 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.02D, 140D);
+            System.Windows.Forms.DataVisualization.Charting.Series series62 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series63 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series64 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series65 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series66 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ChannelToggleButtonTemplate = new System.Windows.Forms.Button();
             this.logWindow = new System.Windows.Forms.RichTextBox();
@@ -61,6 +61,9 @@
             this.startFinishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pointBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pointCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pointDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.MainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -71,51 +74,51 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.Color.DimGray;
-            chartArea8.AxisX.ScaleView.SizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Number;
-            chartArea8.AxisX.ScaleView.SmallScrollMinSize = 0.01D;
-            chartArea8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            chartArea8.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea8);
-            legend8.Name = "Legend1";
-            this.chart1.Legends.Add(legend8);
+            chartArea11.AxisX.ScaleView.SizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Number;
+            chartArea11.AxisX.ScaleView.SmallScrollMinSize = 0.01D;
+            chartArea11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            chartArea11.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea11);
+            legend11.Name = "Legend1";
+            this.chart1.Legends.Add(legend11);
             this.chart1.Location = new System.Drawing.Point(8, 26);
             this.chart1.Margin = new System.Windows.Forms.Padding(2);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            series43.ChartArea = "ChartArea1";
-            series43.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series43.Color = System.Drawing.Color.Red;
-            series43.Legend = "Legend1";
-            series43.Name = "Series1";
-            series43.Points.Add(dataPoint22);
-            series43.Points.Add(dataPoint23);
-            series43.Points.Add(dataPoint24);
-            series44.ChartArea = "ChartArea1";
-            series44.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series44.Legend = "Legend1";
-            series44.Name = "Series2";
-            series45.ChartArea = "ChartArea1";
-            series45.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series45.Legend = "Legend1";
-            series45.Name = "Series3";
-            series46.ChartArea = "ChartArea1";
-            series46.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series46.Legend = "Legend1";
-            series46.Name = "Series4";
-            series47.ChartArea = "ChartArea1";
-            series47.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series47.Legend = "Legend1";
-            series47.Name = "Series5";
-            series48.ChartArea = "ChartArea1";
-            series48.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series48.Legend = "Legend1";
-            series48.Name = "Series6";
-            this.chart1.Series.Add(series43);
-            this.chart1.Series.Add(series44);
-            this.chart1.Series.Add(series45);
-            this.chart1.Series.Add(series46);
-            this.chart1.Series.Add(series47);
-            this.chart1.Series.Add(series48);
+            series61.ChartArea = "ChartArea1";
+            series61.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series61.Color = System.Drawing.Color.Red;
+            series61.Legend = "Legend1";
+            series61.Name = "Series1";
+            series61.Points.Add(dataPoint31);
+            series61.Points.Add(dataPoint32);
+            series61.Points.Add(dataPoint33);
+            series62.ChartArea = "ChartArea1";
+            series62.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series62.Legend = "Legend1";
+            series62.Name = "Series2";
+            series63.ChartArea = "ChartArea1";
+            series63.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series63.Legend = "Legend1";
+            series63.Name = "Series3";
+            series64.ChartArea = "ChartArea1";
+            series64.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series64.Legend = "Legend1";
+            series64.Name = "Series4";
+            series65.ChartArea = "ChartArea1";
+            series65.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series65.Legend = "Legend1";
+            series65.Name = "Series5";
+            series66.ChartArea = "ChartArea1";
+            series66.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series66.Legend = "Legend1";
+            series66.Name = "Series6";
+            this.chart1.Series.Add(series61);
+            this.chart1.Series.Add(series62);
+            this.chart1.Series.Add(series63);
+            this.chart1.Series.Add(series64);
+            this.chart1.Series.Add(series65);
+            this.chart1.Series.Add(series66);
             this.chart1.Size = new System.Drawing.Size(595, 373);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -244,7 +247,8 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.channelConfigToolStripMenuItem,
             this.splitToolStripMenuItem,
-            this.startFinishToolStripMenuItem});
+            this.startFinishToolStripMenuItem,
+            this.testToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -317,7 +321,9 @@
             // 
             this.startFinishToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aToolStripMenuItem,
-            this.pointBToolStripMenuItem});
+            this.pointBToolStripMenuItem,
+            this.pointCToolStripMenuItem,
+            this.pointDToolStripMenuItem});
             this.startFinishToolStripMenuItem.Name = "startFinishToolStripMenuItem";
             this.startFinishToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.startFinishToolStripMenuItem.Text = "Start/Finish";
@@ -335,6 +341,27 @@
             this.pointBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pointBToolStripMenuItem.Text = "Point B";
             this.pointBToolStripMenuItem.Click += new System.EventHandler(this.pointBToolStripMenuItem_Click);
+            // 
+            // pointCToolStripMenuItem
+            // 
+            this.pointCToolStripMenuItem.Name = "pointCToolStripMenuItem";
+            this.pointCToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pointCToolStripMenuItem.Text = "Point C";
+            this.pointCToolStripMenuItem.Click += new System.EventHandler(this.pointCToolStripMenuItem_Click);
+            // 
+            // pointDToolStripMenuItem
+            // 
+            this.pointDToolStripMenuItem.Name = "pointDToolStripMenuItem";
+            this.pointDToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pointDToolStripMenuItem.Text = "Point D";
+            this.pointDToolStripMenuItem.Click += new System.EventHandler(this.pointDToolStripMenuItem_Click);
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.testToolStripMenuItem.Text = "Test";
+            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -386,6 +413,9 @@
         private System.Windows.Forms.ToolStripMenuItem startFinishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pointBToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pointCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pointDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     }
 }
 

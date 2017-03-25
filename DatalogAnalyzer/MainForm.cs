@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -45,7 +46,9 @@ namespace DatalogAnalyzer
 
         private PointLatLng StartFinish_A = PointLatLng.Empty;
         private PointLatLng StartFinish_B = PointLatLng.Empty;
-        private GMapRoute StartFinishLine = null;
+        private PointLatLng StartFinish_C = PointLatLng.Empty;
+        private PointLatLng StartFinish_D = PointLatLng.Empty;
+        private GMapPolygon StartFinishLine = null;
 
         public MainForm()
         {
@@ -502,27 +505,34 @@ namespace DatalogAnalyzer
                 return;
 
             StartFinish_A = cursorMarker.Position;
-
-            if ((StartFinish_B != PointLatLng.Empty) && (StartFinish_A != StartFinish_B))
-            {
-                UpdateStartFinish();
-            }
+            UpdateStartFinish();
         }
 
         private void UpdateStartFinish()
         {
             if (StartFinishLine == null)
             {
-                StartFinishLine = new GMapRoute("Start/Finish");
-                StartFinishLine.Points.Add(StartFinish_A);
-                StartFinishLine.Points.Add(StartFinish_B);
+                StartFinishLine = new GMapPolygon(new List<PointLatLng>
+                    {
+                        StartFinish_A,
+                        StartFinish_B,
+                        StartFinish_C,
+                        StartFinish_D
+                    },
+                    "Start/Finish");
+                
+                mapOverlay.Polygons.Add(StartFinishLine);
 
-                mapOverlay.Routes.Add(StartFinishLine);
             }
             else
             {
                 StartFinishLine.Points[0] = StartFinish_A;
                 StartFinishLine.Points[1] = StartFinish_B;
+                StartFinishLine.Points[2] = StartFinish_C;
+                StartFinishLine.Points[3] = StartFinish_D;
+
+                mapOverlay.Polygons.Clear();
+                mapOverlay.Polygons.Add(StartFinishLine);
             }
         }
 
@@ -532,10 +542,41 @@ namespace DatalogAnalyzer
                 return;
 
             StartFinish_B = cursorMarker.Position;
+            UpdateStartFinish();
+        }
 
-            if ((StartFinish_A != PointLatLng.Empty) && (StartFinish_A != StartFinish_B))
+        private void pointCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cursorMarker == null)
+                return;
+
+            StartFinish_C = cursorMarker.Position;
+            UpdateStartFinish();
+        }
+
+        private void pointDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cursorMarker == null)
+                return;
+
+            StartFinish_D = cursorMarker.Position;
+            UpdateStartFinish();
+        }
+
+        private void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogEntry latestInside = null;
+
+            foreach (var entry in CurrentLog.Entries)
             {
-                UpdateStartFinish();
+                var latLong = new PointLatLng(entry.Latitude, entry.Longitude);
+                if (StartFinishLine.IsInside(latLong))
+                    latestInside = entry;
+                else if (latestInside != null)
+                {
+                    LoadLog(CurrentLog.SubSet(CurrentLog.Entries.First(), entry));
+                    return;
+                }
             }
         }
     }
