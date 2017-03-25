@@ -22,16 +22,16 @@ namespace DatalogAnalyzer
         private TimeSpan GraphStop { get; set; }
 
         private bool _showDelta = true;
-        private List<bool> ChannelEnabled { get; set; }
-        private List<Button> _channelToggleButtons = new List<Button>();
+        private bool _showSpeedAccuracy = true;
+        private bool _showSpeed = true;
 
-        private List<ChannelConfig> _config = new List<ChannelConfig>(); 
+        private List<bool> ChannelEnabled { get; set; }
+        private readonly List<Button> _channelToggleButtons = new List<Button>();
+
+        private readonly List<ChannelConfig> _config = new List<ChannelConfig>(); 
 
         private TimeSpan BaseInterval { get; set; }
-        private TimeSpan Interval
-        {
-            get { return TimeSpan.FromMilliseconds((GraphStop - GraphStart).TotalMilliseconds/1000); }
-        }
+        private TimeSpan Interval => TimeSpan.FromMilliseconds((GraphStop - GraphStart).TotalMilliseconds/1000);
 
         private readonly Color _enabledColor = Color.ForestGreen;
         private readonly Color _disabledColor = Color.Crimson;
@@ -50,7 +50,10 @@ namespace DatalogAnalyzer
             BaseInterval = TimeSpan.FromMilliseconds(20);
 
             chart1.AxisScrollBarClicked +=Chart1OnAxisScrollBarClicked;
+
             toggleDelta.BackColor = _enabledColor;
+            toggleSpeed.BackColor = _enabledColor;
+            toggleSpeedAcc.BackColor = _enabledColor;
         }
 
         private void Chart1OnAxisScrollBarClicked(object sender, ScrollBarEventArgs scrollBarEventArgs)
@@ -59,29 +62,6 @@ namespace DatalogAnalyzer
             GraphStop = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
 
             RefreshGraph();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var removableDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
-
-            var dataLoggerCards = removableDrives.Where(d => d.RootDirectory.GetFiles("*.LOG").Any()).ToList();
-
-            if (dataLoggerCards.Any())
-                openFileDialog.InitialDirectory = dataLoggerCards.First().RootDirectory.ToString();
-
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                try
-                {
-                    logWindow.Clear();
-                    LoadLog(new DataLog(openFileDialog.FileName));
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Failed to load log from \"{0}\" with error: {1}", openFileDialog.FileName, ex);
-                }
-            }
         }
 
         private void LoadLog(DataLog newLog)
@@ -218,16 +198,19 @@ namespace DatalogAnalyzer
                     }
                 }
 
-                if (logEntry.SpeedAccuracy < 5.0)
+                if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                 {
                     chart1.Series[CurrentLog.ValueCount + 0].Points.AddXY(
                         logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
                         logEntry.Speed);
                 }
 
-                chart1.Series[CurrentLog.ValueCount + 1].Points.AddXY(
-                    logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                    logEntry.SpeedAccuracy);
+                if (_showSpeedAccuracy)
+                {
+                    chart1.Series[CurrentLog.ValueCount + 1].Points.AddXY(
+                        logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                        logEntry.SpeedAccuracy);
+                }
 
                 if (_showDelta)
                 {
@@ -306,10 +289,10 @@ namespace DatalogAnalyzer
                 {
                     var button = new Button
                     {
-                        Size = new Size(50, LoadSampleButton.Height),
-                        Left = LoadSampleButton.Left + LoadSampleButton.Width + 6 + (i*56),
-                        Top = LoadSampleButton.Top,
-                        Anchor = LoadSampleButton.Anchor,
+                        Size = new Size(50, ChannelToggleButtonTemplate.Height),
+                        Left = ChannelToggleButtonTemplate.Left + (i*56),
+                        Top = ChannelToggleButtonTemplate.Top,
+                        Anchor = ChannelToggleButtonTemplate.Anchor,
                         Text = $"CH {i + 1}",
                         BackColor = _enabledColor,
                         ForeColor = Color.White,
@@ -364,12 +347,33 @@ namespace DatalogAnalyzer
 
         private void settingsBtn_Click(object sender, EventArgs e)
         {
-            var form = new ChannelConfigForm(_config);
-            form.OnApply += (o, args) => RefreshGraph();
-            form.ShowDialog(this);
+            
         }
 
-        private void splitButton_Click(object sender, EventArgs e)
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var removableDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
+
+            var dataLoggerCards = removableDrives.Where(d => d.RootDirectory.GetFiles("*.LOG").Any()).ToList();
+
+            if (dataLoggerCards.Any())
+                openFileDialog.InitialDirectory = dataLoggerCards.First().RootDirectory.ToString();
+
+            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                try
+                {
+                    logWindow.Clear();
+                    LoadLog(new DataLog(openFileDialog.FileName));
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Failed to load log from \"{0}\" with error: {1}", openFileDialog.FileName, ex);
+                }
+            }
+        }
+
+        private void keepAfterToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var cursor = chart1.ChartAreas[0].CursorX.Position;
 
@@ -380,6 +384,45 @@ namespace DatalogAnalyzer
             var lastEntry = CurrentLog.Entries.Last();
 
             LoadLog(CurrentLog.SubSet(closestEntry, lastEntry));
+        }
+
+        private void keepBeforeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cursor = chart1.ChartAreas[0].CursorX.Position;
+
+            if (cursor < 1)
+                return;
+
+            var closestEntry = CurrentLog.GetClosestEntry(cursor);
+            var firstEntry = CurrentLog.Entries.First();
+
+            LoadLog(CurrentLog.SubSet(firstEntry, closestEntry));
+        }
+
+        private void channelConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new ChannelConfigForm(_config);
+            form.OnApply += (o, args) => RefreshGraph();
+            form.ShowDialog(this);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void toggleSpeedAcc_Click(object sender, EventArgs e)
+        {
+            _showSpeedAccuracy = !_showSpeedAccuracy;
+            toggleSpeedAcc.BackColor = _showSpeedAccuracy ? _enabledColor : _disabledColor;
+            RefreshGraph();
+        }
+
+        private void toggleSpeed_Click(object sender, EventArgs e)
+        {
+            _showSpeed = !_showSpeed;
+            toggleSpeed.BackColor = _showSpeed ? _enabledColor : _disabledColor;
+            RefreshGraph();
         }
     }
 }
