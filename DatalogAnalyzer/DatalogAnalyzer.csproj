@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="DataLog.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="LogAnalysis.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LogStart.cs" />

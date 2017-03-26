@@ -49,6 +49,9 @@ namespace DatalogAnalyzer
         private PointLatLng StartFinish_C = PointLatLng.Empty;
         private PointLatLng StartFinish_D = PointLatLng.Empty;
         private GMapPolygon StartFinishLine = null;
+        private GMapRoute StartFinishLineRoute = null;
+
+        private LogAnalysis _analysis = null;
 
         public MainForm()
         {
@@ -87,6 +90,7 @@ namespace DatalogAnalyzer
                 _config.Add(new ChannelConfig(i));
 
             RenderTrack();
+            UpdateStartFinish();
 
             GraphStart = TimeSpan.Zero;
             GraphStop = CurrentLog.Length;
@@ -107,7 +111,7 @@ namespace DatalogAnalyzer
             Log.Info("Lat: {0} to {1}", minLat, maxLat);
             Log.Info("Lon: {0} to {1}", minLon, maxLon);
 
-            gMap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
+            gMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
 
             mapRoute = new GMapRoute("Route");
 
@@ -358,11 +362,6 @@ namespace DatalogAnalyzer
             }
         }
 
-        private void settingsBtn_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var removableDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
@@ -510,6 +509,12 @@ namespace DatalogAnalyzer
 
         private void UpdateStartFinish()
         {
+            if (StartFinish_A == PointLatLng.Empty ||
+                StartFinish_B == PointLatLng.Empty ||
+                StartFinish_C == PointLatLng.Empty ||
+                StartFinish_D == PointLatLng.Empty)
+                return;
+
             if (StartFinishLine == null)
             {
                 StartFinishLine = new GMapPolygon(new List<PointLatLng>
@@ -520,19 +525,29 @@ namespace DatalogAnalyzer
                         StartFinish_D
                     },
                     "Start/Finish");
+
+                StartFinishLineRoute = new GMapRoute(new List<PointLatLng>
+                    {
+                        StartFinish_A,
+                        StartFinish_B
+                    },
+                    "Start/Finish");
                 
-                mapOverlay.Polygons.Add(StartFinishLine);
+                mapOverlay.Routes.Add(StartFinishLineRoute);
 
             }
             else
             {
+                StartFinishLineRoute.Points[0] = StartFinish_A;
+                StartFinishLineRoute.Points[1] = StartFinish_B;
+
                 StartFinishLine.Points[0] = StartFinish_A;
                 StartFinishLine.Points[1] = StartFinish_B;
                 StartFinishLine.Points[2] = StartFinish_C;
                 StartFinishLine.Points[3] = StartFinish_D;
 
-                mapOverlay.Polygons.Clear();
-                mapOverlay.Polygons.Add(StartFinishLine);
+                if (!mapOverlay.Routes.Contains(StartFinishLineRoute))
+                    mapOverlay.Routes.Add(StartFinishLineRoute);
             }
         }
 
@@ -566,7 +581,8 @@ namespace DatalogAnalyzer
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LogEntry latestInside = null;
-
+            LogEntry previousEntry = CurrentLog.Entries.First();
+            _analysis = new LogAnalysis(new List<DataLog>());
             foreach (var entry in CurrentLog.Entries)
             {
                 var latLong = new PointLatLng(entry.Latitude, entry.Longitude);
@@ -574,10 +590,72 @@ namespace DatalogAnalyzer
                     latestInside = entry;
                 else if (latestInside != null)
                 {
-                    LoadLog(CurrentLog.SubSet(CurrentLog.Entries.First(), entry));
-                    return;
+                    _analysis.Segments.Add(CurrentLog.SubSet(previousEntry, entry));
+                    previousEntry = entry;
+                    latestInside = null;
                 }
             }
+
+            _analysis.Segments.Add(CurrentLog.SubSet(previousEntry, CurrentLog.Entries.Last()));
+
+            logWindow.Clear();
+
+            var segmentIndex = 1;
+            foreach (var segment in _analysis.Segments)
+            {
+                Log.Info("Segment {0} time: {1}", segmentIndex++, segment.Length.ToString("hh\\:mm\\:s\\.fff"));
+            }
+        }
+
+        private void segmentAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadLog(_analysis.Segments[0]);
+        }
+
+        private void segmentBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadLog(_analysis.Segments[1]);
+        }
+
+        private void segmentCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadLog(_analysis.Segments[2]);
+        }
+
+        private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var stream = File.Create("StartFinish.points");
+            var writer = new BinaryWriter(stream);
+
+            writer.Write(StartFinish_A.Lat);
+            writer.Write(StartFinish_A.Lng);
+
+            writer.Write(StartFinish_B.Lat);
+            writer.Write(StartFinish_B.Lng);
+
+            writer.Write(StartFinish_C.Lat);
+            writer.Write(StartFinish_C.Lng);
+
+            writer.Write(StartFinish_D.Lat);
+            writer.Write(StartFinish_D.Lng);
+
+            writer.Flush();
+            stream.Close();
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var stream = File.OpenRead("StartFinish.points");
+            var reader = new BinaryReader(stream);
+
+            StartFinish_A = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
+            StartFinish_B = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
+            StartFinish_C = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
+            StartFinish_D = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
+            
+            stream.Close();
+
+            UpdateStartFinish();
         }
     }
 }
