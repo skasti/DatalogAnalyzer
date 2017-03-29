@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint7 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint8 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.01D, 150D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint9 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.02D, 140D);
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint5 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.01D, 150D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint6 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0.02D, 140D);
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ChannelToggleButtonTemplate = new System.Windows.Forms.Button();
             this.logWindow = new System.Windows.Forms.RichTextBox();
@@ -61,20 +61,20 @@
             this.pointBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pointCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pointDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toggleSpeedAcc = new System.Windows.Forms.Button();
-            this.toggleSpeed = new System.Windows.Forms.Button();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.segmentAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleSpeedAcc = new System.Windows.Forms.Button();
+            this.toggleSpeed = new System.Windows.Forms.Button();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.segmentsList = new System.Windows.Forms.ListView();
             this.segmentsLabel = new System.Windows.Forms.Label();
+            this.segmentsList = new System.Windows.Forms.ListView();
             this.indexColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
@@ -92,52 +92,53 @@
             // chart1
             // 
             this.chart1.BackColor = System.Drawing.Color.DimGray;
-            chartArea3.AxisX.ScaleView.SizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Number;
-            chartArea3.AxisX.ScaleView.SmallScrollMinSize = 0.01D;
-            chartArea3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
+            chartArea2.AxisX.ScaleView.SizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Number;
+            chartArea2.AxisX.ScaleView.SmallScrollMinSize = 0.01D;
+            chartArea2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(0, 0);
+            this.chart1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            series13.ChartArea = "ChartArea1";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series13.Color = System.Drawing.Color.Red;
-            series13.Legend = "Legend1";
-            series13.Name = "Series1";
-            series13.Points.Add(dataPoint7);
-            series13.Points.Add(dataPoint8);
-            series13.Points.Add(dataPoint9);
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series14.Legend = "Legend1";
-            series14.Name = "Series2";
-            series15.ChartArea = "ChartArea1";
-            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series15.Legend = "Legend1";
-            series15.Name = "Series3";
-            series16.ChartArea = "ChartArea1";
-            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series16.Legend = "Legend1";
-            series16.Name = "Series4";
-            series17.ChartArea = "ChartArea1";
-            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series17.Legend = "Legend1";
-            series17.Name = "Series5";
-            series18.ChartArea = "ChartArea1";
-            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series18.Legend = "Legend1";
-            series18.Name = "Series6";
-            this.chart1.Series.Add(series13);
-            this.chart1.Series.Add(series14);
-            this.chart1.Series.Add(series15);
-            this.chart1.Series.Add(series16);
-            this.chart1.Series.Add(series17);
-            this.chart1.Series.Add(series18);
-            this.chart1.Size = new System.Drawing.Size(1027, 576);
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series7.Color = System.Drawing.Color.Red;
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            series7.Points.Add(dataPoint4);
+            series7.Points.Add(dataPoint5);
+            series7.Points.Add(dataPoint6);
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series8.Legend = "Legend1";
+            series8.Name = "Series2";
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series9.Legend = "Legend1";
+            series9.Name = "Series3";
+            series10.ChartArea = "ChartArea1";
+            series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series10.Legend = "Legend1";
+            series10.Name = "Series4";
+            series11.ChartArea = "ChartArea1";
+            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series11.Legend = "Legend1";
+            series11.Name = "Series5";
+            series12.ChartArea = "ChartArea1";
+            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series12.Legend = "Legend1";
+            series12.Name = "Series6";
+            this.chart1.Series.Add(series7);
+            this.chart1.Series.Add(series8);
+            this.chart1.Series.Add(series9);
+            this.chart1.Series.Add(series10);
+            this.chart1.Series.Add(series11);
+            this.chart1.Series.Add(series12);
+            this.chart1.Size = new System.Drawing.Size(684, 374);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             this.chart1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chart1_MouseUp);
@@ -145,9 +146,10 @@
             // ChannelToggleButtonTemplate
             // 
             this.ChannelToggleButtonTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(12, 620);
+            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(8, 403);
+            this.ChannelToggleButtonTemplate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ChannelToggleButtonTemplate.Name = "ChannelToggleButtonTemplate";
-            this.ChannelToggleButtonTemplate.Size = new System.Drawing.Size(140, 42);
+            this.ChannelToggleButtonTemplate.Size = new System.Drawing.Size(93, 27);
             this.ChannelToggleButtonTemplate.TabIndex = 1;
             this.ChannelToggleButtonTemplate.Text = "Channel toggle";
             this.ChannelToggleButtonTemplate.UseVisualStyleBackColor = true;
@@ -157,10 +159,11 @@
             // 
             this.logWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.logWindow.Location = new System.Drawing.Point(12, 668);
+            this.logWindow.Location = new System.Drawing.Point(8, 434);
+            this.logWindow.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.logWindow.Name = "logWindow";
             this.logWindow.ReadOnly = true;
-            this.logWindow.Size = new System.Drawing.Size(1456, 150);
+            this.logWindow.Size = new System.Drawing.Size(972, 99);
             this.logWindow.TabIndex = 2;
             this.logWindow.Text = "";
             // 
@@ -175,9 +178,10 @@
             this.toggleDelta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleDelta.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleDelta.ForeColor = System.Drawing.Color.White;
-            this.toggleDelta.Location = new System.Drawing.Point(1389, 620);
+            this.toggleDelta.Location = new System.Drawing.Point(926, 403);
+            this.toggleDelta.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.toggleDelta.Name = "toggleDelta";
-            this.toggleDelta.Size = new System.Drawing.Size(81, 42);
+            this.toggleDelta.Size = new System.Drawing.Size(54, 27);
             this.toggleDelta.TabIndex = 3;
             this.toggleDelta.Text = "Delta";
             this.toggleDelta.UseVisualStyleBackColor = true;
@@ -193,6 +197,7 @@
             this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.gMap.LevelsKeepInMemmory = 5;
             this.gMap.Location = new System.Drawing.Point(0, 0);
+            this.gMap.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gMap.MarkersEnabled = true;
             this.gMap.MaxZoom = 20;
             this.gMap.MinZoom = 1;
@@ -205,7 +210,7 @@
             this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(425, 210);
+            this.gMap.Size = new System.Drawing.Size(284, 270);
             this.gMap.TabIndex = 5;
             this.gMap.Zoom = 0D;
             this.gMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseDown);
@@ -222,8 +227,7 @@
             this.analysisToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
-            this.MainMenu.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.MainMenu.Size = new System.Drawing.Size(1486, 35);
+            this.MainMenu.Size = new System.Drawing.Size(991, 24);
             this.MainMenu.TabIndex = 7;
             this.MainMenu.Text = "menuStrip1";
             // 
@@ -234,27 +238,27 @@
             this.saveToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -264,13 +268,13 @@
             this.channelConfigToolStripMenuItem,
             this.splitToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // channelConfigToolStripMenuItem
             // 
             this.channelConfigToolStripMenuItem.Name = "channelConfigToolStripMenuItem";
-            this.channelConfigToolStripMenuItem.Size = new System.Drawing.Size(218, 30);
+            this.channelConfigToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.channelConfigToolStripMenuItem.Text = "Channel Config";
             this.channelConfigToolStripMenuItem.Click += new System.EventHandler(this.channelConfigToolStripMenuItem_Click);
             // 
@@ -280,20 +284,20 @@
             this.keepBeforeToolStripMenuItem,
             this.keepAfterToolStripMenuItem});
             this.splitToolStripMenuItem.Name = "splitToolStripMenuItem";
-            this.splitToolStripMenuItem.Size = new System.Drawing.Size(218, 30);
+            this.splitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.splitToolStripMenuItem.Text = "Split";
             // 
             // keepBeforeToolStripMenuItem
             // 
             this.keepBeforeToolStripMenuItem.Name = "keepBeforeToolStripMenuItem";
-            this.keepBeforeToolStripMenuItem.Size = new System.Drawing.Size(193, 30);
+            this.keepBeforeToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.keepBeforeToolStripMenuItem.Text = "Keep before";
             this.keepBeforeToolStripMenuItem.Click += new System.EventHandler(this.keepBeforeToolStripMenuItem_Click);
             // 
             // keepAfterToolStripMenuItem
             // 
             this.keepAfterToolStripMenuItem.Name = "keepAfterToolStripMenuItem";
-            this.keepAfterToolStripMenuItem.Size = new System.Drawing.Size(193, 30);
+            this.keepAfterToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.keepAfterToolStripMenuItem.Text = "Keep after";
             this.keepAfterToolStripMenuItem.Click += new System.EventHandler(this.keepAfterToolStripMenuItem_Click);
             // 
@@ -304,7 +308,7 @@
             this.testToolStripMenuItem,
             this.segmentsToolStripMenuItem});
             this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
-            this.analysisToolStripMenuItem.Size = new System.Drawing.Size(88, 29);
+            this.analysisToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.analysisToolStripMenuItem.Text = "Analysis";
             // 
             // startFinishToolStripMenuItem
@@ -317,41 +321,55 @@
             this.saveToolStripMenuItem1,
             this.loadToolStripMenuItem});
             this.startFinishToolStripMenuItem.Name = "startFinishToolStripMenuItem";
-            this.startFinishToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.startFinishToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.startFinishToolStripMenuItem.Text = "Start/Finish";
             // 
             // aToolStripMenuItem
             // 
             this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.aToolStripMenuItem.Text = "Point A";
             this.aToolStripMenuItem.Click += new System.EventHandler(this.aToolStripMenuItem_Click);
             // 
             // pointBToolStripMenuItem
             // 
             this.pointBToolStripMenuItem.Name = "pointBToolStripMenuItem";
-            this.pointBToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.pointBToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.pointBToolStripMenuItem.Text = "Point B";
             this.pointBToolStripMenuItem.Click += new System.EventHandler(this.pointBToolStripMenuItem_Click);
             // 
             // pointCToolStripMenuItem
             // 
             this.pointCToolStripMenuItem.Name = "pointCToolStripMenuItem";
-            this.pointCToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.pointCToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.pointCToolStripMenuItem.Text = "Point C";
             this.pointCToolStripMenuItem.Click += new System.EventHandler(this.pointCToolStripMenuItem_Click);
             // 
             // pointDToolStripMenuItem
             // 
             this.pointDToolStripMenuItem.Name = "pointDToolStripMenuItem";
-            this.pointDToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.pointDToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.pointDToolStripMenuItem.Text = "Point D";
             this.pointDToolStripMenuItem.Click += new System.EventHandler(this.pointDToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem1
+            // 
+            this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(113, 22);
+            this.saveToolStripMenuItem1.Text = "Save";
+            this.saveToolStripMenuItem1.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
@@ -362,17 +380,39 @@
             this.segmentBToolStripMenuItem,
             this.segmentCToolStripMenuItem});
             this.segmentsToolStripMenuItem.Name = "segmentsToolStripMenuItem";
-            this.segmentsToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.segmentsToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.segmentsToolStripMenuItem.Text = "Segments";
+            // 
+            // segmentAToolStripMenuItem
+            // 
+            this.segmentAToolStripMenuItem.Name = "segmentAToolStripMenuItem";
+            this.segmentAToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.segmentAToolStripMenuItem.Text = "Segment A";
+            this.segmentAToolStripMenuItem.Click += new System.EventHandler(this.segmentAToolStripMenuItem_Click);
+            // 
+            // segmentBToolStripMenuItem
+            // 
+            this.segmentBToolStripMenuItem.Name = "segmentBToolStripMenuItem";
+            this.segmentBToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.segmentBToolStripMenuItem.Text = "Segment B";
+            this.segmentBToolStripMenuItem.Click += new System.EventHandler(this.segmentBToolStripMenuItem_Click);
+            // 
+            // segmentCToolStripMenuItem
+            // 
+            this.segmentCToolStripMenuItem.Name = "segmentCToolStripMenuItem";
+            this.segmentCToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.segmentCToolStripMenuItem.Text = "Segment C";
+            this.segmentCToolStripMenuItem.Click += new System.EventHandler(this.segmentCToolStripMenuItem_Click);
             // 
             // toggleSpeedAcc
             // 
             this.toggleSpeedAcc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeedAcc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeedAcc.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeedAcc.Location = new System.Drawing.Point(1200, 620);
+            this.toggleSpeedAcc.Location = new System.Drawing.Point(800, 403);
+            this.toggleSpeedAcc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.toggleSpeedAcc.Name = "toggleSpeedAcc";
-            this.toggleSpeedAcc.Size = new System.Drawing.Size(183, 42);
+            this.toggleSpeedAcc.Size = new System.Drawing.Size(122, 27);
             this.toggleSpeedAcc.TabIndex = 8;
             this.toggleSpeedAcc.Text = "Speed Accuracy";
             this.toggleSpeedAcc.UseVisualStyleBackColor = true;
@@ -383,9 +423,10 @@
             this.toggleSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeed.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeed.Location = new System.Drawing.Point(1104, 620);
+            this.toggleSpeed.Location = new System.Drawing.Point(736, 403);
+            this.toggleSpeed.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.toggleSpeed.Name = "toggleSpeed";
-            this.toggleSpeed.Size = new System.Drawing.Size(90, 42);
+            this.toggleSpeed.Size = new System.Drawing.Size(60, 27);
             this.toggleSpeed.TabIndex = 9;
             this.toggleSpeed.Text = "Speed";
             this.toggleSpeed.UseVisualStyleBackColor = true;
@@ -397,47 +438,13 @@
             this.saveFileDialog.FileName = "SAMPLE.LOG";
             this.saveFileDialog.Filter = "Log files (*.log)|*.LOG";
             // 
-            // segmentAToolStripMenuItem
-            // 
-            this.segmentAToolStripMenuItem.Name = "segmentAToolStripMenuItem";
-            this.segmentAToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.segmentAToolStripMenuItem.Text = "Segment A";
-            this.segmentAToolStripMenuItem.Click += new System.EventHandler(this.segmentAToolStripMenuItem_Click);
-            // 
-            // segmentBToolStripMenuItem
-            // 
-            this.segmentBToolStripMenuItem.Name = "segmentBToolStripMenuItem";
-            this.segmentBToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.segmentBToolStripMenuItem.Text = "Segment B";
-            this.segmentBToolStripMenuItem.Click += new System.EventHandler(this.segmentBToolStripMenuItem_Click);
-            // 
-            // segmentCToolStripMenuItem
-            // 
-            this.segmentCToolStripMenuItem.Name = "segmentCToolStripMenuItem";
-            this.segmentCToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.segmentCToolStripMenuItem.Text = "Segment C";
-            this.segmentCToolStripMenuItem.Click += new System.EventHandler(this.segmentCToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem1
-            // 
-            this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
-            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(211, 30);
-            this.saveToolStripMenuItem1.Text = "Save";
-            this.saveToolStripMenuItem1.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(12, 38);
+            this.splitContainer1.Location = new System.Drawing.Point(8, 25);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -447,14 +454,16 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1456, 576);
-            this.splitContainer1.SplitterDistance = 1027;
+            this.splitContainer1.Size = new System.Drawing.Size(971, 374);
+            this.splitContainer1.SplitterDistance = 684;
+            this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 10;
             // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -466,9 +475,20 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gMap);
-            this.splitContainer2.Size = new System.Drawing.Size(425, 576);
-            this.splitContainer2.SplitterDistance = 362;
+            this.splitContainer2.Size = new System.Drawing.Size(284, 374);
+            this.splitContainer2.SplitterDistance = 101;
+            this.splitContainer2.SplitterWidth = 3;
             this.splitContainer2.TabIndex = 6;
+            // 
+            // segmentsLabel
+            // 
+            this.segmentsLabel.AutoSize = true;
+            this.segmentsLabel.Location = new System.Drawing.Point(2, 0);
+            this.segmentsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.segmentsLabel.Name = "segmentsLabel";
+            this.segmentsLabel.Size = new System.Drawing.Size(54, 13);
+            this.segmentsLabel.TabIndex = 1;
+            this.segmentsLabel.Text = "Segments";
             // 
             // segmentsList
             // 
@@ -478,21 +498,14 @@
             this.segmentsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.indexColumn,
             this.timeColumn});
-            this.segmentsList.Location = new System.Drawing.Point(3, 23);
+            this.segmentsList.Location = new System.Drawing.Point(2, 15);
+            this.segmentsList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.segmentsList.Name = "segmentsList";
-            this.segmentsList.Size = new System.Drawing.Size(419, 336);
+            this.segmentsList.Size = new System.Drawing.Size(282, 86);
             this.segmentsList.TabIndex = 0;
             this.segmentsList.UseCompatibleStateImageBehavior = false;
             this.segmentsList.View = System.Windows.Forms.View.Details;
-            // 
-            // segmentsLabel
-            // 
-            this.segmentsLabel.AutoSize = true;
-            this.segmentsLabel.Location = new System.Drawing.Point(3, 0);
-            this.segmentsLabel.Name = "segmentsLabel";
-            this.segmentsLabel.Size = new System.Drawing.Size(82, 20);
-            this.segmentsLabel.TabIndex = 1;
-            this.segmentsLabel.Text = "Segments";
+            this.segmentsList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.segmentsList_MouseDoubleClick);
             // 
             // indexColumn
             // 
@@ -504,9 +517,9 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1486, 837);
+            this.ClientSize = new System.Drawing.Size(991, 544);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toggleSpeed);
             this.Controls.Add(this.toggleSpeedAcc);
@@ -515,6 +528,7 @@
             this.Controls.Add(this.ChannelToggleButtonTemplate);
             this.Controls.Add(this.MainMenu);
             this.MainMenuStrip = this.MainMenu;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "SR Datalog Analyzer";
             this.Load += new System.EventHandler(this.MainForm_Load);

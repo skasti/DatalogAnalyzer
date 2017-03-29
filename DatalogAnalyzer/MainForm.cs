@@ -68,6 +68,8 @@ namespace DatalogAnalyzer
             toggleDelta.BackColor = _enabledColor;
             toggleSpeed.BackColor = _enabledColor;
             toggleSpeedAcc.BackColor = _enabledColor;
+
+            LoadStartFinish();
         }
 
         private void Chart1OnAxisScrollBarClicked(object sender, ScrollBarEventArgs scrollBarEventArgs)
@@ -533,7 +535,8 @@ namespace DatalogAnalyzer
                     },
                     "Start/Finish");
                 
-                mapOverlay.Routes.Add(StartFinishLineRoute);
+                if (mapOverlay != null)
+                    mapOverlay.Routes.Add(StartFinishLineRoute);
 
             }
             else
@@ -546,7 +549,7 @@ namespace DatalogAnalyzer
                 StartFinishLine.Points[2] = StartFinish_C;
                 StartFinishLine.Points[3] = StartFinish_D;
 
-                if (!mapOverlay.Routes.Contains(StartFinishLineRoute))
+                if (mapOverlay != null && !mapOverlay.Routes.Contains(StartFinishLineRoute))
                     mapOverlay.Routes.Add(StartFinishLineRoute);
             }
         }
@@ -599,11 +602,17 @@ namespace DatalogAnalyzer
             _analysis.Segments.Add(CurrentLog.SubSet(previousEntry, CurrentLog.Entries.Last()));
 
             logWindow.Clear();
-
+            segmentsList.Items.Clear();
             var segmentIndex = 1;
             foreach (var segment in _analysis.Segments)
             {
-                Log.Info("Segment {0} time: {1}", segmentIndex++, segment.Length.ToString("hh\\:mm\\:s\\.fff"));
+                Log.Info("Segment {0} time: {1}", segmentIndex, segment.Length.ToString("hh\\:mm\\:ss\\.fff"));
+
+                var lvItem = new ListViewItem();
+                lvItem.Text = $"Segment {segmentIndex++}";
+                lvItem.SubItems.Add(segment.Length.ToString("hh\\:mm\\:ss\\.fff"));
+
+                segmentsList.Items.Add(lvItem);
             }
         }
 
@@ -623,6 +632,11 @@ namespace DatalogAnalyzer
         }
 
         private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            SaveStartFinish();
+        }
+
+        private void SaveStartFinish()
         {
             var stream = File.Create("StartFinish.points");
             var writer = new BinaryWriter(stream);
@@ -645,6 +659,17 @@ namespace DatalogAnalyzer
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            LoadStartFinish();
+        }
+
+        private void LoadStartFinish()
+        {
+            if (!File.Exists("StartFinish.points"))
+            {
+                Log.Info("Start/Finish not found!");
+                return;
+            }
+
             var stream = File.OpenRead("StartFinish.points");
             var reader = new BinaryReader(stream);
 
@@ -652,10 +677,23 @@ namespace DatalogAnalyzer
             StartFinish_B = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
             StartFinish_C = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
             StartFinish_D = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
-            
+
             stream.Close();
 
             UpdateStartFinish();
+        }
+
+        private void segmentsList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (segmentsList.SelectedIndices.Count == 0)
+                return;
+
+            var selectedSegment = _analysis.Segments[segmentsList.SelectedIndices[0]];
+
+            if (selectedSegment != CurrentLog)
+            {
+                LoadLog(selectedSegment);
+            }
         }
     }
 }
