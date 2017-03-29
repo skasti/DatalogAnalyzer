@@ -29,10 +29,10 @@ namespace DatalogAnalyzer
         private List<bool> ChannelEnabled { get; set; }
         private readonly List<Button> _channelToggleButtons = new List<Button>();
 
-        private readonly List<ChannelConfig> _config = new List<ChannelConfig>(); 
+        private readonly List<ChannelConfig> _config = new List<ChannelConfig>();
 
         private TimeSpan BaseInterval { get; set; }
-        private TimeSpan Interval => TimeSpan.FromMilliseconds((GraphStop - GraphStart).TotalMilliseconds/1000);
+        private TimeSpan Interval => TimeSpan.FromMilliseconds((GraphStop - GraphStart).TotalMilliseconds / 1000);
 
         private readonly Color _enabledColor = Color.ForestGreen;
         private readonly Color _disabledColor = Color.Crimson;
@@ -95,8 +95,11 @@ namespace DatalogAnalyzer
             UpdateStartFinish();
 
             GraphStart = TimeSpan.Zero;
-            GraphStop = CurrentLog.Length;
+            GraphStop = CurrentLog.Length.TotalSeconds > 30 ? TimeSpan.FromSeconds(30) : CurrentLog.Length; 
             BaseInterval = Interval;
+
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(GraphStart.TotalSeconds, GraphStop.TotalSeconds);
+
             RefreshGraph();
         }
 
@@ -189,7 +192,7 @@ namespace DatalogAnalyzer
             });
 
             TimeSpan previous = TimeSpan.Zero;
-            
+
             foreach (var logEntry in CurrentLog.Entries)
             {
                 var timeStamp = logEntry.GetTimeSpan(CurrentLog.LogStart);
@@ -253,8 +256,8 @@ namespace DatalogAnalyzer
 
                 if (e.Delta < 0)
                 {
-                    double posXStart = Math.Max(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin), 0.0);
-                    double posXFinish = Math.Min(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin), CurrentLog.Length.TotalSeconds);
+                    double posXStart = Math.Max(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin), 1.0);
+                    double posXFinish = Math.Min(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin), 30.0);
 
                     Log.Info($"Zoom out: {posXStart} - {posXFinish}");
 
