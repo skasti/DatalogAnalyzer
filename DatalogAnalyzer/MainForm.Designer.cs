@@ -475,6 +475,8 @@
             // 
             this.speedChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.speedChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            chartArea1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             chartArea1.Name = "ChartArea1";
             this.speedChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
@@ -514,6 +516,8 @@
             // 
             // tempChart
             // 
+            this.tempChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            chartArea2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             chartArea2.Name = "ChartArea1";
             this.tempChart.ChartAreas.Add(chartArea2);
             this.tempChart.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -534,6 +538,8 @@
             // 
             // sensorChart
             // 
+            this.sensorChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            chartArea3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             chartArea3.Name = "ChartArea1";
             this.sensorChart.ChartAreas.Add(chartArea3);
             this.sensorChart.Dock = System.Windows.Forms.DockStyle.Fill;

@@ -48,6 +48,8 @@ namespace DatalogAnalyzer
 
         private LogAnalysis _analysis = null;
 
+        private TimeSpan Interval = TimeSpan.FromMilliseconds(100);
+
         private double _graphCursorX = 0.0;
 
         public MainForm()
@@ -88,6 +90,7 @@ namespace DatalogAnalyzer
 
             RenderTrack();
             UpdateStartFinish();
+            InitializeChartSeries();
 
             RefreshGraph();
         }
@@ -146,11 +149,67 @@ namespace DatalogAnalyzer
             mapMarker = null;
         }
 
-        private void RefreshGraph()
+        private void RefreshGraph(int startChannel = 0, int endChannel = int.MaxValue)
         {
             if (CurrentLog == null)
                 return;
 
+            endChannel = Math.Min(endChannel, CurrentLog.ValueCount - 1);
+
+            for (int i = startChannel; i <= endChannel; i++)
+            {
+                _config[i].ChartSeries.Points.Clear();
+            }
+
+            var nextEntry = TimeSpan.Zero;
+
+            foreach (var logEntry in CurrentLog.Entries)
+            {
+                var timeStamp = logEntry.GetTimeSpan(CurrentLog.LogStart);
+
+                if (timeStamp < nextEntry)
+                    continue;
+
+                nextEntry = timeStamp + Interval;
+
+
+                for (var i = startChannel; i <= endChannel; i++)
+                {
+                    if (i < logEntry.Values.Count && ChannelEnabled[i])
+                    {
+                        _config[i].ChartSeries.Points.AddXY(
+                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, 
+                            _config[i].Process(logEntry.Values[i]));
+                    }
+                }
+
+                if (startChannel == 0 && endChannel == CurrentLog.ValueCount - 1)
+                {
+                    if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
+                    {
+                        speedChart.Series[0].Points.AddXY(
+                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            logEntry.Speed);
+                    }
+
+                    if (_showSpeedAccuracy)
+                    {
+                        speedChart.Series[1].Points.AddXY(
+                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            logEntry.SpeedAccuracy);
+                    }
+
+                    if (_showDelta)
+                    {
+                        speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            Math.Min(logEntry.Delta/1000, 100));
+                    }
+                }
+            }
+        }
+
+        private void InitializeChartSeries()
+        {
             speedChart.Series.Clear();
             tempChart.Series.Clear();
             sensorChart.Series.Clear();
@@ -186,81 +245,7 @@ namespace DatalogAnalyzer
                 Name = "Delta",
                 ChartType = SeriesChartType.Line
             });
-
-            foreach (var logEntry in CurrentLog.Entries)
-            {
-
-                for (var i = 0; i < CurrentLog.ValueCount; i++)
-                {
-                    if (i < logEntry.Values.Count && ChannelEnabled[i])
-                    {
-                        _config[i].ChartSeries.Points.AddXY(
-                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, 
-                            _config[i].Process(logEntry.Values[i]));
-                    }
-                }
-
-                if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
-                {
-                    speedChart.Series[0].Points.AddXY(
-                        logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                        logEntry.Speed);
-                }
-
-                if (_showSpeedAccuracy)
-                {
-                    speedChart.Series[1].Points.AddXY(
-                        logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                        logEntry.SpeedAccuracy);
-                }
-
-                if (_showDelta)
-                {
-                    speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
-                        Math.Min(logEntry.Delta / 1000, 100));
-                }
-            }
         }
-
-        //private void MainForm_Load(object sender, EventArgs e)
-        //{
-        //    chart1.MouseWheel += Chart1OnMouseWheel;
-        //}
-
-        //private void Chart1OnMouseWheel(object sender, MouseEventArgs e)
-        //{
-        //    try
-        //    {
-        //        double xMin = chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
-        //        double xMax = chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum;
-
-        //        if (e.Delta < 0)
-        //        {
-        //            double posXStart = Math.Max(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin), 1.0);
-        //            double posXFinish = Math.Min(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin), CurrentLog.Length.TotalSeconds);
-
-        //            Log.Info($"Zoom out: {posXStart} - {posXFinish}");
-
-        //            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
-        //        }
-
-        //        if (e.Delta > 0)
-        //        {
-        //            double posXStart = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 4;
-        //            double posXFinish = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 4;
-
-        //            Log.Info($"Zoom in: {posXStart} - {posXFinish}");
-
-        //            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
-        //        }
-
-        //        GraphStart = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum);
-        //        GraphStop = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
-
-        //        //RefreshGraph();
-        //    }
-        //    catch { }
-        //}
 
         public void Info(string format, params object[] parameters)
         {
@@ -275,7 +260,7 @@ namespace DatalogAnalyzer
         private bool ToggleChannel(int channel)
         {
             ChannelEnabled[channel] = !ChannelEnabled[channel];
-            RefreshGraph();
+            RefreshGraph(channel, channel);
             return ChannelEnabled[channel];
         }
 
@@ -727,26 +712,41 @@ namespace DatalogAnalyzer
         private void segmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ZoomGraphs(0.0, CurrentLog.Length.TotalSeconds);
+
+            Interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
+            RefreshGraph();
         }
 
         private void secToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ZoomGraphs(0.0, 60.0);
+
+            Interval = TimeSpan.FromMilliseconds(200);
+            RefreshGraph();
         }
 
         private void secToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ZoomGraphs(0.0, 30.0);
+
+            Interval = TimeSpan.FromMilliseconds(100);
+            RefreshGraph();
         }
 
         private void secToolStripMenuItem2_Click(object sender, EventArgs e)
         {
             ZoomGraphs(0.0, 15.0);
+
+            Interval = TimeSpan.FromMilliseconds(50);
+            RefreshGraph();
         }
 
         private void secToolStripMenuItem3_Click(object sender, EventArgs e)
         {
             ZoomGraphs(0.0, 5.0);
+
+            Interval = TimeSpan.Zero;
+            RefreshGraph();
         }
 
         private void secToolStripMenuItem4_Click(object sender, EventArgs e)
