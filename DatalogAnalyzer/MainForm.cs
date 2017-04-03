@@ -19,8 +19,6 @@ namespace DatalogAnalyzer
     public partial class MainForm : Form, ILogger
     {
         private DataLog CurrentLog { get; set; }
-        private TimeSpan GraphStart { get; set; }
-        private TimeSpan GraphStop { get; set; }
 
         private bool _showDelta = true;
         private bool _showSpeedAccuracy = true;
@@ -30,9 +28,6 @@ namespace DatalogAnalyzer
         private readonly List<Button> _channelToggleButtons = new List<Button>();
 
         private readonly List<ChannelConfig> _config = new List<ChannelConfig>();
-
-        private TimeSpan BaseInterval { get; set; }
-        private TimeSpan Interval => TimeSpan.FromMilliseconds((GraphStop - GraphStart).TotalMilliseconds / 1000);
 
         private readonly Color _enabledColor = Color.ForestGreen;
         private readonly Color _disabledColor = Color.Crimson;
@@ -53,31 +48,31 @@ namespace DatalogAnalyzer
 
         private LogAnalysis _analysis = null;
 
+        private double _graphCursorX = 0.0;
+
         public MainForm()
         {
             InitializeComponent();
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
-            chart1.ChartAreas[0].CursorY.IsUserEnabled = true;
+
+            speedChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            speedChart.ChartAreas[0].CursorX.IsUserEnabled = true;
+            speedChart.ChartAreas[0].CursorY.IsUserEnabled = true;
+
+            tempChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            tempChart.ChartAreas[0].CursorX.IsUserEnabled = true;
+            tempChart.ChartAreas[0].CursorY.IsUserEnabled = true;
+
+            sensorChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            sensorChart.ChartAreas[0].CursorX.IsUserEnabled = true;
+            sensorChart.ChartAreas[0].CursorY.IsUserEnabled = true;
+
             Log.Instance = this;
-
-            BaseInterval = TimeSpan.FromMilliseconds(20);
-
-            chart1.AxisScrollBarClicked +=Chart1OnAxisScrollBarClicked;
 
             toggleDelta.BackColor = _enabledColor;
             toggleSpeed.BackColor = _enabledColor;
             toggleSpeedAcc.BackColor = _enabledColor;
 
             LoadStartFinish();
-        }
-
-        private void Chart1OnAxisScrollBarClicked(object sender, ScrollBarEventArgs scrollBarEventArgs)
-        {
-            GraphStart = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum);
-            GraphStop = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
-
-            RefreshGraph();
         }
 
         private void LoadLog(DataLog newLog)
@@ -93,12 +88,6 @@ namespace DatalogAnalyzer
 
             RenderTrack();
             UpdateStartFinish();
-
-            GraphStart = TimeSpan.Zero;
-            GraphStop = CurrentLog.Length.TotalSeconds > 30 ? TimeSpan.FromSeconds(30) : CurrentLog.Length; 
-            BaseInterval = Interval;
-
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(GraphStart.TotalSeconds, GraphStop.TotalSeconds);
 
             RefreshGraph();
         }
@@ -162,59 +151,50 @@ namespace DatalogAnalyzer
             if (CurrentLog == null)
                 return;
 
-            chart1.Series.Clear();
+            speedChart.Series.Clear();
+            tempChart.Series.Clear();
+            sensorChart.Series.Clear();
 
             foreach (var channelConfig in _config)
             {
-                chart1.Series.Add(new Series
+                channelConfig.ChartSeries = new Series
                 {
                     Name = channelConfig.Name,
                     ChartType = SeriesChartType.Line
-                });
+                };
+
+                if (channelConfig.IsTemperature)
+                    tempChart.Series.Add(channelConfig.ChartSeries);
+                else
+                    sensorChart.Series.Add(channelConfig.ChartSeries);
             }
 
-            chart1.Series.Add(new Series
+            speedChart.Series.Add(new Series
             {
                 Name = "Speed (km/h)",
                 ChartType = SeriesChartType.Line
             });
 
-            chart1.Series.Add(new Series
+            speedChart.Series.Add(new Series
             {
                 Name = "Speed Accuracy (m/s)",
                 ChartType = SeriesChartType.Line
             });
 
-            chart1.Series.Add(new Series
+            speedChart.Series.Add(new Series
             {
                 Name = "Delta",
                 ChartType = SeriesChartType.Line
             });
 
-            TimeSpan previous = TimeSpan.Zero;
-
             foreach (var logEntry in CurrentLog.Entries)
             {
-                var timeStamp = logEntry.GetTimeSpan(CurrentLog.LogStart);
-
-                if (previous > TimeSpan.Zero)
-                {
-                    if ((timeStamp > GraphStart) && (timeStamp < GraphStop))
-                    {
-                        if (timeStamp < previous + Interval)
-                            continue;
-                    }
-                    else if (timeStamp < previous + BaseInterval)
-                        continue;
-                }
-
-                previous = logEntry.GetTimeSpan(CurrentLog.LogStart);
 
                 for (var i = 0; i < CurrentLog.ValueCount; i++)
                 {
                     if (i < logEntry.Values.Count && ChannelEnabled[i])
                     {
-                        chart1.Series[i].Points.AddXY(
+                        _config[i].ChartSeries.Points.AddXY(
                             logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, 
                             _config[i].Process(logEntry.Values[i]));
                     }
@@ -222,65 +202,65 @@ namespace DatalogAnalyzer
 
                 if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                 {
-                    chart1.Series[CurrentLog.ValueCount + 0].Points.AddXY(
+                    speedChart.Series[0].Points.AddXY(
                         logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
                         logEntry.Speed);
                 }
 
                 if (_showSpeedAccuracy)
                 {
-                    chart1.Series[CurrentLog.ValueCount + 1].Points.AddXY(
+                    speedChart.Series[1].Points.AddXY(
                         logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
                         logEntry.SpeedAccuracy);
                 }
 
                 if (_showDelta)
                 {
-                    chart1.Series.Last().Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                    speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
                         Math.Min(logEntry.Delta / 1000, 100));
                 }
             }
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            chart1.MouseWheel += Chart1OnMouseWheel;
-        }
+        //private void MainForm_Load(object sender, EventArgs e)
+        //{
+        //    chart1.MouseWheel += Chart1OnMouseWheel;
+        //}
 
-        private void Chart1OnMouseWheel(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                double xMin = chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
-                double xMax = chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum;
+        //private void Chart1OnMouseWheel(object sender, MouseEventArgs e)
+        //{
+        //    try
+        //    {
+        //        double xMin = chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
+        //        double xMax = chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum;
 
-                if (e.Delta < 0)
-                {
-                    double posXStart = Math.Max(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin), 1.0);
-                    double posXFinish = Math.Min(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin), 30.0);
+        //        if (e.Delta < 0)
+        //        {
+        //            double posXStart = Math.Max(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin), 1.0);
+        //            double posXFinish = Math.Min(chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin), CurrentLog.Length.TotalSeconds);
 
-                    Log.Info($"Zoom out: {posXStart} - {posXFinish}");
+        //            Log.Info($"Zoom out: {posXStart} - {posXFinish}");
 
-                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
-                }
+        //            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
+        //        }
 
-                if (e.Delta > 0)
-                {
-                    double posXStart = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 4;
-                    double posXFinish = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 4;
+        //        if (e.Delta > 0)
+        //        {
+        //            double posXStart = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 4;
+        //            double posXFinish = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 4;
 
-                    Log.Info($"Zoom in: {posXStart} - {posXFinish}");
+        //            Log.Info($"Zoom in: {posXStart} - {posXFinish}");
 
-                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
-                }
+        //            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
+        //        }
 
-                GraphStart = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum);
-                GraphStop = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
+        //        GraphStart = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum);
+        //        GraphStop = TimeSpan.FromSeconds(chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
 
-                RefreshGraph();
-            }
-            catch { }
-        }
+        //        //RefreshGraph();
+        //    }
+        //    catch { }
+        //}
 
         public void Info(string format, params object[] parameters)
         {
@@ -305,7 +285,7 @@ namespace DatalogAnalyzer
 
             for (int i = 0; i < CurrentLog.ValueCount; i++)
             {
-                ChannelEnabled.Add(true);
+                ChannelEnabled.Add(false);
 
                 if (_channelToggleButtons.Count <= i)
                 {
@@ -316,7 +296,7 @@ namespace DatalogAnalyzer
                         Top = ChannelToggleButtonTemplate.Top,
                         Anchor = ChannelToggleButtonTemplate.Anchor,
                         Text = $"CH {i + 1}",
-                        BackColor = _enabledColor,
+                        BackColor = _disabledColor,
                         ForeColor = Color.White,
                     };
 
@@ -341,30 +321,6 @@ namespace DatalogAnalyzer
             _showDelta = !_showDelta;
             toggleDelta.BackColor = _showDelta ? _enabledColor : _disabledColor;
             RefreshGraph();
-        }
-
-        private void chart1_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (CurrentLog == null)
-                return;
-
-            var x = chart1.ChartAreas[0].CursorX.Position;
-            var y = chart1.ChartAreas[0].CursorY.Position;
-
-            Log.Info("Cursor: [{0},{1}]", x, y);
-
-            var closestEntry = CurrentLog.GetClosestEntry(x);
-
-            if (mapMarker == null)
-            {
-                mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude),
-                    GMarkerGoogleType.red_pushpin);
-                mapOverlay.Markers.Add(mapMarker);
-            }
-            else
-            {
-                mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
-            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -392,9 +348,9 @@ namespace DatalogAnalyzer
 
         private void keepAfterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cursor = chart1.ChartAreas[0].CursorX.Position;
+            var cursor = _graphCursorX;
 
-            if (cursor < 1)
+            if (cursor < 0.1)
                 return;
 
             var closestEntry = CurrentLog.GetClosestEntry(cursor);
@@ -405,9 +361,9 @@ namespace DatalogAnalyzer
 
         private void keepBeforeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cursor = chart1.ChartAreas[0].CursorX.Position;
+            var cursor = _graphCursorX;
 
-            if (cursor < 1)
+            if (cursor < 0.1)
                 return;
 
             var closestEntry = CurrentLog.GetClosestEntry(cursor);
@@ -697,6 +653,120 @@ namespace DatalogAnalyzer
             {
                 LoadLog(selectedSegment);
             }
+        }
+
+        private void MoveMapMarker(double timeStamp)
+        {
+            if (CurrentLog == null)
+                return;
+
+            var closestEntry = CurrentLog.GetClosestEntry(timeStamp);
+
+            if (mapMarker == null)
+            {
+                mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude),
+                    GMarkerGoogleType.red_pushpin);
+                mapOverlay.Markers.Add(mapMarker);
+            }
+            else
+            {
+                mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
+            }
+        }
+
+        private void speedChart_MouseDown(object sender, MouseEventArgs e)
+        {
+            _graphCursorX = speedChart.ChartAreas[0].CursorX.Position;
+            tempChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+            sensorChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+
+            var x = speedChart.ChartAreas[0].CursorX.Position;
+            var y = speedChart.ChartAreas[0].CursorY.Position;
+
+            Log.Info("Cursor: [{0},{1}]", x, y);
+
+            MoveMapMarker(x);
+        }
+
+        private void tempChart_MouseDown(object sender, MouseEventArgs e)
+        {
+            _graphCursorX = tempChart.ChartAreas[0].CursorX.Position;
+            speedChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+            sensorChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+
+            var x = tempChart.ChartAreas[0].CursorX.Position;
+            var y = tempChart.ChartAreas[0].CursorY.Position;
+
+            Log.Info("Cursor: [{0},{1}]", x, y);
+
+            MoveMapMarker(x);
+        }
+
+        private void sensorChart_MouseDown(object sender, MouseEventArgs e)
+        {
+            _graphCursorX = sensorChart.ChartAreas[0].CursorX.Position;
+            speedChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+            tempChart.ChartAreas[0].CursorX.Position = _graphCursorX;
+
+            var x = sensorChart.ChartAreas[0].CursorX.Position;
+            var y = sensorChart.ChartAreas[0].CursorY.Position;
+
+            Log.Info("Cursor: [{0},{1}]", x, y);
+
+            MoveMapMarker(x);
+
+        }
+
+        private void ZoomGraphs(double viewStart, double viewEnd)
+        {
+            speedChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
+            tempChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
+            sensorChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
+        }
+
+        private void segmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, CurrentLog.Length.TotalSeconds);
+        }
+
+        private void secToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, 60.0);
+        }
+
+        private void secToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, 30.0);
+        }
+
+        private void secToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, 15.0);
+        }
+
+        private void secToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, 5.0);
+        }
+
+        private void secToolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            ZoomGraphs(0.0, 1.0);
+        }
+
+        private void speedChart_AxisViewChanged(object sender, ViewEventArgs e)
+        {
+            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
+        }
+
+        private void tempChart_AxisViewChanged(object sender, ViewEventArgs e)
+        {
+            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
+        }
+
+        private void sensorChart_AxisViewChanged(object sender, ViewEventArgs e)
+        {
+            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
         }
     }
 }

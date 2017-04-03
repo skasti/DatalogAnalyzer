@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace DatalogAnalyzer
 {
@@ -12,7 +13,11 @@ namespace DatalogAnalyzer
         public double ZeroPoint { get; set; }
         public double Scaling { get; set; }
 
+        public bool IsTemperature { get; set; }
+
         public double ArmLength { get; set; }
+
+        public Series ChartSeries { get; set; }
 
         public ChannelConfig(int index)
         {
@@ -20,6 +25,9 @@ namespace DatalogAnalyzer
             ZeroPoint = 0.0;
             Scaling = 1.0;
             ArmLength = 0.0;
+
+            if (index < 6)
+                IsTemperature = true;
         }
 
         public ChannelConfig(string name, double zero, double scaling, double armLength)
