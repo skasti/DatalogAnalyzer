@@ -488,7 +488,7 @@
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.speedChart.Series.Add(series1);
-            this.speedChart.Size = new System.Drawing.Size(1019, 288);
+            this.speedChart.Size = new System.Drawing.Size(1019, 497);
             this.speedChart.TabIndex = 0;
             this.speedChart.Text = "chart1";
             this.speedChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.speedChart_AxisViewChanged);
@@ -499,7 +499,7 @@
             this.chartsSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chartsSplitter.Location = new System.Drawing.Point(0, 297);
+            this.chartsSplitter.Location = new System.Drawing.Point(0, 506);
             this.chartsSplitter.Name = "chartsSplitter";
             this.chartsSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -510,8 +510,8 @@
             // chartsSplitter.Panel2
             // 
             this.chartsSplitter.Panel2.Controls.Add(this.sensorChart);
-            this.chartsSplitter.Size = new System.Drawing.Size(1025, 846);
-            this.chartsSplitter.SplitterDistance = 275;
+            this.chartsSplitter.Size = new System.Drawing.Size(1025, 637);
+            this.chartsSplitter.SplitterDistance = 207;
             this.chartsSplitter.TabIndex = 0;
             // 
             // tempChart
@@ -530,7 +530,7 @@
             series2.Legend = "Legend1";
             series2.Name = "Series1";
             this.tempChart.Series.Add(series2);
-            this.tempChart.Size = new System.Drawing.Size(1025, 275);
+            this.tempChart.Size = new System.Drawing.Size(1025, 207);
             this.tempChart.TabIndex = 0;
             this.tempChart.Text = "chart1";
             this.tempChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.tempChart_AxisViewChanged);
@@ -551,7 +551,7 @@
             series3.Legend = "Legend1";
             series3.Name = "Series1";
             this.sensorChart.Series.Add(series3);
-            this.sensorChart.Size = new System.Drawing.Size(1025, 567);
+            this.sensorChart.Size = new System.Drawing.Size(1025, 426);
             this.sensorChart.TabIndex = 0;
             this.sensorChart.Text = "chart1";
             this.sensorChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.sensorChart_AxisViewChanged);
