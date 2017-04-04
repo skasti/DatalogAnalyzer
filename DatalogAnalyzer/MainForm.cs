@@ -154,11 +154,20 @@ namespace DatalogAnalyzer
             if (CurrentLog == null)
                 return;
 
+            var refreshSpeedChart = startChannel == 0 && endChannel == CurrentLog.ValueCount - 1;
+
             endChannel = Math.Min(endChannel, CurrentLog.ValueCount - 1);
 
             for (int i = startChannel; i <= endChannel; i++)
             {
                 _config[i].ChartSeries.Points.Clear();
+            }
+
+            if (refreshSpeedChart)
+            {
+                speedChart.Series[0].Points.Clear();
+                speedChart.Series[1].Points.Clear();
+                speedChart.Series[2].Points.Clear();
             }
 
             var nextEntry = TimeSpan.Zero;
@@ -183,7 +192,7 @@ namespace DatalogAnalyzer
                     }
                 }
 
-                if (startChannel == 0 && endChannel == CurrentLog.ValueCount - 1)
+                if (refreshSpeedChart)
                 {
                     if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                     {
@@ -280,7 +289,7 @@ namespace DatalogAnalyzer
                         Left = ChannelToggleButtonTemplate.Left + (i*56),
                         Top = ChannelToggleButtonTemplate.Top,
                         Anchor = ChannelToggleButtonTemplate.Anchor,
-                        Text = $"CH {i + 1}",
+                        Text = _config[i].Name,
                         BackColor = _disabledColor,
                         ForeColor = Color.White,
                     };
