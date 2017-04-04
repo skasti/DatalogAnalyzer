@@ -81,12 +81,12 @@ namespace DatalogAnalyzer
         {
             CurrentLog = newLog;
 
-            InitializeChannelEnable();
-
             _config.Clear();
 
             for (int i = 0; i < CurrentLog.ValueCount; i++)
                 _config.Add(new ChannelConfig(i));
+
+            InitializeChannelEnable();
 
             RenderTrack();
             UpdateStartFinish();
@@ -149,22 +149,25 @@ namespace DatalogAnalyzer
             mapMarker = null;
         }
 
-        private void RefreshGraph(int startChannel = 0, int endChannel = int.MaxValue)
+        private void RefreshGraph(int channel = -1)
         {
             if (CurrentLog == null)
                 return;
 
-            var refreshSpeedChart = startChannel == 0 && endChannel == CurrentLog.ValueCount - 1;
+            if (channel < -1 || channel >= CurrentLog.ValueCount)
+                throw new ArgumentOutOfRangeException("channel", "channel out of range");
 
-            endChannel = Math.Min(endChannel, CurrentLog.ValueCount - 1);
+            var singleChannel = channel >= 0;
 
-            for (int i = startChannel; i <= endChannel; i++)
+            if (singleChannel)
+                _config[channel].ChartSeries.Points.Clear();
+            else
             {
-                _config[i].ChartSeries.Points.Clear();
-            }
+                for (int i = 0; i < CurrentLog.ValueCount; i++)
+                {
+                    _config[i].ChartSeries.Points.Clear();
+                }
 
-            if (refreshSpeedChart)
-            {
                 speedChart.Series[0].Points.Clear();
                 speedChart.Series[1].Points.Clear();
                 speedChart.Series[2].Points.Clear();
@@ -181,19 +184,28 @@ namespace DatalogAnalyzer
 
                 nextEntry = timeStamp + Interval;
 
-
-                for (var i = startChannel; i <= endChannel; i++)
+                if (singleChannel)
                 {
-                    if (i < logEntry.Values.Count && ChannelEnabled[i])
+                    if (channel < logEntry.Values.Count && ChannelEnabled[channel])
                     {
-                        _config[i].ChartSeries.Points.AddXY(
-                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, 
-                            _config[i].Process(logEntry.Values[i]));
+                        _config[channel].ChartSeries.Points.AddXY(
+                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            _config[channel].Process(logEntry.Values[channel]));
                     }
                 }
-
-                if (refreshSpeedChart)
+                else
                 {
+                    for (var i = 0; i < CurrentLog.ValueCount; i++)
+                    {
+                        if (i < logEntry.Values.Count && ChannelEnabled[i])
+                        {
+                            _config[i].ChartSeries.Points.AddXY(
+                                logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                                _config[i].Process(logEntry.Values[i]));
+                        }
+                    }
+
+
                     if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                     {
                         speedChart.Series[0].Points.AddXY(
@@ -269,7 +281,7 @@ namespace DatalogAnalyzer
         private bool ToggleChannel(int channel)
         {
             ChannelEnabled[channel] = !ChannelEnabled[channel];
-            RefreshGraph(channel, channel);
+            RefreshGraph(channel);
             return ChannelEnabled[channel];
         }
 
