@@ -380,42 +380,42 @@
             // segmentToolStripMenuItem
             // 
             this.segmentToolStripMenuItem.Name = "segmentToolStripMenuItem";
-            this.segmentToolStripMenuItem.Size = new System.Drawing.Size(168, 30);
+            this.segmentToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
             this.segmentToolStripMenuItem.Text = "Segment";
             this.segmentToolStripMenuItem.Click += new System.EventHandler(this.segmentToolStripMenuItem_Click);
             // 
             // secToolStripMenuItem
             // 
             this.secToolStripMenuItem.Name = "secToolStripMenuItem";
-            this.secToolStripMenuItem.Size = new System.Drawing.Size(168, 30);
+            this.secToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
             this.secToolStripMenuItem.Text = "60 sec";
             this.secToolStripMenuItem.Click += new System.EventHandler(this.secToolStripMenuItem_Click);
             // 
             // secToolStripMenuItem1
             // 
             this.secToolStripMenuItem1.Name = "secToolStripMenuItem1";
-            this.secToolStripMenuItem1.Size = new System.Drawing.Size(168, 30);
+            this.secToolStripMenuItem1.Size = new System.Drawing.Size(211, 30);
             this.secToolStripMenuItem1.Text = "30 sec";
             this.secToolStripMenuItem1.Click += new System.EventHandler(this.secToolStripMenuItem1_Click);
             // 
             // secToolStripMenuItem2
             // 
             this.secToolStripMenuItem2.Name = "secToolStripMenuItem2";
-            this.secToolStripMenuItem2.Size = new System.Drawing.Size(168, 30);
+            this.secToolStripMenuItem2.Size = new System.Drawing.Size(211, 30);
             this.secToolStripMenuItem2.Text = "15 sec";
             this.secToolStripMenuItem2.Click += new System.EventHandler(this.secToolStripMenuItem2_Click);
             // 
             // secToolStripMenuItem3
             // 
             this.secToolStripMenuItem3.Name = "secToolStripMenuItem3";
-            this.secToolStripMenuItem3.Size = new System.Drawing.Size(168, 30);
+            this.secToolStripMenuItem3.Size = new System.Drawing.Size(211, 30);
             this.secToolStripMenuItem3.Text = "5 sec";
             this.secToolStripMenuItem3.Click += new System.EventHandler(this.secToolStripMenuItem3_Click);
             // 
             // secToolStripMenuItem4
             // 
             this.secToolStripMenuItem4.Name = "secToolStripMenuItem4";
-            this.secToolStripMenuItem4.Size = new System.Drawing.Size(168, 30);
+            this.secToolStripMenuItem4.Size = new System.Drawing.Size(211, 30);
             this.secToolStripMenuItem4.Text = "1 sec";
             this.secToolStripMenuItem4.Click += new System.EventHandler(this.secToolStripMenuItem4_Click);
             // 
@@ -475,8 +475,8 @@
             // 
             this.speedChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.speedChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            chartArea1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.speedChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea1.BackColor = System.Drawing.SystemColors.WindowFrame;
             chartArea1.Name = "ChartArea1";
             this.speedChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
@@ -516,8 +516,8 @@
             // 
             // tempChart
             // 
-            this.tempChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            chartArea2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.tempChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea2.BackColor = System.Drawing.SystemColors.WindowFrame;
             chartArea2.Name = "ChartArea1";
             this.tempChart.ChartAreas.Add(chartArea2);
             this.tempChart.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -538,8 +538,8 @@
             // 
             // sensorChart
             // 
-            this.sensorChart.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            chartArea3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.sensorChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea3.BackColor = System.Drawing.SystemColors.WindowFrame;
             chartArea3.Name = "ChartArea1";
             this.sensorChart.ChartAreas.Add(chartArea3);
             this.sensorChart.Dock = System.Windows.Forms.DockStyle.Fill;

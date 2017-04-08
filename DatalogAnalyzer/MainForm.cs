@@ -51,6 +51,7 @@ namespace DatalogAnalyzer
         private TimeSpan Interval = TimeSpan.FromMilliseconds(100);
 
         private double _graphCursorX = 0.0;
+        private double _graphViewPosition = 0.0;
 
         public MainForm()
         {
@@ -123,8 +124,8 @@ namespace DatalogAnalyzer
                 if (logEntry.FixType != 3)
                     continue;
 
-                if (logEntry.HorizontalAccuracy > 20)
-                    continue;
+                //if (logEntry.HorizontalAccuracy > 20)
+                //    continue;
 
                 if (logEntry.SpeedAccuracy > 5)
                     continue;
@@ -240,7 +241,7 @@ namespace DatalogAnalyzer
                 channelConfig.ChartSeries = new Series
                 {
                     Name = channelConfig.Name,
-                    ChartType = SeriesChartType.Line
+                    ChartType = SeriesChartType.FastLine
                 };
 
                 if (channelConfig.IsTemperature)
@@ -252,19 +253,19 @@ namespace DatalogAnalyzer
             speedChart.Series.Add(new Series
             {
                 Name = "Speed (km/h)",
-                ChartType = SeriesChartType.Line
+                ChartType = SeriesChartType.Spline
             });
 
             speedChart.Series.Add(new Series
             {
                 Name = "Speed Accuracy (m/s)",
-                ChartType = SeriesChartType.Line
+                ChartType = SeriesChartType.FastLine
             });
 
             speedChart.Series.Add(new Series
             {
                 Name = "Delta",
-                ChartType = SeriesChartType.Line
+                ChartType = SeriesChartType.FastLine
             });
         }
 
@@ -301,7 +302,7 @@ namespace DatalogAnalyzer
                         Left = ChannelToggleButtonTemplate.Left + (i*56),
                         Top = ChannelToggleButtonTemplate.Top,
                         Anchor = ChannelToggleButtonTemplate.Anchor,
-                        Text = _config[i].Name,
+                        Text = $"Ch {i+1}",
                         BackColor = _disabledColor,
                         ForeColor = Color.White,
                     };
@@ -723,8 +724,27 @@ namespace DatalogAnalyzer
 
         }
 
-        private void ZoomGraphs(double viewStart, double viewEnd)
+        private void ZoomGraphs(double zoomLevel)
         {
+            var viewStart = 0.0;
+            var viewEnd = zoomLevel;
+
+            if (_graphCursorX < zoomLevel)
+            {
+                viewStart = 0.0;
+                viewEnd = zoomLevel;
+            }
+            else if (_graphCursorX > CurrentLog.Length.TotalSeconds - zoomLevel)
+            {
+                viewStart = CurrentLog.Length.TotalSeconds - zoomLevel;
+                viewEnd = CurrentLog.Length.TotalSeconds;
+            }
+            else
+            {
+                viewStart = _graphCursorX - (zoomLevel / 2);
+                viewEnd = _graphCursorX + (zoomLevel / 2);
+            }
+
             speedChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
             tempChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
             sensorChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
@@ -732,7 +752,7 @@ namespace DatalogAnalyzer
 
         private void segmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, CurrentLog.Length.TotalSeconds);
+            ZoomGraphs(CurrentLog.Length.TotalSeconds);
 
             Interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
             RefreshGraph();
@@ -740,7 +760,7 @@ namespace DatalogAnalyzer
 
         private void secToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, 60.0);
+            ZoomGraphs(60.0);
 
             Interval = TimeSpan.FromMilliseconds(200);
             RefreshGraph();
@@ -748,7 +768,7 @@ namespace DatalogAnalyzer
 
         private void secToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, 30.0);
+            ZoomGraphs(30.0);
 
             Interval = TimeSpan.FromMilliseconds(100);
             RefreshGraph();
@@ -756,7 +776,7 @@ namespace DatalogAnalyzer
 
         private void secToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, 15.0);
+            ZoomGraphs(15.0);
 
             Interval = TimeSpan.FromMilliseconds(50);
             RefreshGraph();
@@ -764,7 +784,7 @@ namespace DatalogAnalyzer
 
         private void secToolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, 5.0);
+            ZoomGraphs(5.0);
 
             Interval = TimeSpan.Zero;
             RefreshGraph();
@@ -772,22 +792,31 @@ namespace DatalogAnalyzer
 
         private void secToolStripMenuItem4_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(0.0, 1.0);
+            ZoomGraphs(1.0);
+
+            Interval = TimeSpan.Zero;
+            RefreshGraph();
         }
 
         private void speedChart_AxisViewChanged(object sender, ViewEventArgs e)
         {
-            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
+            _graphViewPosition = e.NewPosition;
+            tempChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
+            sensorChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
         }
 
         private void tempChart_AxisViewChanged(object sender, ViewEventArgs e)
         {
-            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
+            _graphViewPosition = e.NewPosition;
+            speedChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
+            sensorChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
         }
 
         private void sensorChart_AxisViewChanged(object sender, ViewEventArgs e)
         {
-            ZoomGraphs(e.ChartArea.AxisX.ScaleView.ViewMinimum, e.ChartArea.AxisX.ScaleView.ViewMaximum);
+            _graphViewPosition = e.NewPosition;
+            tempChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
+            speedChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
         }
     }
 }
