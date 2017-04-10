@@ -40,7 +40,7 @@ namespace DatalogAnalyzer
             int largeDeltas = 0;
 
             ValueCount = reader.ReadUInt16();
-
+            
             while (stream.Position < stream.Length)
             {
                 try

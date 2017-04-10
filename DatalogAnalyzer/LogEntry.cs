@@ -38,7 +38,7 @@ namespace DatalogAnalyzer
             VerticalAccuracy = reader.ReadUInt32() * 0.001;
             FixType = reader.ReadByte();
 
-            Values = new List<double>(valueCount + 1);
+            Values = new List<double>(valueCount);
 
             for (var i = 0; i < valueCount; i++)
             {

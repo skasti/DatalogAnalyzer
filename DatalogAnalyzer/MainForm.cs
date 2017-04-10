@@ -161,20 +161,30 @@ namespace DatalogAnalyzer
             var singleChannel = channel >= 0;
 
             if (singleChannel)
+            {
                 _config[channel].ChartSeries.Points.Clear();
+                _config[channel].ChartSeries.LegendText = _config[channel].Name;
+                _config[channel].ChartSeries.Name = _config[channel].Name;
+            }
             else
             {
                 for (int i = 0; i < CurrentLog.ValueCount; i++)
                 {
                     _config[i].ChartSeries.Points.Clear();
+                    _config[i].ChartSeries.LegendText = _config[i].Name;
+                    _config[i].ChartSeries.Name = _config[i].Name;
                 }
 
                 speedChart.Series[0].Points.Clear();
                 speedChart.Series[1].Points.Clear();
                 speedChart.Series[2].Points.Clear();
+                speedChart.Series[3].Points.Clear();
             }
 
             var nextEntry = TimeSpan.Zero;
+            var nextAcceleration = TimeSpan.Zero;
+            var accelerationInterval = TimeSpan.FromMilliseconds(100);
+            LogEntry previousAcceleration = null;
 
             foreach (var logEntry in CurrentLog.Entries)
             {
@@ -226,6 +236,22 @@ namespace DatalogAnalyzer
                         speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
                             Math.Min(logEntry.Delta/1000, 100));
                     }
+
+                    if (timeStamp > nextAcceleration)
+                    {
+                        nextAcceleration = timeStamp + accelerationInterval;
+
+                        var deltaSpeed = logEntry.Speed - (previousAcceleration?.Speed ?? logEntry.Speed);
+                        deltaSpeed /= 3.6;
+
+                        var deltaTime = logEntry.GetTimeSpan(CurrentLog.LogStart) -
+                                        (previousAcceleration?.GetTimeSpan(CurrentLog.LogStart) ?? TimeSpan.Zero);
+
+                        var acceleration = (deltaSpeed/deltaTime.TotalSeconds);// * 0.101971621;
+                        speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, acceleration);
+
+                        previousAcceleration = logEntry;
+                    }
                 }
             }
         }
@@ -241,6 +267,7 @@ namespace DatalogAnalyzer
                 channelConfig.ChartSeries = new Series
                 {
                     Name = channelConfig.Name,
+                    LegendText = channelConfig.Name,
                     ChartType = SeriesChartType.FastLine
                 };
 
@@ -252,12 +279,14 @@ namespace DatalogAnalyzer
 
             speedChart.Series.Add(new Series
             {
+                Color = Color.DarkOrange,
                 Name = "Speed (km/h)",
                 ChartType = SeriesChartType.Spline
             });
 
             speedChart.Series.Add(new Series
             {
+                Color = Color.DarkBlue,
                 Name = "Speed Accuracy (m/s)",
                 ChartType = SeriesChartType.FastLine
             });
@@ -266,6 +295,13 @@ namespace DatalogAnalyzer
             {
                 Name = "Delta",
                 ChartType = SeriesChartType.FastLine
+            });
+
+            speedChart.Series.Add(new Series
+            {
+                Color = Color.Red,
+                Name = "Acceleration",
+                ChartType = SeriesChartType.Spline
             });
         }
 
@@ -318,7 +354,7 @@ namespace DatalogAnalyzer
                 }
                 else
                 {
-                    _channelToggleButtons[i].BackColor = _enabledColor;
+                    _channelToggleButtons[i].BackColor = ChannelEnabled[i] ? _enabledColor : _disabledColor;
                 }
             }
         }
@@ -382,7 +418,7 @@ namespace DatalogAnalyzer
         private void channelConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = new ChannelConfigForm(_config);
-            form.OnApply += (o, args) => RefreshGraph();
+            form.OnApply += (o, args) => RefreshGraph(args.Index);
             form.ShowDialog(this);
         }
 
