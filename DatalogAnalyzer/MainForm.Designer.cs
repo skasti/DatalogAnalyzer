@@ -85,6 +85,8 @@
             this.segmentsList = new System.Windows.Forms.ListView();
             this.indexColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -185,7 +187,8 @@
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.analysisToolStripMenuItem,
-            this.zoomToolStripMenuItem});
+            this.zoomToolStripMenuItem,
+            this.tracksToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Size = new System.Drawing.Size(991, 24);
@@ -625,6 +628,21 @@
             // 
             this.timeColumn.Text = "Duration";
             // 
+            // tracksToolStripMenuItem
+            // 
+            this.tracksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem});
+            this.tracksToolStripMenuItem.Name = "tracksToolStripMenuItem";
+            this.tracksToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.tracksToolStripMenuItem.Text = "Tracks";
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -713,6 +731,8 @@
         private System.Windows.Forms.ToolStripMenuItem secToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem secToolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem secToolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem tracksToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
     }
 }
 

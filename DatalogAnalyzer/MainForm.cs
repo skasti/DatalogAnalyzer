@@ -13,6 +13,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using Newtonsoft.Json;
 
 namespace DatalogAnalyzer
 {
@@ -53,6 +54,8 @@ namespace DatalogAnalyzer
         private double _graphCursorX = 0.0;
         private double _graphViewPosition = 0.0;
 
+        TrackRepository _trackRepository = new TrackRepository();
+
         public MainForm()
         {
             InitializeComponent();
@@ -76,6 +79,7 @@ namespace DatalogAnalyzer
             toggleSpeedAcc.BackColor = _enabledColor;
 
             LoadStartFinish();
+            _trackRepository.Load();
         }
 
         private void LoadLog(DataLog newLog)
@@ -112,7 +116,7 @@ namespace DatalogAnalyzer
             gMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
 
             mapRoute = new GMapRoute("Route");
-
+            //mapRoute.Stroke.Color = Color.CadetBlue;
 
             var prevLat = 0.0;
             var prevLong = 0.0;
@@ -247,8 +251,9 @@ namespace DatalogAnalyzer
                         var deltaTime = logEntry.GetTimeSpan(CurrentLog.LogStart) -
                                         (previousAcceleration?.GetTimeSpan(CurrentLog.LogStart) ?? TimeSpan.Zero);
 
-                        var acceleration = (deltaSpeed/deltaTime.TotalSeconds);// * 0.101971621;
-                        speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds, acceleration);
+                        var acceleration = (deltaSpeed/deltaTime.TotalSeconds); // * 0.101971621;
+                        speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            acceleration);
 
                         previousAcceleration = logEntry;
                     }
@@ -307,12 +312,14 @@ namespace DatalogAnalyzer
 
         public void Info(string format, params object[] parameters)
         {
-            logWindow.AppendText(string.Format($"[{DateTime.Now.ToString("yyyy-mm-dd HH:MM")}][INFO] - {format}\n", parameters));
+            logWindow.AppendText(string.Format($"[{DateTime.Now.ToString("yyyy-mm-dd HH:MM")}][INFO] - {format}\n",
+                parameters));
         }
 
         public void Error(string format, params object[] parameters)
         {
-            logWindow.AppendText(string.Format($"[{DateTime.Now.ToString("yyyy-mm-dd HH:MM")}][ERROR] - {format}\n", parameters));
+            logWindow.AppendText(string.Format($"[{DateTime.Now.ToString("yyyy-mm-dd HH:MM")}][ERROR] - {format}\n",
+                parameters));
         }
 
         private bool ToggleChannel(int channel)
@@ -338,7 +345,7 @@ namespace DatalogAnalyzer
                         Left = ChannelToggleButtonTemplate.Left + (i*56),
                         Top = ChannelToggleButtonTemplate.Top,
                         Anchor = ChannelToggleButtonTemplate.Anchor,
-                        Text = $"Ch {i+1}",
+                        Text = $"Ch {i + 1}",
                         BackColor = _disabledColor,
                         ForeColor = Color.White,
                     };
@@ -536,10 +543,11 @@ namespace DatalogAnalyzer
                         StartFinish_B
                     },
                     "Start/Finish");
-                
+
+                //StartFinishLineRoute.Stroke.Color = Color.Red;
+
                 if (mapOverlay != null)
                     mapOverlay.Routes.Add(StartFinishLineRoute);
-
             }
             else
             {
@@ -757,7 +765,6 @@ namespace DatalogAnalyzer
             Log.Info("Cursor: [{0},{1}]", x, y);
 
             MoveMapMarker(x);
-
         }
 
         private void ZoomGraphs(double zoomLevel)
@@ -777,8 +784,8 @@ namespace DatalogAnalyzer
             }
             else
             {
-                viewStart = _graphCursorX - (zoomLevel / 2);
-                viewEnd = _graphCursorX + (zoomLevel / 2);
+                viewStart = _graphCursorX - (zoomLevel/2);
+                viewEnd = _graphCursorX + (zoomLevel/2);
             }
 
             speedChart.ChartAreas[0].AxisX.ScaleView.Zoom(viewStart, viewEnd);
@@ -853,6 +860,12 @@ namespace DatalogAnalyzer
             _graphViewPosition = e.NewPosition;
             tempChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
             speedChart.ChartAreas[0].AxisX.ScaleView.Position = _graphViewPosition;
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new TrackEditor();
+            editor.ShowDialog(this);
         }
     }
 }
