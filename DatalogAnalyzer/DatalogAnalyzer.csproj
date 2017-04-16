@@ -87,6 +87,12 @@
     <Compile Include="TrackEditor.Designer.cs">
       <DependentUpon>TrackEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="TrackLibrary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TrackLibrary.Designer.cs">
+      <DependentUpon>TrackLibrary.cs</DependentUpon>
+    </Compile>
     <Compile Include="TrackRepository.cs" />
     <EmbeddedResource Include="ChannelConfigForm.resx">
       <DependentUpon>ChannelConfigForm.cs</DependentUpon>
@@ -105,6 +111,9 @@
     </Compile>
     <EmbeddedResource Include="TrackEditor.resx">
       <DependentUpon>TrackEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrackLibrary.resx">
+      <DependentUpon>TrackLibrary.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

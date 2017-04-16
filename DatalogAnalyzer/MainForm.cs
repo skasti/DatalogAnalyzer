@@ -54,7 +54,7 @@ namespace DatalogAnalyzer
         private double _graphCursorX = 0.0;
         private double _graphViewPosition = 0.0;
 
-        TrackRepository _trackRepository = new TrackRepository();
+        readonly TrackRepository _trackRepository = new TrackRepository();
 
         public MainForm()
         {
@@ -79,6 +79,7 @@ namespace DatalogAnalyzer
             toggleSpeedAcc.BackColor = _enabledColor;
 
             LoadStartFinish();
+
             _trackRepository.Load();
         }
 
