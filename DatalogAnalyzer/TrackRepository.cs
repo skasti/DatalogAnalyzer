@@ -23,6 +23,12 @@ namespace DatalogAnalyzer
         /// </summary>
         public void Load()
         {
+            if (!Directory.Exists("Tracks"))
+            {
+                Directory.CreateDirectory("Tracks");
+                return;
+            }
+
             var trackFiles = Directory.GetFiles("Tracks", "*.track");
 
             if (trackFiles.Length <= 0)
