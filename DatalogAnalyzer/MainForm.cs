@@ -20,6 +20,8 @@ namespace DatalogAnalyzer
     public partial class MainForm : Form, ILogger
     {
         private DataLog CurrentLog { get; set; }
+        private LogAnalysis _analysis;
+        private Track _track;
 
         private bool _showDelta = true;
         private bool _showSpeedAccuracy = true;
@@ -33,23 +35,15 @@ namespace DatalogAnalyzer
         private readonly Color _enabledColor = Color.ForestGreen;
         private readonly Color _disabledColor = Color.Crimson;
 
-        private GMapOverlay mapOverlay = null;
-        private GMapMarker mapMarker = null;
-        private GMapRoute mapRoute = null;
+        private GMapOverlay _lineOverlay = null;
+        private GMapOverlay _startFinishOverlay = null;
+        private GMapMarker _mapMarker = null;
+        private GMapRoute _lineRoute = null;
 
-        private GMapMarker cursorMarker = null;
+        private GMapMarker _cursorMarker = null;
         private bool _cursorSticky = false;
 
-        private PointLatLng StartFinish_A = PointLatLng.Empty;
-        private PointLatLng StartFinish_B = PointLatLng.Empty;
-        private PointLatLng StartFinish_C = PointLatLng.Empty;
-        private PointLatLng StartFinish_D = PointLatLng.Empty;
-        private GMapPolygon StartFinishLine = null;
-        private GMapRoute StartFinishLineRoute = null;
-
-        private LogAnalysis _analysis = null;
-
-        private TimeSpan Interval = TimeSpan.FromMilliseconds(100);
+        private TimeSpan _interval = TimeSpan.FromMilliseconds(100);
 
         private double _graphCursorX = 0.0;
         private double _graphViewPosition = 0.0;
@@ -78,8 +72,6 @@ namespace DatalogAnalyzer
             toggleSpeed.BackColor = _enabledColor;
             toggleSpeedAcc.BackColor = _enabledColor;
 
-            LoadStartFinish();
-
             _trackRepository.Load();
         }
 
@@ -95,10 +87,23 @@ namespace DatalogAnalyzer
             InitializeChannelEnable();
 
             RenderTrack();
-            UpdateStartFinish();
             InitializeChartSeries();
-
             RefreshGraph();
+
+            _track = _trackRepository.FindTrackAt(CurrentLog.Entries[CurrentLog.Entries.Count/2].Position);
+
+            if (_track != null)
+            {
+                if (_startFinishOverlay == null)
+                {
+                    _startFinishOverlay = new GMapOverlay();
+                    gMap.Overlays.Add(_startFinishOverlay);
+                }
+
+                var startFinishRoute = new GMapRoute(_track.StartFinishPolygon.Points.Take(2), "Start/Finish");
+                startFinishRoute.Stroke = new Pen(Color.Red, 2.0f);
+                _startFinishOverlay.Routes.Add(startFinishRoute);
+            }
         }
 
         private void RenderTrack()
@@ -116,8 +121,8 @@ namespace DatalogAnalyzer
 
             gMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
 
-            mapRoute = new GMapRoute("Route");
-            //mapRoute.Stroke.Color = Color.CadetBlue;
+            _lineRoute = new GMapRoute("Route");
+            _lineRoute.Stroke = new Pen(Color.CornflowerBlue, 2.0f);
 
             var prevLat = 0.0;
             var prevLong = 0.0;
@@ -129,30 +134,27 @@ namespace DatalogAnalyzer
                 if (logEntry.FixType != 3)
                     continue;
 
-                //if (logEntry.HorizontalAccuracy > 20)
-                //    continue;
-
                 if (logEntry.SpeedAccuracy > 5)
                     continue;
 
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
-                mapRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                _lineRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
             }
 
-            if (mapOverlay == null)
+            if (_lineOverlay == null)
             {
-                mapOverlay = new GMapOverlay();
-                gMap.Overlays.Add(mapOverlay);
+                _lineOverlay = new GMapOverlay();
+                gMap.Overlays.Add(_lineOverlay);
             }
 
-            mapOverlay.Clear();
-            mapOverlay.Routes.Add(mapRoute);
+            _lineOverlay.Clear();
+            _lineOverlay.Routes.Add(_lineRoute);
 
-            gMap.ZoomAndCenterRoute(mapRoute);
+            gMap.ZoomAndCenterRoute(_lineRoute);
 
-            mapMarker = null;
+            _mapMarker = null;
         }
 
         private void RefreshGraph(int channel = -1)
@@ -198,7 +200,7 @@ namespace DatalogAnalyzer
                 if (timeStamp < nextEntry)
                     continue;
 
-                nextEntry = timeStamp + Interval;
+                nextEntry = timeStamp + _interval;
 
                 if (singleChannel)
                 {
@@ -299,6 +301,7 @@ namespace DatalogAnalyzer
 
             speedChart.Series.Add(new Series
             {
+                Color = Color.CornflowerBlue,
                 Name = "Delta",
                 ChartType = SeriesChartType.FastLine
             });
@@ -475,14 +478,14 @@ namespace DatalogAnalyzer
         {
             var newPosition = gMap.FromLocalToLatLng(x, y);
 
-            if (cursorMarker == null)
+            if (_cursorMarker == null)
             {
-                cursorMarker = new GMarkerCross(newPosition);
-                mapOverlay.Markers.Add(cursorMarker);
+                _cursorMarker = new GMarkerCross(newPosition);
+                _lineOverlay.Markers.Add(_cursorMarker);
             }
             else
             {
-                cursorMarker.Position = newPosition;
+                _cursorMarker.Position = newPosition;
             }
         }
 
@@ -510,112 +513,14 @@ namespace DatalogAnalyzer
             MoveCursor(e.X, e.Y);
         }
 
-        private void aToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (cursorMarker == null)
-                return;
-
-            StartFinish_A = cursorMarker.Position;
-            UpdateStartFinish();
-        }
-
-        private void UpdateStartFinish()
-        {
-            if (StartFinish_A == PointLatLng.Empty ||
-                StartFinish_B == PointLatLng.Empty ||
-                StartFinish_C == PointLatLng.Empty ||
-                StartFinish_D == PointLatLng.Empty)
-                return;
-
-            if (StartFinishLine == null)
-            {
-                StartFinishLine = new GMapPolygon(new List<PointLatLng>
-                    {
-                        StartFinish_A,
-                        StartFinish_B,
-                        StartFinish_C,
-                        StartFinish_D
-                    },
-                    "Start/Finish");
-
-                StartFinishLineRoute = new GMapRoute(new List<PointLatLng>
-                    {
-                        StartFinish_A,
-                        StartFinish_B
-                    },
-                    "Start/Finish");
-
-                //StartFinishLineRoute.Stroke.Color = Color.Red;
-
-                if (mapOverlay != null)
-                    mapOverlay.Routes.Add(StartFinishLineRoute);
-            }
-            else
-            {
-                StartFinishLineRoute.Points[0] = StartFinish_A;
-                StartFinishLineRoute.Points[1] = StartFinish_B;
-
-                StartFinishLine.Points[0] = StartFinish_A;
-                StartFinishLine.Points[1] = StartFinish_B;
-                StartFinishLine.Points[2] = StartFinish_C;
-                StartFinishLine.Points[3] = StartFinish_D;
-
-                if (mapOverlay != null && !mapOverlay.Routes.Contains(StartFinishLineRoute))
-                    mapOverlay.Routes.Add(StartFinishLineRoute);
-            }
-        }
-
-        private void pointBToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (cursorMarker == null)
-                return;
-
-            StartFinish_B = cursorMarker.Position;
-            UpdateStartFinish();
-        }
-
-        private void pointCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (cursorMarker == null)
-                return;
-
-            StartFinish_C = cursorMarker.Position;
-            UpdateStartFinish();
-        }
-
-        private void pointDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (cursorMarker == null)
-                return;
-
-            StartFinish_D = cursorMarker.Position;
-            UpdateStartFinish();
-        }
-
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LogEntry latestInside = null;
-            LogEntry previousEntry = CurrentLog.Entries.First();
-            _analysis = new LogAnalysis(new List<DataLog>());
-            foreach (var entry in CurrentLog.Entries)
-            {
-                var latLong = new PointLatLng(entry.Latitude, entry.Longitude);
-                if (StartFinishLine.IsInside(latLong))
-                    latestInside = entry;
-                else if (latestInside != null)
-                {
-                    _analysis.Segments.Add(CurrentLog.SubSet(previousEntry, entry));
-                    previousEntry = entry;
-                    latestInside = null;
-                }
-            }
-
-            _analysis.Segments.Add(CurrentLog.SubSet(previousEntry, CurrentLog.Entries.Last()));
+            _analysis = new LogAnalysis(CurrentLog, _track);
 
             logWindow.Clear();
             segmentsList.Items.Clear();
             var segmentIndex = 1;
-            foreach (var segment in _analysis.Segments)
+            foreach (var segment in _analysis.Laps)
             {
                 Log.Info("Segment {0} time: {1}", segmentIndex, segment.Length.ToString("hh\\:mm\\:ss\\.fff"));
 
@@ -627,79 +532,12 @@ namespace DatalogAnalyzer
             }
         }
 
-        private void segmentAToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadLog(_analysis.Segments[0]);
-        }
-
-        private void segmentBToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadLog(_analysis.Segments[1]);
-        }
-
-        private void segmentCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadLog(_analysis.Segments[2]);
-        }
-
-        private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            SaveStartFinish();
-        }
-
-        private void SaveStartFinish()
-        {
-            var stream = File.Create("StartFinish.points");
-            var writer = new BinaryWriter(stream);
-
-            writer.Write(StartFinish_A.Lat);
-            writer.Write(StartFinish_A.Lng);
-
-            writer.Write(StartFinish_B.Lat);
-            writer.Write(StartFinish_B.Lng);
-
-            writer.Write(StartFinish_C.Lat);
-            writer.Write(StartFinish_C.Lng);
-
-            writer.Write(StartFinish_D.Lat);
-            writer.Write(StartFinish_D.Lng);
-
-            writer.Flush();
-            stream.Close();
-        }
-
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadStartFinish();
-        }
-
-        private void LoadStartFinish()
-        {
-            if (!File.Exists("StartFinish.points"))
-            {
-                Log.Info("Start/Finish not found!");
-                return;
-            }
-
-            var stream = File.OpenRead("StartFinish.points");
-            var reader = new BinaryReader(stream);
-
-            StartFinish_A = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
-            StartFinish_B = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
-            StartFinish_C = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
-            StartFinish_D = new PointLatLng(reader.ReadDouble(), reader.ReadDouble());
-
-            stream.Close();
-
-            UpdateStartFinish();
-        }
-
         private void segmentsList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (segmentsList.SelectedIndices.Count == 0)
                 return;
 
-            var selectedSegment = _analysis.Segments[segmentsList.SelectedIndices[0]];
+            var selectedSegment = _analysis.Laps[segmentsList.SelectedIndices[0]];
 
             if (selectedSegment != CurrentLog)
             {
@@ -714,15 +552,15 @@ namespace DatalogAnalyzer
 
             var closestEntry = CurrentLog.GetClosestEntry(timeStamp);
 
-            if (mapMarker == null)
+            if (_mapMarker == null)
             {
-                mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude),
+                _mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude),
                     GMarkerGoogleType.red_pushpin);
-                mapOverlay.Markers.Add(mapMarker);
+                _lineOverlay.Markers.Add(_mapMarker);
             }
             else
             {
-                mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
+                _mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
             }
         }
 
@@ -798,7 +636,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(CurrentLog.Length.TotalSeconds);
 
-            Interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
+            _interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
             RefreshGraph();
         }
 
@@ -806,7 +644,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(60.0);
 
-            Interval = TimeSpan.FromMilliseconds(200);
+            _interval = TimeSpan.FromMilliseconds(200);
             RefreshGraph();
         }
 
@@ -814,7 +652,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(30.0);
 
-            Interval = TimeSpan.FromMilliseconds(100);
+            _interval = TimeSpan.FromMilliseconds(100);
             RefreshGraph();
         }
 
@@ -822,7 +660,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(15.0);
 
-            Interval = TimeSpan.FromMilliseconds(50);
+            _interval = TimeSpan.FromMilliseconds(50);
             RefreshGraph();
         }
 
@@ -830,7 +668,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(5.0);
 
-            Interval = TimeSpan.Zero;
+            _interval = TimeSpan.Zero;
             RefreshGraph();
         }
 
@@ -838,7 +676,7 @@ namespace DatalogAnalyzer
         {
             ZoomGraphs(1.0);
 
-            Interval = TimeSpan.Zero;
+            _interval = TimeSpan.Zero;
             RefreshGraph();
         }
 
@@ -867,6 +705,12 @@ namespace DatalogAnalyzer
         {
             var editor = new TrackEditor();
             editor.ShowDialog(this);
+        }
+
+        private void openLibraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var library = new TrackLibrary(_trackRepository);
+            library.ShowDialog(this);
         }
     }
 }
