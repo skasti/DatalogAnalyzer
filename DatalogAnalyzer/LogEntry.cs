@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GMap.NET;
+using Newtonsoft.Json;
 
 namespace DatalogAnalyzer
 {
@@ -79,6 +81,9 @@ namespace DatalogAnalyzer
         public byte FixType { get; }
       
         public List<double> Values { get; }
+
+        [JsonIgnore]
+        public PointLatLng Position => new PointLatLng(Latitude, Longitude);
 
         public DateTime GetTimeStamp(LogStart logStart)
         {

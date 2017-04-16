@@ -22,9 +22,12 @@ namespace DatalogAnalyzer
         [JsonProperty(ItemConverterType = typeof(PolygonConverter))]
         public List<GMapPolygon> Sections { get; set; }
 
+        public DateTime ChangedDate { get; set; }
+
         public Track()
         {
             Id = Guid.NewGuid();
+            Name = "New Track";
         }
     }
 }

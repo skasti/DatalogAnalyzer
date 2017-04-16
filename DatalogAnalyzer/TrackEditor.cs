@@ -26,12 +26,14 @@ namespace DatalogAnalyzer
         private EventHandler OnPolygonCreated;
         private EventHandler OnMapCursorMoved;
 
-        public Track Track { get; private set; }
+        public Track Track { get; }
+        public bool Saved { get; private set; }
 
         public TrackEditor(Track track = null)
         {
             InitializeComponent();
             Track = track ?? new Track();
+            nameInput.Text = Track.Name;
         }
 
         private void TrackEditor_Load(object sender, EventArgs e)
@@ -123,6 +125,7 @@ namespace DatalogAnalyzer
             if (_activePolygon.Points.Count >= 4)
             {
                 Track.StartFinishPolygon = _activePolygon;
+                Track.ChangedDate = DateTime.Now;
                 _mapOverlay.Polygons.Clear();
                 _mapOverlay.Polygons.Add(_activePolygon);
 
@@ -167,6 +170,7 @@ namespace DatalogAnalyzer
             if (_activePolygon.Points.Count >= 4)
             {
                 Track.Area = _activePolygon;
+                Track.ChangedDate = DateTime.Now;
                 _mapOverlay.Polygons.Clear();
                 _mapOverlay.Polygons.Add(_activePolygon);
 
@@ -181,7 +185,14 @@ namespace DatalogAnalyzer
             if (!Directory.Exists("Tracks"))
                 Directory.CreateDirectory("Tracks");
 
+            if (Track.Name != nameInput.Text)
+            {
+                Track.Name = nameInput.Text;
+                Track.ChangedDate = DateTime.Now;
+            }
+
             File.WriteAllText(fileName, JsonConvert.SerializeObject(Track, Formatting.Indented));
+            Saved = true;
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
