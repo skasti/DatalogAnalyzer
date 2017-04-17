@@ -29,6 +29,27 @@ namespace DatalogAnalyzer
                 return;
             }
 
+            var removableDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Removable && d.IsReady);
+
+            var dataLoggerCards = removableDrives.Where(d => d.RootDirectory.GetFiles("*.LOG").Any()).ToList();
+
+            if (dataLoggerCards.Any())
+            {
+                var cardRoot = dataLoggerCards.First().RootDirectory.ToString();
+
+                if (Directory.Exists($"{cardRoot}\\Tracks"))
+                {
+                    var cardTracks = Directory.GetFiles($"{cardRoot}\\Tracks", "*.track");
+
+                    foreach (var trackFile in cardTracks)
+                    {
+                        var data = File.ReadAllText(trackFile);
+                        var track = JsonConvert.DeserializeObject<Track>(data);
+                        Tracks.Add(track);
+                    }
+                }
+            }
+
             var trackFiles = Directory.GetFiles("Tracks", "*.track");
 
             if (trackFiles.Length <= 0)
@@ -38,7 +59,20 @@ namespace DatalogAnalyzer
             {
                 var data = File.ReadAllText(trackFile);
                 var track = JsonConvert.DeserializeObject<Track>(data);
-                Tracks.Add(track);
+
+                
+                var existing = Tracks.FirstOrDefault(t => t.Id == track.Id);
+
+                if (existing != null)
+                {
+                    if (existing.ChangedDate < track.ChangedDate)
+                    {
+                        Tracks.Remove(existing);
+                        Tracks.Add(track);
+                    }
+                }
+                else
+                    Tracks.Add(track);
             }
         }
 
