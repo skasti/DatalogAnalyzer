@@ -28,6 +28,7 @@ namespace DatalogAnalyzer
         {
             Id = Guid.NewGuid();
             Name = "New Track";
+            Sections = new List<GMapPolygon>();
         }
     }
 }

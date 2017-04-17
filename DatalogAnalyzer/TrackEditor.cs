@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,14 +18,14 @@ namespace DatalogAnalyzer
 {
     public partial class TrackEditor : Form
     {
-        readonly GMapOverlay _mapOverlay = new GMapOverlay();
+        readonly GMapOverlay _activeOverlay = new GMapOverlay();
+        readonly GMapOverlay _areaOverlay = new GMapOverlay();
+        readonly GMapOverlay _startFinishOverlay = new GMapOverlay();
+        readonly GMapOverlay _sectionsOverlay = new GMapOverlay();
 
         private GMapPolygon _activePolygon = null;
         private GMapMarker _cursorMarker = null;
         private bool _cursorSticky = false;
-
-        private EventHandler OnPolygonCreated;
-        private EventHandler OnMapCursorMoved;
 
         public Track Track { get; }
         public bool Saved { get; private set; }
@@ -34,12 +35,39 @@ namespace DatalogAnalyzer
             InitializeComponent();
             Track = track ?? new Track();
             nameInput.Text = Track.Name;
+
+            if (Track.Area != null)
+            {
+                Track.Area.Stroke = new Pen(Color.CornflowerBlue, 5.0f);
+                Track.Area.Fill = new SolidBrush(Color.Transparent);
+                _areaOverlay.Polygons.Add(Track.Area);
+            }
+
+            if (Track.StartFinishPolygon != null)
+            {
+                Track.StartFinishPolygon.Stroke = new Pen(Color.Red, 2.0f);
+                Track.StartFinishPolygon.Fill = new SolidBrush(Color.FromArgb(40, Color.Red));
+                _startFinishOverlay.Polygons.Add(Track.StartFinishPolygon);
+            }
+
+            if (Track.Sections != null)
+            {
+                foreach (var section in Track.Sections)
+                {
+                    _sectionsOverlay.Polygons.Add(section);
+                }
+            }
+
+            InitializeActivePolygon();
         }
 
         private void TrackEditor_Load(object sender, EventArgs e)
         {
             trackMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
-            trackMap.Overlays.Add(_mapOverlay);
+            trackMap.Overlays.Add(_activeOverlay);
+            trackMap.Overlays.Add(_areaOverlay);
+            trackMap.Overlays.Add(_startFinishOverlay);
+            trackMap.Overlays.Add(_sectionsOverlay);
 
             if (Track.Area != null)
             {
@@ -50,9 +78,19 @@ namespace DatalogAnalyzer
 
         private void trackMap_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             _cursorSticky = true;
             MoveCursor(e.X, e.Y);
-            OnMapCursorMoved?.Invoke(sender, new EventArgs());
+
+            if (_activePolygon == null)
+                return;
+
+            var newPoint = new PointLatLng(_cursorMarker.Position.Lat, _cursorMarker.Position.Lng);
+            _activePolygon.Points.Add(newPoint);
+
+            _activeOverlay.Refresh();
         }
 
         private void MoveCursor(int x, int y)
@@ -62,7 +100,7 @@ namespace DatalogAnalyzer
             if (_cursorMarker == null)
             {
                 _cursorMarker = new GMarkerCross(newPosition);
-                _mapOverlay.Markers.Add(_cursorMarker);
+                _activeOverlay.Markers.Add(_cursorMarker);
             }
             else
             {
@@ -77,6 +115,9 @@ namespace DatalogAnalyzer
 
         private void trackMap_MouseUp(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             _cursorSticky = false;
         }
 
@@ -90,92 +131,76 @@ namespace DatalogAnalyzer
 
         private void showHideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Track.StartFinishPolygon == null)
-                return;
-
-            if (_activePolygon == Track.StartFinishPolygon)
-            {
-                _activePolygon = null;
-                _mapOverlay.Polygons.Clear();
-                return;
-            }
-
-            _mapOverlay.Polygons.Clear();
-            _activePolygon = Track.StartFinishPolygon;
-            _mapOverlay.Polygons.Add(_activePolygon);
+            _startFinishOverlay.IsVisibile = !_startFinishOverlay.IsVisibile;
         }
 
         private void defineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _activePolygon = new GMapPolygon(new List<PointLatLng>(), "Start/Finish");
-            _mapOverlay.Polygons.Clear();
-            _mapOverlay.Polygons.Add(_activePolygon);
+            if (!ValidateActivePolygon())
+                return;
 
-            OnMapCursorMoved = null;
-            OnMapCursorMoved += StartFinish_OnMapCursorMoved;
+            if (Track.StartFinishPolygon == null)
+            {
+                Track.StartFinishPolygon = new GMapPolygon(_activePolygon.Points, "Start/Finish");
+                Track.StartFinishPolygon.Stroke = new Pen(Color.Red, 2.0f);
+                Track.StartFinishPolygon.Fill = new SolidBrush(Color.FromArgb(40, Color.Red));
+                _startFinishOverlay.Polygons.Add(Track.StartFinishPolygon);
+            }
+            else
+            {
+                Track.StartFinishPolygon.Points.Clear();
+                Track.StartFinishPolygon.Points.AddRange(_activePolygon.Points);
+            }
+
+            Track.ChangedDate = DateTime.Now;
+            _startFinishOverlay.Refresh();
+            InitializeActivePolygon();
         }
 
-        private void StartFinish_OnMapCursorMoved(object sender, EventArgs eventArgs)
+        private void InitializeActivePolygon(List<PointLatLng> initialPoints = null)
         {
-            var newPoint = new PointLatLng(_cursorMarker.Position.Lat, _cursorMarker.Position.Lng);
-            _activePolygon.Points.Add(newPoint);
-            _mapOverlay.Polygons.Clear();
-            _mapOverlay.Polygons.Add(_activePolygon);
-
-            if (_activePolygon.Points.Count >= 4)
-            {
-                Track.StartFinishPolygon = _activePolygon;
-                Track.ChangedDate = DateTime.Now;
-                _mapOverlay.Polygons.Clear();
-                _mapOverlay.Polygons.Add(_activePolygon);
-
-                OnMapCursorMoved = null;
-            }
+            _activePolygon = new GMapPolygon(initialPoints ?? new List<PointLatLng>(), "");
+            _activeOverlay.Polygons.Clear();
+            _activeOverlay.Polygons.Add(_activePolygon);
         }
 
         private void showHideToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (Track.Area == null)
-                return;
-
-            if (_activePolygon == Track.Area)
-            {
-                _activePolygon = null;
-                _mapOverlay.Polygons.Clear();
-                return;
-            }
-
-            _mapOverlay.Polygons.Clear();
-            _activePolygon = Track.Area;
-            _mapOverlay.Polygons.Add(_activePolygon);
+            _areaOverlay.IsVisibile = !_areaOverlay.IsVisibile;
         }
 
         private void defineToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            _activePolygon = new GMapPolygon(new List<PointLatLng>(), "Area");
-            _mapOverlay.Polygons.Clear();
-            _mapOverlay.Polygons.Add(_activePolygon);
+            if (!ValidateActivePolygon())
+                return;
 
-            OnMapCursorMoved = null;
-            OnMapCursorMoved += Area_OnMapCursorMoved;
+            if (Track.Area == null)
+            {
+                Track.Area = new GMapPolygon(_activePolygon.Points, "Area");
+                Track.Area.Stroke = new Pen(Color.CornflowerBlue, 5.0f);
+                Track.Area.Fill = new SolidBrush(Color.Transparent);
+                _areaOverlay.Polygons.Add(Track.Area);
+            }
+            else
+            {
+                Track.Area.Points.Clear();
+                Track.Area.Points.AddRange(_activePolygon.Points);
+            }
+
+            Track.ChangedDate = DateTime.Now;
+            _areaOverlay.Refresh();
+            InitializeActivePolygon();
         }
 
-        private void Area_OnMapCursorMoved(object sender, EventArgs e)
+        private bool ValidateActivePolygon()
         {
-            var newPoint = new PointLatLng(_cursorMarker.Position.Lat, _cursorMarker.Position.Lng);
-            _activePolygon.Points.Add(newPoint);
-            _mapOverlay.Polygons.Clear();
-            _mapOverlay.Polygons.Add(_activePolygon);
+            if (_activePolygon.Points.Count >= 4) return true;
 
-            if (_activePolygon.Points.Count >= 4)
-            {
-                Track.Area = _activePolygon;
-                Track.ChangedDate = DateTime.Now;
-                _mapOverlay.Polygons.Clear();
-                _mapOverlay.Polygons.Add(_activePolygon);
+            MessageBox.Show(
+                "Need at least 4 points to make a polygon of this type", "Not enough points",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                OnMapCursorMoved = null;
-            }
+            return false;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -198,6 +223,81 @@ namespace DatalogAnalyzer
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void polygonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeActivePolygon();
+        }
+
+        private void newSectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Track.Sections == null)
+                Track.Sections = new List<GMapPolygon>();
+
+            if (Track.Sections.Count == 0)
+            {
+                if (Track.StartFinishPolygon == null)
+                {
+                    MessageBox.Show("Start/Finish must be defined before you can start adding sections",
+                        "Start/Finish undefined!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var initialPoints = Track.StartFinishPolygon.Points.Skip(Track.StartFinishPolygon.Points.Count - 2).ToList();
+
+                StartSection(initialPoints);
+            }
+            else
+            {
+                var lastSection = Track.Sections.Last();
+                var initialPoints = lastSection.Points.Skip(lastSection.Points.Count - 2).ToList();
+
+                StartSection(initialPoints);
+            }
+        }
+
+        private void StartSection(List<PointLatLng> initialPoints)
+        {
+            InitializeActivePolygon(initialPoints);
+            newSectionToolStripMenuItem.Visible = false;
+            finishSectionToolStripMenuItem.Visible = true;
+            abortSectionToolStripMenuItem.Visible = true;
+            defineToolStripMenuItem.Enabled = false;
+            defineToolStripMenuItem1.Enabled = false;
+        }
+
+        private void finishSectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ValidateActivePolygon())
+                return;
+
+            var section = new GMapPolygon(_activePolygon.Points, $"Section {Track.Sections.Count + 1}");
+            section.Stroke = new Pen(RandomColors.GetNext(), 1.0f);
+            section.Fill = new SolidBrush(Color.FromArgb(40, section.Stroke.Color));
+
+            Track.Sections.Add(section);
+            Track.ChangedDate = DateTime.Now;
+            _sectionsOverlay.Polygons.Add(section);
+
+            InitializeActivePolygon();
+
+            newSectionToolStripMenuItem.Visible = true;
+            finishSectionToolStripMenuItem.Visible = false;
+            abortSectionToolStripMenuItem.Visible = false;
+            defineToolStripMenuItem.Enabled = true;
+            defineToolStripMenuItem1.Enabled = true;
+        }
+
+        private void abortSectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeActivePolygon();
+
+            newSectionToolStripMenuItem.Visible = true;
+            finishSectionToolStripMenuItem.Visible = false;
+            abortSectionToolStripMenuItem.Visible = false;
+            defineToolStripMenuItem.Enabled = true;
+            defineToolStripMenuItem1.Enabled = true;
         }
     }
 }

@@ -78,7 +78,7 @@ namespace DatalogAnalyzer
         {
             var item = _trackItems[track];
             item.Text = track.Name;
-            item.SubItems[0].Text = track.ChangedDate.ToShortDateString();
+            item.SubItems[1].Text = track.ChangedDate.ToShortDateString();
         }
 
         private void trackList_SelectedIndexChanged(object sender, EventArgs e)
