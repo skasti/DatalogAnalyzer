@@ -11,6 +11,8 @@ namespace DatalogAnalyzer
     {
         public Track Track { get; }
         public List<DataLog> Laps { get; }
+        public DataLog LeadIn { get; private set; }
+        public DataLog LeadOut { get; private set; }
         public DataLog Log { get; }
 
         public LogAnalysis(DataLog log, Track track)
@@ -23,7 +25,7 @@ namespace DatalogAnalyzer
         private List<DataLog> GetLaps()
         {
             LogEntry latestInside = null;
-            LogEntry previousEntry = Log.Entries.First();
+            LogEntry previousEntry = null;
 
             List<DataLog> laps = new List<DataLog>();
 
@@ -34,13 +36,17 @@ namespace DatalogAnalyzer
                     latestInside = entry;
                 else if (latestInside != null)
                 {
-                    laps.Add(Log.SubSet(previousEntry, entry));
+                    if (previousEntry == null)
+                        LeadIn = Log.SubSet(Log.Entries.First(), entry);
+                    else
+                        laps.Add(Log.SubSet(previousEntry, entry));
+
                     previousEntry = entry;
                     latestInside = null;
                 }
             }
 
-            laps.Add(Log.SubSet(previousEntry, Log.Entries.Last()));
+            LeadOut = Log.SubSet(previousEntry, Log.Entries.Last());
 
             return laps;
         }

@@ -265,7 +265,7 @@
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(192, 30);
             this.testToolStripMenuItem.Text = "Analyze Log";
             this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
@@ -533,7 +533,7 @@
             // 
             // indexColumn
             // 
-            this.indexColumn.Text = "Segment No.";
+            this.indexColumn.Text = "Lap";
             // 
             // timeColumn
             // 

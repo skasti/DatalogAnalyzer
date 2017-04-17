@@ -90,8 +90,13 @@ namespace DatalogAnalyzer
             InitializeChartSeries();
             RefreshGraph();
 
-            _track = _trackRepository.FindTrackAt(CurrentLog.Entries[CurrentLog.Entries.Count/2].Position);
+            FindTrack();
 
+            InitializeStartFinish();
+        }
+
+        private void InitializeStartFinish()
+        {
             if (_track != null)
             {
                 if (_startFinishOverlay == null)
@@ -103,6 +108,22 @@ namespace DatalogAnalyzer
                 var startFinishRoute = new GMapRoute(_track.StartFinishPolygon.Points.Take(2), "Start/Finish");
                 startFinishRoute.Stroke = new Pen(Color.Red, 2.0f);
                 _startFinishOverlay.Routes.Add(startFinishRoute);
+            }
+        }
+
+        private void FindTrack()
+        {
+            int index = 0;
+            _track = null;
+
+            while (_track == null)
+            {
+                if (index >= CurrentLog.Entries.Count)
+                    break;
+
+                _track = _trackRepository.FindTrackAt(CurrentLog.Entries[index].Position);
+
+                index += 200;
             }
         }
 
@@ -519,17 +540,25 @@ namespace DatalogAnalyzer
 
             logWindow.Clear();
             segmentsList.Items.Clear();
+
+            AddLap("Lead-in", _analysis.LeadIn);
+            AddLap("Lead-out", _analysis.LeadOut);
+
             var segmentIndex = 1;
-            foreach (var segment in _analysis.Laps)
+            foreach (var lap in _analysis.Laps)
             {
-                Log.Info("Segment {0} time: {1}", segmentIndex, segment.Length.ToString("hh\\:mm\\:ss\\.fff"));
-
-                var lvItem = new ListViewItem();
-                lvItem.Text = $"Segment {segmentIndex++}";
-                lvItem.SubItems.Add(segment.Length.ToString("hh\\:mm\\:ss\\.fff"));
-
-                segmentsList.Items.Add(lvItem);
+                Log.Info("Lap {0} time: {1}", segmentIndex, lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
+                var text = $"Lap {segmentIndex++}";
+                AddLap(text, lap);
             }
+        }
+
+        private void AddLap(string text, DataLog lap)
+        {
+            var lvItem = new ListViewItem {Text = text};
+            lvItem.SubItems.Add(lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
+            lvItem.Tag = lap;
+            segmentsList.Items.Add(lvItem);
         }
 
         private void segmentsList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -537,11 +566,11 @@ namespace DatalogAnalyzer
             if (segmentsList.SelectedIndices.Count == 0)
                 return;
 
-            var selectedSegment = _analysis.Laps[segmentsList.SelectedIndices[0]];
+            var selectedLap = segmentsList.SelectedItems[0].Tag as DataLog;
 
-            if (selectedSegment != CurrentLog)
+            if (selectedLap != CurrentLog)
             {
-                LoadLog(selectedSegment);
+                LoadLog(selectedLap);
             }
         }
 
