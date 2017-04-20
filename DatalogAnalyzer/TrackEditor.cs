@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 
 namespace DatalogAnalyzer
 {
+
+
     public partial class TrackEditor : Form
     {
         readonly GMapOverlay _activeOverlay = new GMapOverlay();

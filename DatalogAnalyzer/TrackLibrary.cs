@@ -101,6 +101,7 @@ namespace DatalogAnalyzer
             {
                 var startFinishRoute = new GMapRoute(_selectedTrack.StartFinishPolygon.Points.Take(2), "Start/Finish");
                 startFinishRoute.Stroke.Color = Color.Red;
+                startFinishRoute.Stroke.Width = 1.0f;
                 _mapOverlay.Routes.Clear();
                 _mapOverlay.Routes.Add(startFinishRoute);
             }

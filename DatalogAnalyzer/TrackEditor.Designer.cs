@@ -204,6 +204,7 @@
             this.finishSectionToolStripMenuItem.Name = "finishSectionToolStripMenuItem";
             this.finishSectionToolStripMenuItem.Size = new System.Drawing.Size(130, 29);
             this.finishSectionToolStripMenuItem.Text = "Finish section";
+            this.finishSectionToolStripMenuItem.Visible = false;
             this.finishSectionToolStripMenuItem.Click += new System.EventHandler(this.finishSectionToolStripMenuItem_Click);
             // 
             // abortSectionToolStripMenuItem
@@ -211,6 +212,7 @@
             this.abortSectionToolStripMenuItem.Name = "abortSectionToolStripMenuItem";
             this.abortSectionToolStripMenuItem.Size = new System.Drawing.Size(131, 29);
             this.abortSectionToolStripMenuItem.Text = "Abort section";
+            this.abortSectionToolStripMenuItem.Visible = false;
             this.abortSectionToolStripMenuItem.Click += new System.EventHandler(this.abortSectionToolStripMenuItem_Click);
             // 
             // TrackEditor
