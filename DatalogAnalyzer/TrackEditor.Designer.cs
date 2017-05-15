@@ -45,6 +45,9 @@
             this.newSectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.finishSectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.abortSectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sectionStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backwardsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forwardsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,7 +111,8 @@
             this.polygonToolStripMenuItem,
             this.newSectionToolStripMenuItem,
             this.finishSectionToolStripMenuItem,
-            this.abortSectionToolStripMenuItem});
+            this.abortSectionToolStripMenuItem,
+            this.sectionStartToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
@@ -215,6 +219,30 @@
             this.abortSectionToolStripMenuItem.Visible = false;
             this.abortSectionToolStripMenuItem.Click += new System.EventHandler(this.abortSectionToolStripMenuItem_Click);
             // 
+            // sectionStartToolStripMenuItem
+            // 
+            this.sectionStartToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.backwardsToolStripMenuItem,
+            this.forwardsToolStripMenuItem});
+            this.sectionStartToolStripMenuItem.Name = "sectionStartToolStripMenuItem";
+            this.sectionStartToolStripMenuItem.Size = new System.Drawing.Size(122, 29);
+            this.sectionStartToolStripMenuItem.Text = "Section start";
+            this.sectionStartToolStripMenuItem.Visible = false;
+            // 
+            // backwardsToolStripMenuItem
+            // 
+            this.backwardsToolStripMenuItem.Name = "backwardsToolStripMenuItem";
+            this.backwardsToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.backwardsToolStripMenuItem.Text = "Backwards";
+            this.backwardsToolStripMenuItem.Click += new System.EventHandler(this.backwardsToolStripMenuItem_Click);
+            // 
+            // forwardsToolStripMenuItem
+            // 
+            this.forwardsToolStripMenuItem.Name = "forwardsToolStripMenuItem";
+            this.forwardsToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.forwardsToolStripMenuItem.Text = "Forwards";
+            this.forwardsToolStripMenuItem.Click += new System.EventHandler(this.forwardsToolStripMenuItem_Click);
+            // 
             // TrackEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -255,5 +283,8 @@
         private System.Windows.Forms.ToolStripMenuItem newSectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem finishSectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem abortSectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sectionStartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backwardsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forwardsToolStripMenuItem;
     }
 }

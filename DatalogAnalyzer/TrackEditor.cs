@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GMap.NET;
+using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json;
@@ -28,6 +29,8 @@ namespace DatalogAnalyzer
         private GMapPolygon _activePolygon = null;
         private GMapMarker _cursorMarker = null;
         private bool _cursorSticky = false;
+
+        private int _sectionSkip = 0;
 
         public Track Track { get; }
         public bool Saved { get; private set; }
@@ -161,7 +164,14 @@ namespace DatalogAnalyzer
 
         private void InitializeActivePolygon(List<PointLatLng> initialPoints = null)
         {
+            InitializeActivePolygon(Color.CornflowerBlue, Color.CornflowerBlue, initialPoints);
+        }
+
+        private void InitializeActivePolygon(Color pointColor, Color fillColor, List<PointLatLng> initialPoints = null)
+        {
             _activePolygon = new GMapPolygon(initialPoints ?? new List<PointLatLng>(), "");
+            _activePolygon.Stroke = new Pen(pointColor, 2.0f);
+            _activePolygon.Fill = new SolidBrush(Color.FromArgb(20, fillColor));
             _activeOverlay.Polygons.Clear();
             _activeOverlay.Polygons.Add(_activePolygon);
         }
@@ -234,8 +244,39 @@ namespace DatalogAnalyzer
 
         private void newSectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            _sectionSkip = 0;
+            NewSection();
+        }
+
+        private void NewSection()
+        {
             if (Track.Sections == null)
                 Track.Sections = new List<GMapPolygon>();
+
+            var lastSection = GetLastSection();
+
+
+            var initialPoints = new List<PointLatLng>();
+            var numPoints = lastSection.Points.Count;
+
+            var firstPointIndex = _sectionSkip;
+            var secondPointIndex = _sectionSkip + 1;
+
+            if (firstPointIndex < 0)
+                firstPointIndex = numPoints - firstPointIndex;
+
+            if (secondPointIndex >= numPoints)
+                secondPointIndex -= numPoints;
+
+            initialPoints.Add(lastSection.Points[firstPointIndex]);
+            initialPoints.Add(lastSection.Points[secondPointIndex]);
+
+            StartSection(initialPoints);
+        }
+
+        private GMapPolygon GetLastSection()
+        {
+            GMapPolygon lastSection = null;
 
             if (Track.Sections.Count == 0)
             {
@@ -243,28 +284,23 @@ namespace DatalogAnalyzer
                 {
                     MessageBox.Show("Start/Finish must be defined before you can start adding sections",
                         "Start/Finish undefined!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    return lastSection;
                 }
 
-                var initialPoints = Track.StartFinishPolygon.Points.Skip(Track.StartFinishPolygon.Points.Count - 2).ToList();
-
-                StartSection(initialPoints);
+                lastSection = Track.StartFinishPolygon;
             }
             else
-            {
-                var lastSection = Track.Sections.Last();
-                var initialPoints = lastSection.Points.Skip(lastSection.Points.Count - 2).ToList();
-
-                StartSection(initialPoints);
-            }
+                lastSection = Track.Sections.Last();
+            return lastSection;
         }
 
         private void StartSection(List<PointLatLng> initialPoints)
         {
-            InitializeActivePolygon(initialPoints);
+            InitializeActivePolygon(Color.Fuchsia, Color.CornflowerBlue, initialPoints);
             newSectionToolStripMenuItem.Visible = false;
             finishSectionToolStripMenuItem.Visible = true;
             abortSectionToolStripMenuItem.Visible = true;
+            sectionStartToolStripMenuItem.Visible = true;
             defineToolStripMenuItem.Enabled = false;
             defineToolStripMenuItem1.Enabled = false;
         }
@@ -287,6 +323,8 @@ namespace DatalogAnalyzer
             newSectionToolStripMenuItem.Visible = true;
             finishSectionToolStripMenuItem.Visible = false;
             abortSectionToolStripMenuItem.Visible = false;
+            sectionStartToolStripMenuItem.Visible = false;
+
             defineToolStripMenuItem.Enabled = true;
             defineToolStripMenuItem1.Enabled = true;
         }
@@ -298,8 +336,36 @@ namespace DatalogAnalyzer
             newSectionToolStripMenuItem.Visible = true;
             finishSectionToolStripMenuItem.Visible = false;
             abortSectionToolStripMenuItem.Visible = false;
+            sectionStartToolStripMenuItem.Visible = false;
             defineToolStripMenuItem.Enabled = true;
             defineToolStripMenuItem1.Enabled = true;
+            
+        }
+
+        private void backwardsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _sectionSkip--;
+
+            if (_sectionSkip < 0)
+            {
+                var lastSection = GetLastSection();
+                _sectionSkip = lastSection.Points.Count + _sectionSkip;
+            }
+
+            NewSection();
+        }
+
+        private void forwardsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _sectionSkip++;
+            var lastSection = GetLastSection();
+
+            if (_sectionSkip >= lastSection.Points.Count)
+            {
+                _sectionSkip -= lastSection.Points.Count;
+            }
+
+            NewSection();
         }
     }
 }
