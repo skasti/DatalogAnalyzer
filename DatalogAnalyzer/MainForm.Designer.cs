@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -77,6 +78,7 @@
             this.segmentsList = new System.Windows.Forms.ListView();
             this.indexColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.LapContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -121,7 +123,7 @@
             // 
             this.openFileDialog.DefaultExt = "*.LOG";
             this.openFileDialog.FileName = "SAMPLE.LOG";
-            this.openFileDialog.Filter = "Log files (*.log)|*.LOG";
+            this.openFileDialog.Filter = "Log files (*.LogSegment)|*.LOG";
             // 
             // toggleDelta
             // 
@@ -377,7 +379,7 @@
             // 
             this.saveFileDialog.DefaultExt = "*.LOG";
             this.saveFileDialog.FileName = "SAMPLE.LOG";
-            this.saveFileDialog.Filter = "Log files (*.log)|*.LOG";
+            this.saveFileDialog.Filter = "Log files (*.LogSegment)|*.LOG";
             // 
             // splitContainer1
             // 
@@ -523,6 +525,7 @@
             this.segmentsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.indexColumn,
             this.timeColumn});
+            this.segmentsList.ContextMenuStrip = this.LapContextMenu;
             this.segmentsList.Location = new System.Drawing.Point(3, 23);
             this.segmentsList.Name = "segmentsList";
             this.segmentsList.Size = new System.Drawing.Size(422, 181);
@@ -538,6 +541,12 @@
             // timeColumn
             // 
             this.timeColumn.Text = "Duration";
+            // 
+            // LapContextMenu
+            // 
+            this.LapContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.LapContextMenu.Name = "LapContextMenu";
+            this.LapContextMenu.Size = new System.Drawing.Size(61, 4);
             // 
             // MainForm
             // 
@@ -618,6 +627,7 @@
         private System.Windows.Forms.ToolStripMenuItem tracksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLibraryToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip LapContextMenu;
     }
 }
 

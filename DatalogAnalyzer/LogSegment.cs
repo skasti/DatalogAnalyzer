@@ -1,28 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GMap.NET;
+using GMap.NET.WindowsForms;
 
 namespace DatalogAnalyzer
 {
-    public class DataLog
+    public class LogSegment
     {
         public LogStart LogStart { get; }
         public List<LogEntry> Entries { get; }
         public int ValueCount { get; }
         public TimeSpan Length => Entries?.LastOrDefault()?.GetTimeSpan(LogStart) ?? TimeSpan.Zero;
+        public double Distance { get; private set; }
+        public double AverageSpeed { get; private set; }
+        public double TopSpeed { get; private set; }
+        public double LowestSpeed { get; private set; }
 
-        public DataLog(LogStart logStart, List<LogEntry> entries)
+        public LogSegment(LogStart logStart, List<LogEntry> entries)
         {
             LogStart = logStart;
             Entries = entries;
             ValueCount = entries.Select(e => e.Values.Count).Max();
+
+            InitializeStats();
         }
 
-        public DataLog(string fileName)
+        private void InitializeStats()
+        {
+            var route = GetMapRoute();
+
+            Distance = route.Distance;
+            AverageSpeed = Distance/Length.TotalHours;
+            TopSpeed = Entries.Max(e => e.Speed);
+            LowestSpeed = Entries.Min(e => e.Speed);
+        }
+
+        public LogSegment(string fileName)
         {
             var stream = File.OpenRead(fileName);
             var reader = new BinaryReader(stream);
@@ -75,6 +94,7 @@ namespace DatalogAnalyzer
             }
 
             Entries = entries;
+            InitializeStats();
 
             Log.Info(
                 "DataLog - Loaded {0} samples ({7} seconds)\navg delta: {1} micros\nsmallest delta: {2}\nlargest delta: {3}\ndeltas over {4} micros: {5} ({6}%)",
@@ -130,7 +150,7 @@ namespace DatalogAnalyzer
             return sortedEntries.First();
         }
 
-        public DataLog SubSet(LogEntry start, LogEntry end = null)
+        public LogSegment SubSet(LogEntry start, LogEntry end = null)
         {
             var startIndex = Entries.IndexOf(start);
             var endIndex = Entries.IndexOf(end);
@@ -140,7 +160,7 @@ namespace DatalogAnalyzer
             return SubSet(startIndex, count);
         }
 
-        public DataLog SubSet(int startIndex, int count = 0)
+        public LogSegment SubSet(int startIndex, int count = 0)
         {
             if (count == 0)
                 count = Entries.Count - startIndex;
@@ -150,7 +170,36 @@ namespace DatalogAnalyzer
 
             var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).Ticks);
 
-            return new DataLog(logStart, entries.Skip(1).ToList());
+            return new LogSegment(logStart, entries.Skip(1).ToList());
+        }
+
+        public GMapRoute GetMapRoute()
+        {
+            var lineRoute = new GMapRoute("Route")
+            {
+                Stroke = new Pen(Color.CornflowerBlue, 2.0f)
+            };
+
+            var prevLat = 0.0;
+            var prevLong = 0.0;
+            foreach (var logEntry in Entries)
+            {
+                if ((logEntry.Latitude == prevLat) && (logEntry.Longitude == prevLong))
+                    continue;
+
+                if (logEntry.FixType != 3)
+                    continue;
+
+                if (logEntry.SpeedAccuracy > 5)
+                    continue;
+
+                prevLat = logEntry.Latitude;
+                prevLong = logEntry.Longitude;
+
+                lineRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+            }
+
+            return lineRoute;
         }
     }
 }

@@ -65,9 +65,13 @@
     <Compile Include="ChannelConfigForm.Designer.cs">
       <DependentUpon>ChannelConfigForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLog.cs" />
+    <Compile Include="GMapRouteExtensions.cs" />
+    <Compile Include="LapAnalysis.cs" />
+    <Compile Include="LogSegment.cs" />
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="LogAnalysis.cs" />
+    <Compile Include="LapSectionAnalysis.cs" />
+    <Compile Include="PointLatLngExtensions.cs" />
+    <Compile Include="SessionAnalysis.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LogStart.cs" />

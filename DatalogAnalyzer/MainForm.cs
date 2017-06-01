@@ -19,8 +19,8 @@ namespace DatalogAnalyzer
 {
     public partial class MainForm : Form, ILogger
     {
-        private DataLog CurrentLog { get; set; }
-        private LogAnalysis _analysis;
+        private LogSegment CurrentSegment { get; set; }
+        private SessionAnalysis _analysis;
         private Track _track;
 
         private bool _showDelta = true;
@@ -75,13 +75,13 @@ namespace DatalogAnalyzer
             _trackRepository.Load();
         }
 
-        private void LoadLog(DataLog newLog)
+        private void LoadLog(LogSegment newSegment)
         {
-            CurrentLog = newLog;
+            CurrentSegment = newSegment;
 
             _config.Clear();
 
-            for (int i = 0; i < CurrentLog.ValueCount; i++)
+            for (int i = 0; i < CurrentSegment.ValueCount; i++)
                 _config.Add(new ChannelConfig(i));
 
             InitializeChannelEnable();
@@ -118,10 +118,10 @@ namespace DatalogAnalyzer
 
             while (_track == null)
             {
-                if (index >= CurrentLog.Entries.Count)
+                if (index >= CurrentSegment.Entries.Count)
                     break;
 
-                _track = _trackRepository.FindTrackAt(CurrentLog.Entries[index].Position);
+                _track = _trackRepository.FindTrackAt(CurrentSegment.Entries[index].Position);
 
                 index += 200;
             }
@@ -129,11 +129,11 @@ namespace DatalogAnalyzer
 
         private void RenderTrack()
         {
-            var latitudes = CurrentLog.Entries.Select(e => e.Latitude);
+            var latitudes = CurrentSegment.Entries.Select(e => e.Latitude);
             var minLat = latitudes.Min();
             var maxLat = latitudes.Max();
 
-            var longitudes = CurrentLog.Entries.Select(e => e.Longitude);
+            var longitudes = CurrentSegment.Entries.Select(e => e.Longitude);
             var minLon = longitudes.Min();
             var maxLon = longitudes.Max();
 
@@ -147,7 +147,7 @@ namespace DatalogAnalyzer
 
             var prevLat = 0.0;
             var prevLong = 0.0;
-            foreach (var logEntry in CurrentLog.Entries)
+            foreach (var logEntry in CurrentSegment.Entries)
             {
                 if ((logEntry.Latitude == prevLat) && (logEntry.Longitude == prevLong))
                     continue;
@@ -160,9 +160,13 @@ namespace DatalogAnalyzer
 
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
-
+                
                 _lineRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
             }
+
+            var directions = new GDirections();
+            directions.Route = _lineRoute.Points;
+            
 
             if (_lineOverlay == null)
             {
@@ -180,10 +184,10 @@ namespace DatalogAnalyzer
 
         private void RefreshGraph(int channel = -1)
         {
-            if (CurrentLog == null)
+            if (CurrentSegment == null)
                 return;
 
-            if (channel < -1 || channel >= CurrentLog.ValueCount)
+            if (channel < -1 || channel >= CurrentSegment.ValueCount)
                 throw new ArgumentOutOfRangeException("channel", "channel out of range");
 
             var singleChannel = channel >= 0;
@@ -196,7 +200,7 @@ namespace DatalogAnalyzer
             }
             else
             {
-                for (int i = 0; i < CurrentLog.ValueCount; i++)
+                for (int i = 0; i < CurrentSegment.ValueCount; i++)
                 {
                     _config[i].ChartSeries.Points.Clear();
                     _config[i].ChartSeries.LegendText = _config[i].Name;
@@ -214,9 +218,9 @@ namespace DatalogAnalyzer
             var accelerationInterval = TimeSpan.FromMilliseconds(100);
             LogEntry previousAcceleration = null;
 
-            foreach (var logEntry in CurrentLog.Entries)
+            foreach (var logEntry in CurrentSegment.Entries)
             {
-                var timeStamp = logEntry.GetTimeSpan(CurrentLog.LogStart);
+                var timeStamp = logEntry.GetTimeSpan(CurrentSegment.LogStart);
 
                 if (timeStamp < nextEntry)
                     continue;
@@ -228,18 +232,18 @@ namespace DatalogAnalyzer
                     if (channel < logEntry.Values.Count && ChannelEnabled[channel])
                     {
                         _config[channel].ChartSeries.Points.AddXY(
-                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             _config[channel].Process(logEntry.Values[channel]));
                     }
                 }
                 else
                 {
-                    for (var i = 0; i < CurrentLog.ValueCount; i++)
+                    for (var i = 0; i < CurrentSegment.ValueCount; i++)
                     {
                         if (i < logEntry.Values.Count && ChannelEnabled[i])
                         {
                             _config[i].ChartSeries.Points.AddXY(
-                                logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                                logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                                 _config[i].Process(logEntry.Values[i]));
                         }
                     }
@@ -248,20 +252,20 @@ namespace DatalogAnalyzer
                     if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                     {
                         speedChart.Series[0].Points.AddXY(
-                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             logEntry.Speed);
                     }
 
                     if (_showSpeedAccuracy)
                     {
                         speedChart.Series[1].Points.AddXY(
-                            logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                            logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             logEntry.SpeedAccuracy);
                     }
 
                     if (_showDelta)
                     {
-                        speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                        speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             Math.Min(logEntry.Delta/1000, 100));
                     }
 
@@ -272,11 +276,11 @@ namespace DatalogAnalyzer
                         var deltaSpeed = logEntry.Speed - (previousAcceleration?.Speed ?? logEntry.Speed);
                         deltaSpeed /= 3.6;
 
-                        var deltaTime = logEntry.GetTimeSpan(CurrentLog.LogStart) -
-                                        (previousAcceleration?.GetTimeSpan(CurrentLog.LogStart) ?? TimeSpan.Zero);
+                        var deltaTime = logEntry.GetTimeSpan(CurrentSegment.LogStart) -
+                                        (previousAcceleration?.GetTimeSpan(CurrentSegment.LogStart) ?? TimeSpan.Zero);
 
                         var acceleration = (deltaSpeed/deltaTime.TotalSeconds); // * 0.101971621;
-                        speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentLog.LogStart).TotalSeconds,
+                        speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             acceleration);
 
                         previousAcceleration = logEntry;
@@ -356,9 +360,9 @@ namespace DatalogAnalyzer
 
         private void InitializeChannelEnable()
         {
-            ChannelEnabled = new List<bool>(CurrentLog.ValueCount);
+            ChannelEnabled = new List<bool>(CurrentSegment.ValueCount);
 
-            for (int i = 0; i < CurrentLog.ValueCount; i++)
+            for (int i = 0; i < CurrentSegment.ValueCount; i++)
             {
                 ChannelEnabled.Add(false);
 
@@ -412,7 +416,7 @@ namespace DatalogAnalyzer
                 try
                 {
                     logWindow.Clear();
-                    LoadLog(new DataLog(openFileDialog.FileName));
+                    LoadLog(new LogSegment(openFileDialog.FileName));
                 }
                 catch (Exception ex)
                 {
@@ -428,10 +432,10 @@ namespace DatalogAnalyzer
             if (cursor < 0.1)
                 return;
 
-            var closestEntry = CurrentLog.GetClosestEntry(cursor);
-            var lastEntry = CurrentLog.Entries.Last();
+            var closestEntry = CurrentSegment.GetClosestEntry(cursor);
+            var lastEntry = CurrentSegment.Entries.Last();
 
-            LoadLog(CurrentLog.SubSet(closestEntry, lastEntry));
+            LoadLog(CurrentSegment.SubSet(closestEntry, lastEntry));
         }
 
         private void keepBeforeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -441,10 +445,10 @@ namespace DatalogAnalyzer
             if (cursor < 0.1)
                 return;
 
-            var closestEntry = CurrentLog.GetClosestEntry(cursor);
-            var firstEntry = CurrentLog.Entries.First();
+            var closestEntry = CurrentSegment.GetClosestEntry(cursor);
+            var firstEntry = CurrentSegment.Entries.First();
 
-            LoadLog(CurrentLog.SubSet(firstEntry, closestEntry));
+            LoadLog(CurrentSegment.SubSet(firstEntry, closestEntry));
         }
 
         private void channelConfigToolStripMenuItem_Click(object sender, EventArgs e)
@@ -486,7 +490,7 @@ namespace DatalogAnalyzer
             {
                 try
                 {
-                    CurrentLog.Save(saveFileDialog.FileName);
+                    CurrentSegment.Save(saveFileDialog.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -536,10 +540,29 @@ namespace DatalogAnalyzer
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _analysis = new LogAnalysis(CurrentLog, _track);
+            _analysis = new SessionAnalysis(CurrentSegment, _track);
 
             logWindow.Clear();
             segmentsList.Items.Clear();
+            LapContextMenu.Items.Clear();
+            
+            segmentsList.Columns.Clear();
+            segmentsList.Columns.Add("Lap", 100);
+            segmentsList.Columns.Add("Laptime", 100);
+            segmentsList.Columns.Add("Avg. Speed", 100);
+            segmentsList.Columns.Add("Top Speed", 100);
+            segmentsList.Columns.Add("Min. Speed", 100);
+
+            for (int i = 1; i <= _analysis.Track.Sections.Count; i++)
+            {
+                segmentsList.Columns.Add($"Section {i}", 100);
+                var contextMenuItem = new ToolStripMenuItem($"View Section {i}");
+                var sectionIndex = i-1;
+                contextMenuItem.Click += (o, args) => ViewLapSection(sectionIndex);
+                LapContextMenu.Items.Add(contextMenuItem);
+            }
+
+            segmentsList.Columns.Add("SectionSum", 100);
 
             AddLap("Lead-in", _analysis.LeadIn);
             AddLap("Lead-out", _analysis.LeadOut);
@@ -547,16 +570,46 @@ namespace DatalogAnalyzer
             var segmentIndex = 1;
             foreach (var lap in _analysis.Laps)
             {
-                Log.Info("Lap {0} time: {1}", segmentIndex, lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
+                Log.Info("Lap {0} time: {1}", segmentIndex, lap.LapTime.ToString("hh\\:mm\\:ss\\.fff"));
                 var text = $"Lap {segmentIndex++}";
                 AddLap(text, lap);
             }
         }
 
-        private void AddLap(string text, DataLog lap)
+        private void ViewLapSection(int sectionIndex)
+        {
+            if (!(segmentsList.SelectedItems[0].Tag is LapAnalysis))
+                return;
+            
+            var lap = (LapAnalysis)segmentsList.SelectedItems[0].Tag;
+
+            if (lap.Sections[sectionIndex].Segment != CurrentSegment)
+                LoadLog(lap.Sections[sectionIndex].Segment);
+        }
+
+        private void AddLap(string text, LogSegment lap)
+        {
+            var lvItem = new ListViewItem { Text = text };
+            lvItem.SubItems.Add(lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
+            lvItem.Tag = lap;
+            segmentsList.Items.Add(lvItem);
+        }
+
+        private void AddLap(string text, LapAnalysis lap)
         {
             var lvItem = new ListViewItem {Text = text};
-            lvItem.SubItems.Add(lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
+            lvItem.SubItems.Add(lap.LapTime.ToString("hh\\:mm\\:ss\\.fff"));
+            lvItem.SubItems.Add(lap.AverageSpeed.ToString("0.00"));
+            lvItem.SubItems.Add(lap.TopSpeed.ToString("0.00"));
+            lvItem.SubItems.Add(lap.LowestSpeed.ToString("0.00"));
+
+            foreach (var sectionAnalysis in lap.Sections)
+            {
+                lvItem.SubItems.Add(sectionAnalysis.SectionTime.ToString("hh\\:mm\\:ss\\.fff"));
+            }
+
+            lvItem.SubItems.Add(TimeSpan.FromSeconds(lap.Sections.Sum(s => s.SectionTime.TotalSeconds)).ToString("hh\\:mm\\:ss\\.fff"));
+
             lvItem.Tag = lap;
             segmentsList.Items.Add(lvItem);
         }
@@ -566,20 +619,28 @@ namespace DatalogAnalyzer
             if (segmentsList.SelectedIndices.Count == 0)
                 return;
 
-            var selectedLap = segmentsList.SelectedItems[0].Tag as DataLog;
-
-            if (selectedLap != CurrentLog)
+            if (segmentsList.SelectedItems[0].Tag is LogSegment)
             {
-                LoadLog(selectedLap);
+                var segment = (LogSegment) segmentsList.SelectedItems[0].Tag;
+
+                if (segment != CurrentSegment)
+                    LoadLog(segment);
+            }
+            else if (segmentsList.SelectedItems[0].Tag is LapAnalysis)
+            {
+                var lap = (LapAnalysis)segmentsList.SelectedItems[0].Tag;
+
+                if (lap.Segment != CurrentSegment)
+                    LoadLog(lap.Segment);
             }
         }
 
         private void MoveMapMarker(double timeStamp)
         {
-            if (CurrentLog == null)
+            if (CurrentSegment == null)
                 return;
 
-            var closestEntry = CurrentLog.GetClosestEntry(timeStamp);
+            var closestEntry = CurrentSegment.GetClosestEntry(timeStamp);
 
             if (_mapMarker == null)
             {
@@ -645,10 +706,10 @@ namespace DatalogAnalyzer
                 viewStart = 0.0;
                 viewEnd = zoomLevel;
             }
-            else if (_graphCursorX > CurrentLog.Length.TotalSeconds - zoomLevel)
+            else if (_graphCursorX > CurrentSegment.Length.TotalSeconds - zoomLevel)
             {
-                viewStart = CurrentLog.Length.TotalSeconds - zoomLevel;
-                viewEnd = CurrentLog.Length.TotalSeconds;
+                viewStart = CurrentSegment.Length.TotalSeconds - zoomLevel;
+                viewEnd = CurrentSegment.Length.TotalSeconds;
             }
             else
             {
@@ -663,9 +724,9 @@ namespace DatalogAnalyzer
 
         private void segmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(CurrentLog.Length.TotalSeconds);
+            ZoomGraphs(CurrentSegment.Length.TotalSeconds);
 
-            _interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
+            _interval = TimeSpan.FromMilliseconds(Math.Min(CurrentSegment.Length.TotalSeconds, 500.0));
             RefreshGraph();
         }
 

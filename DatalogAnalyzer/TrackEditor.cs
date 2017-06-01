@@ -69,10 +69,10 @@ namespace DatalogAnalyzer
         private void TrackEditor_Load(object sender, EventArgs e)
         {
             trackMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
-            trackMap.Overlays.Add(_activeOverlay);
             trackMap.Overlays.Add(_areaOverlay);
             trackMap.Overlays.Add(_startFinishOverlay);
             trackMap.Overlays.Add(_sectionsOverlay);
+            trackMap.Overlays.Add(_activeOverlay);
 
             if (Track.Area != null)
             {
@@ -311,8 +311,8 @@ namespace DatalogAnalyzer
                 return;
 
             var section = new GMapPolygon(_activePolygon.Points, $"Section {Track.Sections.Count + 1}");
-            section.Stroke = new Pen(RandomColors.GetNext(), 1.0f);
-            section.Fill = new SolidBrush(Color.FromArgb(40, section.Stroke.Color));
+            section.Stroke = new Pen(RandomColors.GetNext(), 3.0f);
+            section.Fill = new SolidBrush(Color.FromArgb(70, section.Stroke.Color));
 
             Track.Sections.Add(section);
             Track.ChangedDate = DateTime.Now;
