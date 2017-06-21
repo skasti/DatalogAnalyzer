@@ -79,7 +79,7 @@ namespace DatalogAnalyzer
         public double HorizontalAccuracy { get; }
         public double VerticalAccuracy { get; }
         public byte FixType { get; }
-      
+        public double Accelleration { get; set; } = 0.0;
         public List<double> Values { get; }
 
         [JsonIgnore]

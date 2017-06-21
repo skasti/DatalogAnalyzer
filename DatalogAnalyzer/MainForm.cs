@@ -23,8 +23,8 @@ namespace DatalogAnalyzer
         private SessionAnalysis _analysis;
         private Track _track;
 
-        private bool _showDelta = true;
-        private bool _showSpeedAccuracy = true;
+        private bool _showDelta = false;
+        private bool _showSpeedAccuracy = false;
         private bool _showSpeed = true;
 
         private List<bool> ChannelEnabled { get; set; }
@@ -39,6 +39,7 @@ namespace DatalogAnalyzer
         private GMapOverlay _startFinishOverlay = null;
         private GMapMarker _mapMarker = null;
         private GMapRoute _lineRoute = null;
+        private GMapOverlay _accellerationOverlay = null;
 
         private GMapMarker _cursorMarker = null;
         private bool _cursorSticky = false;
@@ -68,9 +69,9 @@ namespace DatalogAnalyzer
 
             Log.Instance = this;
 
-            toggleDelta.BackColor = _enabledColor;
-            toggleSpeed.BackColor = _enabledColor;
-            toggleSpeedAcc.BackColor = _enabledColor;
+            toggleDelta.BackColor = _showDelta ? _enabledColor : _disabledColor;
+            toggleSpeed.BackColor = _showSpeed ? _enabledColor : _disabledColor;
+            toggleSpeedAcc.BackColor = _showSpeedAccuracy ? _enabledColor : _disabledColor;
 
             _trackRepository.Load();
         }
@@ -145,8 +146,29 @@ namespace DatalogAnalyzer
             _lineRoute = new GMapRoute("Route");
             _lineRoute.Stroke = new Pen(Color.CornflowerBlue, 2.0f);
 
+            if (_lineOverlay == null)
+            {
+                _lineOverlay = new GMapOverlay();
+                gMap.Overlays.Add(_lineOverlay);
+            }
+
+            if (_accellerationOverlay == null)
+            {
+                _accellerationOverlay = new GMapOverlay();
+                gMap.Overlays.Add(_accellerationOverlay);
+            }
+            else
+            {
+                _accellerationOverlay.Clear();
+            }
+
             var prevLat = 0.0;
             var prevLong = 0.0;
+
+            GMapRoute currentAccellerationRoute = null;
+            int accellerationCount = 0;
+            var currentAccellerationPositive = true;
+
             foreach (var logEntry in CurrentSegment.Entries)
             {
                 if ((logEntry.Latitude == prevLat) && (logEntry.Longitude == prevLong))
@@ -158,6 +180,34 @@ namespace DatalogAnalyzer
                 if (logEntry.SpeedAccuracy > 5)
                     continue;
 
+                if (currentAccellerationRoute == null)
+                {
+                    if (logEntry.Accelleration > Settings.AccelleratingThreshold)
+                    {
+                        currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
+                        currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                        currentAccellerationRoute.Stroke = new Pen(Color.Green, 3.0f);
+                        currentAccellerationPositive = true;
+                    }
+                    else if (logEntry.Accelleration < Settings.BrakingThreshold)
+                    {
+                        currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
+                        currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                        currentAccellerationRoute.Stroke = new Pen(Color.Red, 3.0f);
+                        currentAccellerationPositive = false;
+                    }
+                }
+                else if (((logEntry.Accelleration > -Settings.CoastingThreshold) && !currentAccellerationPositive) 
+                    || ((logEntry.Accelleration < Settings.CoastingThreshold) && currentAccellerationPositive))
+                {
+                    _accellerationOverlay.Routes.Add(currentAccellerationRoute);
+                    currentAccellerationRoute = null;
+                }
+                else
+                {
+                    currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                }
+
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
                 
@@ -166,13 +216,6 @@ namespace DatalogAnalyzer
 
             var directions = new GDirections();
             directions.Route = _lineRoute.Points;
-            
-
-            if (_lineOverlay == null)
-            {
-                _lineOverlay = new GMapOverlay();
-                gMap.Overlays.Add(_lineOverlay);
-            }
 
             _lineOverlay.Clear();
             _lineOverlay.Routes.Add(_lineRoute);
@@ -215,7 +258,7 @@ namespace DatalogAnalyzer
 
             var nextEntry = TimeSpan.Zero;
             var nextAcceleration = TimeSpan.Zero;
-            var accelerationInterval = TimeSpan.FromMilliseconds(100);
+            var accelerationInterval = TimeSpan.FromMilliseconds(500);
             LogEntry previousAcceleration = null;
 
             foreach (var logEntry in CurrentSegment.Entries)
@@ -279,9 +322,9 @@ namespace DatalogAnalyzer
                         var deltaTime = logEntry.GetTimeSpan(CurrentSegment.LogStart) -
                                         (previousAcceleration?.GetTimeSpan(CurrentSegment.LogStart) ?? TimeSpan.Zero);
 
-                        var acceleration = (deltaSpeed/deltaTime.TotalSeconds); // * 0.101971621;
+                        var acceleration = (deltaSpeed / deltaTime.TotalSeconds); // * 0.101971621;
                         speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
-                            acceleration);
+                            logEntry.Accelleration);
 
                         previousAcceleration = logEntry;
                     }

@@ -59,7 +59,9 @@ namespace DatalogAnalyzer
             int largeDeltas = 0;
 
             ValueCount = reader.ReadUInt16();
-            
+
+            LogEntry previousGpsEntry = null; 
+
             while (stream.Position < stream.Length)
             {
                 try
@@ -84,6 +86,35 @@ namespace DatalogAnalyzer
                     previous = micros;
 
                     var entry = new LogEntry(ValueCount, micros, delta, reader);
+
+                    if (previousGpsEntry == null)
+                    {
+                        entry.Accelleration = 0.0;
+
+                        if (entry.SpeedAccuracy < 5)
+                        {
+                            previousGpsEntry = entry;
+                        }
+                    }
+                    else if (entry.Latitude == previousGpsEntry.Latitude && entry.Longitude == previousGpsEntry.Longitude)
+                    {
+                        entry.Accelleration = previousGpsEntry.Accelleration;
+                    }
+                    else if (entry.SpeedAccuracy < 5)
+                    {
+                        var deltaSpeed = entry.Speed - previousGpsEntry.Speed;
+                        deltaSpeed *= 0.277778;
+
+                        var deltaTime = entry.GetTimeSpan(LogStart) - previousGpsEntry.GetTimeSpan(LogStart);
+                        
+                        entry.Accelleration = (deltaSpeed / deltaTime.TotalSeconds); // * 0.101971621;
+
+                        previousGpsEntry = entry;
+                    }
+                    else
+                    {
+                        entry.Accelleration = previousGpsEntry.Accelleration;
+                    }
 
                     entries.Add(entry);
                 }
