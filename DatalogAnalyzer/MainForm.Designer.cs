@@ -29,20 +29,19 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea19 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend19 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series19 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea20 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend20 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series20 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea21 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend21 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series21 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.ChannelToggleButtonTemplate = new System.Windows.Forms.Button();
             this.logWindow = new System.Windows.Forms.RichTextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.toggleDelta = new System.Windows.Forms.Button();
-            this.gMap = new GMap.NET.WindowsForms.GMapControl();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,39 +67,35 @@
             this.toggleSpeedAcc = new System.Windows.Forms.Button();
             this.toggleSpeed = new System.Windows.Forms.Button();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.speedChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chartsSplitter = new System.Windows.Forms.SplitContainer();
-            this.tempChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.sensorChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.segmentsLabel = new System.Windows.Forms.Label();
             this.segmentsList = new System.Windows.Forms.ListView();
             this.indexColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LapContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.sensorChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.tempChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.speedChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.gMap = new GMap.NET.WindowsForms.GMapControl();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.lapsTab = new System.Windows.Forms.TabPage();
+            this.speedChartTab = new System.Windows.Forms.TabPage();
+            this.sensorChartTab = new System.Windows.Forms.TabPage();
+            this.tempChartTab = new System.Windows.Forms.TabPage();
+            this.toggleAccelerationButton = new System.Windows.Forms.Button();
             this.MainMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.speedChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartsSplitter)).BeginInit();
-            this.chartsSplitter.Panel1.SuspendLayout();
-            this.chartsSplitter.Panel2.SuspendLayout();
-            this.chartsSplitter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tempChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sensorChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tempChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.speedChart)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.lapsTab.SuspendLayout();
+            this.speedChartTab.SuspendLayout();
+            this.sensorChartTab.SuspendLayout();
+            this.tempChartTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // ChannelToggleButtonTemplate
             // 
             this.ChannelToggleButtonTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(12, 814);
+            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(12, 1000);
             this.ChannelToggleButtonTemplate.Name = "ChannelToggleButtonTemplate";
             this.ChannelToggleButtonTemplate.Size = new System.Drawing.Size(140, 42);
             this.ChannelToggleButtonTemplate.TabIndex = 1;
@@ -112,10 +107,10 @@
             // 
             this.logWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.logWindow.Location = new System.Drawing.Point(12, 862);
+            this.logWindow.Location = new System.Drawing.Point(12, 1048);
             this.logWindow.Name = "logWindow";
             this.logWindow.ReadOnly = true;
-            this.logWindow.Size = new System.Drawing.Size(1456, 175);
+            this.logWindow.Size = new System.Drawing.Size(1172, 181);
             this.logWindow.TabIndex = 2;
             this.logWindow.Text = "";
             // 
@@ -130,43 +125,13 @@
             this.toggleDelta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleDelta.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleDelta.ForeColor = System.Drawing.Color.White;
-            this.toggleDelta.Location = new System.Drawing.Point(1389, 814);
+            this.toggleDelta.Location = new System.Drawing.Point(1099, 1000);
             this.toggleDelta.Name = "toggleDelta";
             this.toggleDelta.Size = new System.Drawing.Size(81, 42);
             this.toggleDelta.TabIndex = 3;
             this.toggleDelta.Text = "Delta";
             this.toggleDelta.UseVisualStyleBackColor = true;
             this.toggleDelta.Click += new System.EventHandler(this.toggleDelta_Click);
-            // 
-            // gMap
-            // 
-            this.gMap.Bearing = 0F;
-            this.gMap.CanDragMap = true;
-            this.gMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gMap.EmptyTileColor = System.Drawing.Color.Navy;
-            this.gMap.GrayScaleMode = false;
-            this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
-            this.gMap.LevelsKeepInMemmory = 5;
-            this.gMap.Location = new System.Drawing.Point(0, 0);
-            this.gMap.MarkersEnabled = true;
-            this.gMap.MaxZoom = 20;
-            this.gMap.MinZoom = 1;
-            this.gMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
-            this.gMap.Name = "gMap";
-            this.gMap.NegativeMode = false;
-            this.gMap.PolygonsEnabled = true;
-            this.gMap.RetryLoadTile = 0;
-            this.gMap.RoutesEnabled = true;
-            this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
-            this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
-            this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(428, 558);
-            this.gMap.TabIndex = 5;
-            this.gMap.Zoom = 0D;
-            this.gMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseDown);
-            this.gMap.MouseLeave += new System.EventHandler(this.gMap_MouseLeave);
-            this.gMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseMove);
-            this.gMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseUp);
             // 
             // MainMenu
             // 
@@ -180,7 +145,7 @@
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.MainMenu.Size = new System.Drawing.Size(1486, 35);
+            this.MainMenu.Size = new System.Drawing.Size(1196, 35);
             this.MainMenu.TabIndex = 7;
             this.MainMenu.Text = "menuStrip1";
             // 
@@ -354,7 +319,7 @@
             this.toggleSpeedAcc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeedAcc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeedAcc.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeedAcc.Location = new System.Drawing.Point(1200, 814);
+            this.toggleSpeedAcc.Location = new System.Drawing.Point(910, 1000);
             this.toggleSpeedAcc.Name = "toggleSpeedAcc";
             this.toggleSpeedAcc.Size = new System.Drawing.Size(183, 42);
             this.toggleSpeedAcc.TabIndex = 8;
@@ -367,7 +332,7 @@
             this.toggleSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeed.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeed.Location = new System.Drawing.Point(1104, 814);
+            this.toggleSpeed.Location = new System.Drawing.Point(814, 1000);
             this.toggleSpeed.Name = "toggleSpeed";
             this.toggleSpeed.Size = new System.Drawing.Size(90, 42);
             this.toggleSpeed.TabIndex = 9;
@@ -381,157 +346,20 @@
             this.saveFileDialog.FileName = "SAMPLE.LOG";
             this.saveFileDialog.Filter = "Log files (*.LogSegment)|*.LOG";
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(12, 38);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.speedChart);
-            this.splitContainer1.Panel1.Controls.Add(this.chartsSplitter);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1456, 769);
-            this.splitContainer1.SplitterDistance = 1024;
-            this.splitContainer1.TabIndex = 10;
-            // 
-            // speedChart
-            // 
-            this.speedChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.speedChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea1.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea1.Name = "ChartArea1";
-            this.speedChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.speedChart.Legends.Add(legend1);
-            this.speedChart.Location = new System.Drawing.Point(3, 3);
-            this.speedChart.Name = "speedChart";
-            this.speedChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.speedChart.Series.Add(series1);
-            this.speedChart.Size = new System.Drawing.Size(1018, 497);
-            this.speedChart.TabIndex = 0;
-            this.speedChart.Text = "chart1";
-            this.speedChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.speedChart_AxisViewChanged);
-            this.speedChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.speedChart_MouseDown);
-            // 
-            // chartsSplitter
-            // 
-            this.chartsSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.chartsSplitter.Location = new System.Drawing.Point(0, 506);
-            this.chartsSplitter.Name = "chartsSplitter";
-            this.chartsSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // chartsSplitter.Panel1
-            // 
-            this.chartsSplitter.Panel1.Controls.Add(this.tempChart);
-            // 
-            // chartsSplitter.Panel2
-            // 
-            this.chartsSplitter.Panel2.Controls.Add(this.sensorChart);
-            this.chartsSplitter.Size = new System.Drawing.Size(1024, 260);
-            this.chartsSplitter.SplitterDistance = 83;
-            this.chartsSplitter.SplitterWidth = 5;
-            this.chartsSplitter.TabIndex = 0;
-            // 
-            // tempChart
-            // 
-            this.tempChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea2.Name = "ChartArea1";
-            this.tempChart.ChartAreas.Add(chartArea2);
-            this.tempChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.tempChart.Legends.Add(legend2);
-            this.tempChart.Location = new System.Drawing.Point(0, 0);
-            this.tempChart.Name = "tempChart";
-            this.tempChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Fire;
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.tempChart.Series.Add(series2);
-            this.tempChart.Size = new System.Drawing.Size(1024, 83);
-            this.tempChart.TabIndex = 0;
-            this.tempChart.Text = "chart1";
-            this.tempChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.tempChart_AxisViewChanged);
-            this.tempChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tempChart_MouseDown);
-            // 
-            // sensorChart
-            // 
-            this.sensorChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea3.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea3.Name = "ChartArea1";
-            this.sensorChart.ChartAreas.Add(chartArea3);
-            this.sensorChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.sensorChart.Legends.Add(legend3);
-            this.sensorChart.Location = new System.Drawing.Point(0, 0);
-            this.sensorChart.Name = "sensorChart";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.sensorChart.Series.Add(series3);
-            this.sensorChart.Size = new System.Drawing.Size(1024, 172);
-            this.sensorChart.TabIndex = 0;
-            this.sensorChart.Text = "chart1";
-            this.sensorChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.sensorChart_AxisViewChanged);
-            this.sensorChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.sensorChart_MouseDown);
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.segmentsLabel);
-            this.splitContainer2.Panel1.Controls.Add(this.segmentsList);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.gMap);
-            this.splitContainer2.Size = new System.Drawing.Size(428, 769);
-            this.splitContainer2.SplitterDistance = 206;
-            this.splitContainer2.SplitterWidth = 5;
-            this.splitContainer2.TabIndex = 6;
-            // 
-            // segmentsLabel
-            // 
-            this.segmentsLabel.AutoSize = true;
-            this.segmentsLabel.Location = new System.Drawing.Point(3, 0);
-            this.segmentsLabel.Name = "segmentsLabel";
-            this.segmentsLabel.Size = new System.Drawing.Size(44, 20);
-            this.segmentsLabel.TabIndex = 1;
-            this.segmentsLabel.Text = "Laps";
-            // 
             // segmentsList
             // 
-            this.segmentsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.segmentsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.indexColumn,
             this.timeColumn});
             this.segmentsList.ContextMenuStrip = this.LapContextMenu;
-            this.segmentsList.Location = new System.Drawing.Point(3, 23);
+            this.segmentsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.segmentsList.Location = new System.Drawing.Point(3, 3);
             this.segmentsList.Name = "segmentsList";
-            this.segmentsList.Size = new System.Drawing.Size(422, 181);
+            this.segmentsList.Size = new System.Drawing.Size(1158, 268);
             this.segmentsList.TabIndex = 0;
             this.segmentsList.UseCompatibleStateImageBehavior = false;
             this.segmentsList.View = System.Windows.Forms.View.Details;
+            this.segmentsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.segmentsList_ItemSelectionChanged);
             this.segmentsList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.segmentsList_MouseDoubleClick);
             // 
             // indexColumn
@@ -548,12 +376,180 @@
             this.LapContextMenu.Name = "LapContextMenu";
             this.LapContextMenu.Size = new System.Drawing.Size(61, 4);
             // 
+            // sensorChart
+            // 
+            this.sensorChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea19.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea19.Name = "ChartArea1";
+            this.sensorChart.ChartAreas.Add(chartArea19);
+            this.sensorChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend19.Name = "Legend1";
+            this.sensorChart.Legends.Add(legend19);
+            this.sensorChart.Location = new System.Drawing.Point(3, 3);
+            this.sensorChart.Name = "sensorChart";
+            series19.ChartArea = "ChartArea1";
+            series19.Legend = "Legend1";
+            series19.Name = "Series1";
+            this.sensorChart.Series.Add(series19);
+            this.sensorChart.Size = new System.Drawing.Size(1158, 268);
+            this.sensorChart.TabIndex = 1;
+            this.sensorChart.Text = "chart1";
+            this.sensorChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.sensorChart_AxisViewChanged);
+            this.sensorChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.sensorChart_MouseDown);
+            // 
+            // tempChart
+            // 
+            this.tempChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea20.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea20.Name = "ChartArea1";
+            this.tempChart.ChartAreas.Add(chartArea20);
+            this.tempChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend20.Name = "Legend1";
+            this.tempChart.Legends.Add(legend20);
+            this.tempChart.Location = new System.Drawing.Point(3, 3);
+            this.tempChart.Name = "tempChart";
+            this.tempChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Fire;
+            series20.ChartArea = "ChartArea1";
+            series20.Legend = "Legend1";
+            series20.Name = "Series1";
+            this.tempChart.Series.Add(series20);
+            this.tempChart.Size = new System.Drawing.Size(1158, 268);
+            this.tempChart.TabIndex = 2;
+            this.tempChart.Text = "chart1";
+            this.tempChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.tempChart_AxisViewChanged);
+            this.tempChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tempChart_MouseDown);
+            // 
+            // speedChart
+            // 
+            this.speedChart.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea21.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea21.Name = "ChartArea1";
+            this.speedChart.ChartAreas.Add(chartArea21);
+            this.speedChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend21.Name = "Legend1";
+            this.speedChart.Legends.Add(legend21);
+            this.speedChart.Location = new System.Drawing.Point(3, 3);
+            this.speedChart.Name = "speedChart";
+            this.speedChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
+            series21.ChartArea = "ChartArea1";
+            series21.Legend = "Legend1";
+            series21.Name = "Series1";
+            this.speedChart.Series.Add(series21);
+            this.speedChart.Size = new System.Drawing.Size(1158, 268);
+            this.speedChart.TabIndex = 3;
+            this.speedChart.Text = "chart1";
+            this.speedChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.speedChart_AxisViewChanged);
+            this.speedChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.speedChart_MouseDown);
+            // 
+            // gMap
+            // 
+            this.gMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gMap.Bearing = 0F;
+            this.gMap.CanDragMap = true;
+            this.gMap.EmptyTileColor = System.Drawing.Color.Navy;
+            this.gMap.GrayScaleMode = false;
+            this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
+            this.gMap.LevelsKeepInMemmory = 5;
+            this.gMap.Location = new System.Drawing.Point(8, 38);
+            this.gMap.MarkersEnabled = true;
+            this.gMap.MaxZoom = 20;
+            this.gMap.MinZoom = 1;
+            this.gMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
+            this.gMap.Name = "gMap";
+            this.gMap.NegativeMode = false;
+            this.gMap.PolygonsEnabled = true;
+            this.gMap.RetryLoadTile = 0;
+            this.gMap.RoutesEnabled = true;
+            this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
+            this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
+            this.gMap.ShowTileGridLines = false;
+            this.gMap.Size = new System.Drawing.Size(1172, 595);
+            this.gMap.TabIndex = 6;
+            this.gMap.Zoom = 0D;
+            this.gMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseDown);
+            this.gMap.MouseLeave += new System.EventHandler(this.gMap_MouseLeave);
+            this.gMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseMove);
+            this.gMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseUp);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.lapsTab);
+            this.tabControl1.Controls.Add(this.speedChartTab);
+            this.tabControl1.Controls.Add(this.sensorChartTab);
+            this.tabControl1.Controls.Add(this.tempChartTab);
+            this.tabControl1.Location = new System.Drawing.Point(12, 687);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1172, 307);
+            this.tabControl1.TabIndex = 10;
+            // 
+            // lapsTab
+            // 
+            this.lapsTab.Controls.Add(this.segmentsList);
+            this.lapsTab.Location = new System.Drawing.Point(4, 29);
+            this.lapsTab.Name = "lapsTab";
+            this.lapsTab.Padding = new System.Windows.Forms.Padding(3);
+            this.lapsTab.Size = new System.Drawing.Size(1164, 274);
+            this.lapsTab.TabIndex = 3;
+            this.lapsTab.Text = "Laps";
+            this.lapsTab.UseVisualStyleBackColor = true;
+            // 
+            // speedChartTab
+            // 
+            this.speedChartTab.Controls.Add(this.speedChart);
+            this.speedChartTab.Location = new System.Drawing.Point(4, 29);
+            this.speedChartTab.Name = "speedChartTab";
+            this.speedChartTab.Padding = new System.Windows.Forms.Padding(3);
+            this.speedChartTab.Size = new System.Drawing.Size(1164, 274);
+            this.speedChartTab.TabIndex = 0;
+            this.speedChartTab.Text = "Speed";
+            this.speedChartTab.UseVisualStyleBackColor = true;
+            // 
+            // sensorChartTab
+            // 
+            this.sensorChartTab.Controls.Add(this.sensorChart);
+            this.sensorChartTab.Location = new System.Drawing.Point(4, 29);
+            this.sensorChartTab.Name = "sensorChartTab";
+            this.sensorChartTab.Padding = new System.Windows.Forms.Padding(3);
+            this.sensorChartTab.Size = new System.Drawing.Size(1164, 274);
+            this.sensorChartTab.TabIndex = 1;
+            this.sensorChartTab.Text = "Sensors";
+            this.sensorChartTab.UseVisualStyleBackColor = true;
+            // 
+            // tempChartTab
+            // 
+            this.tempChartTab.Controls.Add(this.tempChart);
+            this.tempChartTab.Location = new System.Drawing.Point(4, 29);
+            this.tempChartTab.Name = "tempChartTab";
+            this.tempChartTab.Padding = new System.Windows.Forms.Padding(3);
+            this.tempChartTab.Size = new System.Drawing.Size(1164, 274);
+            this.tempChartTab.TabIndex = 2;
+            this.tempChartTab.Text = "Temperatures";
+            this.tempChartTab.UseVisualStyleBackColor = true;
+            // 
+            // toggleAccelerationButton
+            // 
+            this.toggleAccelerationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.toggleAccelerationButton.Location = new System.Drawing.Point(984, 639);
+            this.toggleAccelerationButton.Name = "toggleAccelerationButton";
+            this.toggleAccelerationButton.Size = new System.Drawing.Size(200, 42);
+            this.toggleAccelerationButton.TabIndex = 11;
+            this.toggleAccelerationButton.Text = "Acceleration Overlay";
+            this.toggleAccelerationButton.UseVisualStyleBackColor = true;
+            this.toggleAccelerationButton.Click += new System.EventHandler(this.toggleAccelerationButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1486, 1055);
-            this.Controls.Add(this.splitContainer1);
+            this.ClientSize = new System.Drawing.Size(1196, 1241);
+            this.Controls.Add(this.toggleAccelerationButton);
+            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.gMap);
             this.Controls.Add(this.toggleSpeed);
             this.Controls.Add(this.toggleSpeedAcc);
             this.Controls.Add(this.toggleDelta);
@@ -565,22 +561,14 @@
             this.Text = "SR Datalog Analyzer";
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.speedChart)).EndInit();
-            this.chartsSplitter.Panel1.ResumeLayout(false);
-            this.chartsSplitter.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chartsSplitter)).EndInit();
-            this.chartsSplitter.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tempChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sensorChart)).EndInit();
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tempChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.speedChart)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.lapsTab.ResumeLayout(false);
+            this.speedChartTab.ResumeLayout(false);
+            this.sensorChartTab.ResumeLayout(false);
+            this.tempChartTab.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -591,7 +579,6 @@
         private System.Windows.Forms.RichTextBox logWindow;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Button toggleDelta;
-        private GMap.NET.WindowsForms.GMapControl gMap;
         private System.Windows.Forms.MenuStrip MainMenu;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
@@ -607,16 +594,9 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.ToolStripMenuItem analysisToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.Label segmentsLabel;
         private System.Windows.Forms.ListView segmentsList;
         private System.Windows.Forms.ColumnHeader indexColumn;
         private System.Windows.Forms.ColumnHeader timeColumn;
-        private System.Windows.Forms.SplitContainer chartsSplitter;
-        private System.Windows.Forms.DataVisualization.Charting.Chart speedChart;
-        private System.Windows.Forms.DataVisualization.Charting.Chart tempChart;
-        private System.Windows.Forms.DataVisualization.Charting.Chart sensorChart;
         private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem segmentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem secToolStripMenuItem;
@@ -628,6 +608,16 @@
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLibraryToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip LapContextMenu;
+        private GMap.NET.WindowsForms.GMapControl gMap;
+        private System.Windows.Forms.DataVisualization.Charting.Chart sensorChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart tempChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart speedChart;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage speedChartTab;
+        private System.Windows.Forms.TabPage sensorChartTab;
+        private System.Windows.Forms.TabPage tempChartTab;
+        private System.Windows.Forms.TabPage lapsTab;
+        private System.Windows.Forms.Button toggleAccelerationButton;
     }
 }
 

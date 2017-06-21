@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using Newtonsoft.Json;
 
 namespace DatalogAnalyzer
 {
@@ -78,6 +72,43 @@ namespace DatalogAnalyzer
 
         private void LoadLog(LogSegment newSegment)
         {
+            DisplaySegment(newSegment);
+
+            FindTrack();
+
+            InitializeStartFinish();
+
+            if (_track != null)
+                AnalyzeCurrentLog();
+            else
+            {
+                if (MessageBox.Show(this,
+                        text: "Can't find existing track matching this log. Do you want to create a new track?",
+                        caption: "Track not identified", 
+                        buttons: MessageBoxButtons.YesNo, 
+                        icon: MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    var editor = new TrackEditor(segment: CurrentSegment);
+                    editor.ShowDialog(this);
+
+                    if (editor.Saved)
+                    {
+                        _trackRepository.Tracks.Add(editor.Track);
+
+                        FindTrack();
+
+                        if (_track != null)
+                        {
+                            InitializeStartFinish();
+                            AnalyzeCurrentLog();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DisplaySegment(LogSegment newSegment)
+        {
             CurrentSegment = newSegment;
 
             _config.Clear();
@@ -90,10 +121,6 @@ namespace DatalogAnalyzer
             RenderTrack();
             InitializeChartSeries();
             RefreshGraph();
-
-            FindTrack();
-
-            InitializeStartFinish();
         }
 
         private void InitializeStartFinish()
@@ -223,6 +250,8 @@ namespace DatalogAnalyzer
             gMap.ZoomAndCenterRoute(_lineRoute);
 
             _mapMarker = null;
+
+            toggleAccelerationButton.BackColor = _accellerationOverlay.IsVisibile ? _enabledColor : _disabledColor;
         }
 
         private void RefreshGraph(int channel = -1)
@@ -259,7 +288,6 @@ namespace DatalogAnalyzer
             var nextEntry = TimeSpan.Zero;
             var nextAcceleration = TimeSpan.Zero;
             var accelerationInterval = TimeSpan.FromMilliseconds(500);
-            LogEntry previousAcceleration = null;
 
             foreach (var logEntry in CurrentSegment.Entries)
             {
@@ -316,17 +344,8 @@ namespace DatalogAnalyzer
                     {
                         nextAcceleration = timeStamp + accelerationInterval;
 
-                        var deltaSpeed = logEntry.Speed - (previousAcceleration?.Speed ?? logEntry.Speed);
-                        deltaSpeed /= 3.6;
-
-                        var deltaTime = logEntry.GetTimeSpan(CurrentSegment.LogStart) -
-                                        (previousAcceleration?.GetTimeSpan(CurrentSegment.LogStart) ?? TimeSpan.Zero);
-
-                        var acceleration = (deltaSpeed / deltaTime.TotalSeconds); // * 0.101971621;
                         speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds,
                             logEntry.Accelleration);
-
-                        previousAcceleration = logEntry;
                     }
                 }
             }
@@ -583,12 +602,21 @@ namespace DatalogAnalyzer
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (_track == null)
+                FindTrack();
+
+            if (_track != null)
+                AnalyzeCurrentLog();
+        }
+
+        private void AnalyzeCurrentLog()
+        {
             _analysis = new SessionAnalysis(CurrentSegment, _track);
 
             logWindow.Clear();
             segmentsList.Items.Clear();
             LapContextMenu.Items.Clear();
-            
+
             segmentsList.Columns.Clear();
             segmentsList.Columns.Add("Lap", 100);
             segmentsList.Columns.Add("Laptime", 100);
@@ -600,10 +628,12 @@ namespace DatalogAnalyzer
             {
                 segmentsList.Columns.Add($"Section {i}", 100);
                 var contextMenuItem = new ToolStripMenuItem($"View Section {i}");
-                var sectionIndex = i-1;
+                var sectionIndex = i - 1;
                 contextMenuItem.Click += (o, args) => ViewLapSection(sectionIndex);
                 LapContextMenu.Items.Add(contextMenuItem);
             }
+
+            segmentsList.ContextMenuStrip = LapContextMenu;
 
             segmentsList.Columns.Add("SectionSum", 100);
 
@@ -627,7 +657,7 @@ namespace DatalogAnalyzer
             var lap = (LapAnalysis)segmentsList.SelectedItems[0].Tag;
 
             if (lap.Sections[sectionIndex].Segment != CurrentSegment)
-                LoadLog(lap.Sections[sectionIndex].Segment);
+                DisplaySegment(lap.Sections[sectionIndex].Segment);
         }
 
         private void AddLap(string text, LogSegment lap)
@@ -667,14 +697,14 @@ namespace DatalogAnalyzer
                 var segment = (LogSegment) segmentsList.SelectedItems[0].Tag;
 
                 if (segment != CurrentSegment)
-                    LoadLog(segment);
+                    DisplaySegment(segment);
             }
             else if (segmentsList.SelectedItems[0].Tag is LapAnalysis)
             {
                 var lap = (LapAnalysis)segmentsList.SelectedItems[0].Tag;
 
                 if (lap.Segment != CurrentSegment)
-                    LoadLog(lap.Segment);
+                    DisplaySegment(lap.Segment);
             }
         }
 
@@ -836,7 +866,7 @@ namespace DatalogAnalyzer
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var editor = new TrackEditor();
+            var editor = new TrackEditor(segment: CurrentSegment);
             editor.ShowDialog(this);
         }
 
@@ -844,6 +874,34 @@ namespace DatalogAnalyzer
         {
             var library = new TrackLibrary(_trackRepository);
             library.ShowDialog(this);
+        }
+
+        private void segmentsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (segmentsList.SelectedIndices.Count == 0)
+                return;
+
+            if (segmentsList.SelectedItems[0].Tag is LogSegment)
+            {
+                var segment = (LogSegment)segmentsList.SelectedItems[0].Tag;
+
+                if (segment != CurrentSegment)
+                    DisplaySegment(segment);
+            }
+            else if (segmentsList.SelectedItems[0].Tag is LapAnalysis)
+            {
+                var lap = (LapAnalysis)segmentsList.SelectedItems[0].Tag;
+
+                if (lap.Segment != CurrentSegment)
+                    DisplaySegment(lap.Segment);
+            }
+        }
+
+        private void toggleAccelerationButton_Click(object sender, EventArgs e)
+        {
+            _accellerationOverlay.IsVisibile = !_accellerationOverlay.IsVisibile;
+
+            toggleAccelerationButton.BackColor = _accellerationOverlay.IsVisibile ? _enabledColor : _disabledColor;
         }
     }
 }

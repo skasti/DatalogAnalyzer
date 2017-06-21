@@ -25,6 +25,7 @@ namespace DatalogAnalyzer
         readonly GMapOverlay _areaOverlay = new GMapOverlay();
         readonly GMapOverlay _startFinishOverlay = new GMapOverlay();
         readonly GMapOverlay _sectionsOverlay = new GMapOverlay();
+        readonly GMapOverlay _segmentOverlay = new GMapOverlay();
 
         private GMapPolygon _activePolygon = null;
         private GMapMarker _cursorMarker = null;
@@ -33,13 +34,15 @@ namespace DatalogAnalyzer
         private int _sectionSkip = 0;
 
         public Track Track { get; }
+        public LogSegment Segment { get; }
         public bool Saved { get; private set; }
 
-        public TrackEditor(Track track = null)
+        public TrackEditor(Track track = null, LogSegment segment = null)
         {
             InitializeComponent();
             Track = track ?? new Track();
             nameInput.Text = Track.Name;
+            Segment = segment;
 
             if (Track.Area != null)
             {
@@ -69,10 +72,18 @@ namespace DatalogAnalyzer
         private void TrackEditor_Load(object sender, EventArgs e)
         {
             trackMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
+            trackMap.Overlays.Add(_segmentOverlay);
             trackMap.Overlays.Add(_areaOverlay);
             trackMap.Overlays.Add(_startFinishOverlay);
             trackMap.Overlays.Add(_sectionsOverlay);
             trackMap.Overlays.Add(_activeOverlay);
+
+            if (Segment != null)
+            {
+                var segmentRoute = Segment.GetMapRoute();
+                _segmentOverlay.Routes.Add(segmentRoute);
+                trackMap.ZoomAndCenterRoute(segmentRoute);
+            }
 
             if (Track.Area != null)
             {
