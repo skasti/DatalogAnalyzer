@@ -363,7 +363,7 @@ namespace DatalogAnalyzer
                 {
                     Name = channelConfig.Name,
                     LegendText = channelConfig.Name,
-                    ChartType = SeriesChartType.FastLine
+                    ChartType = SeriesChartType.Spline
                 };
 
                 if (channelConfig.IsTemperature)
@@ -624,18 +624,21 @@ namespace DatalogAnalyzer
             segmentsList.Columns.Add("Top Speed", 100);
             segmentsList.Columns.Add("Min. Speed", 100);
 
-            for (int i = 1; i <= _analysis.Track.Sections.Count; i++)
+            if (_analysis.Track.Sections != null)
             {
-                segmentsList.Columns.Add($"Section {i}", 100);
-                var contextMenuItem = new ToolStripMenuItem($"View Section {i}");
-                var sectionIndex = i - 1;
-                contextMenuItem.Click += (o, args) => ViewLapSection(sectionIndex);
-                LapContextMenu.Items.Add(contextMenuItem);
+                for (int i = 1; i <= _analysis.Track.Sections.Count; i++)
+                {
+                    segmentsList.Columns.Add($"Section {i}", 100);
+                    var contextMenuItem = new ToolStripMenuItem($"View Section {i}");
+                    var sectionIndex = i - 1;
+                    contextMenuItem.Click += (o, args) => ViewLapSection(sectionIndex);
+                    LapContextMenu.Items.Add(contextMenuItem);
+                }
+
+                segmentsList.ContextMenuStrip = LapContextMenu;
+
+                segmentsList.Columns.Add("SectionSum", 100);
             }
-
-            segmentsList.ContextMenuStrip = LapContextMenu;
-
-            segmentsList.Columns.Add("SectionSum", 100);
 
             AddLap("Lead-in", _analysis.LeadIn);
             AddLap("Lead-out", _analysis.LeadOut);
@@ -676,12 +679,16 @@ namespace DatalogAnalyzer
             lvItem.SubItems.Add(lap.TopSpeed.ToString("0.00"));
             lvItem.SubItems.Add(lap.LowestSpeed.ToString("0.00"));
 
-            foreach (var sectionAnalysis in lap.Sections)
+            if ((lap.Sections != null) && lap.Sections.Any())
             {
-                lvItem.SubItems.Add(sectionAnalysis.SectionTime.ToString("hh\\:mm\\:ss\\.fff"));
-            }
+                foreach (var sectionAnalysis in lap.Sections)
+                {
+                    lvItem.SubItems.Add(sectionAnalysis.SectionTime.ToString("hh\\:mm\\:ss\\.fff"));
+                }
 
-            lvItem.SubItems.Add(TimeSpan.FromSeconds(lap.Sections.Sum(s => s.SectionTime.TotalSeconds)).ToString("hh\\:mm\\:ss\\.fff"));
+                lvItem.SubItems.Add(TimeSpan.FromSeconds(lap.Sections.Sum(s => s.SectionTime.TotalSeconds))
+                    .ToString("hh\\:mm\\:ss\\.fff"));
+            }
 
             lvItem.Tag = lap;
             segmentsList.Items.Add(lvItem);

@@ -20,7 +20,7 @@ namespace DatalogAnalyzer
         public GMapPolygon StartFinishPolygon { get; set; }
 
         [JsonProperty(ItemConverterType = typeof(PolygonConverter))]
-        public List<GMapPolygon> Sections { get; set; }
+        public List<GMapPolygon> Sections { get; set; } = new List<GMapPolygon>(0);
 
         public DateTime ChangedDate { get; set; }
 
