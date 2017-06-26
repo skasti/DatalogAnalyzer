@@ -52,7 +52,8 @@ namespace DatalogAnalyzer
                 }
             }
 
-            LeadOut = Segment.SubSet(previousEntry, Segment.Entries.Last());
+            if (previousEntry != null)
+                LeadOut = Segment.SubSet(previousEntry, Segment.Entries.Last());
 
             return laps.Select(lapSegment => new LapAnalysis(Track, lapSegment)).ToList();
         }

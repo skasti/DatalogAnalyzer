@@ -640,8 +640,11 @@ namespace DatalogAnalyzer
                 segmentsList.Columns.Add("SectionSum", 100);
             }
 
-            AddLap("Lead-in", _analysis.LeadIn);
-            AddLap("Lead-out", _analysis.LeadOut);
+            if (_analysis.LeadIn != null)
+                AddLap("Lead-in", _analysis.LeadIn);
+
+            if (_analysis.LeadOut != null)
+                AddLap("Lead-out", _analysis.LeadOut);
 
             var segmentIndex = 1;
             foreach (var lap in _analysis.Laps)
