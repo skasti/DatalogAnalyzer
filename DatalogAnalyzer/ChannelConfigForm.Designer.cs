@@ -56,68 +56,61 @@
             // 
             // chNameTemplate
             // 
-            this.chNameTemplate.Location = new System.Drawing.Point(35, 52);
-            this.chNameTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chNameTemplate.Location = new System.Drawing.Point(52, 80);
             this.chNameTemplate.Name = "chNameTemplate";
-            this.chNameTemplate.Size = new System.Drawing.Size(120, 20);
+            this.chNameTemplate.Size = new System.Drawing.Size(178, 26);
             this.chNameTemplate.TabIndex = 0;
             this.chNameTemplate.Text = "Channel 1";
             this.chNameTemplate.Visible = false;
             // 
             // chZeroTemplate
             // 
-            this.chZeroTemplate.Location = new System.Drawing.Point(158, 52);
-            this.chZeroTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chZeroTemplate.Location = new System.Drawing.Point(237, 80);
             this.chZeroTemplate.Name = "chZeroTemplate";
-            this.chZeroTemplate.Size = new System.Drawing.Size(68, 20);
+            this.chZeroTemplate.Size = new System.Drawing.Size(100, 26);
             this.chZeroTemplate.TabIndex = 1;
             this.chZeroTemplate.Visible = false;
             // 
             // chScalingTemplate
             // 
-            this.chScalingTemplate.Location = new System.Drawing.Point(228, 52);
-            this.chScalingTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chScalingTemplate.Location = new System.Drawing.Point(342, 80);
             this.chScalingTemplate.Name = "chScalingTemplate";
-            this.chScalingTemplate.Size = new System.Drawing.Size(68, 20);
+            this.chScalingTemplate.Size = new System.Drawing.Size(100, 26);
             this.chScalingTemplate.TabIndex = 2;
             this.chScalingTemplate.Visible = false;
             // 
             // nameLabel
             // 
             this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(32, 32);
-            this.nameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nameLabel.Location = new System.Drawing.Point(48, 49);
             this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(77, 13);
+            this.nameLabel.Size = new System.Drawing.Size(114, 20);
             this.nameLabel.TabIndex = 3;
             this.nameLabel.Text = "Channel Name";
             // 
             // zeroLabel
             // 
             this.zeroLabel.AutoSize = true;
-            this.zeroLabel.Location = new System.Drawing.Point(155, 32);
-            this.zeroLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.zeroLabel.Location = new System.Drawing.Point(232, 49);
             this.zeroLabel.Name = "zeroLabel";
-            this.zeroLabel.Size = new System.Drawing.Size(56, 13);
+            this.zeroLabel.Size = new System.Drawing.Size(82, 20);
             this.zeroLabel.TabIndex = 4;
             this.zeroLabel.Text = "Zero Point";
             // 
             // scalingLabel
             // 
             this.scalingLabel.AutoSize = true;
-            this.scalingLabel.Location = new System.Drawing.Point(226, 32);
-            this.scalingLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.scalingLabel.Location = new System.Drawing.Point(339, 49);
             this.scalingLabel.Name = "scalingLabel";
-            this.scalingLabel.Size = new System.Drawing.Size(42, 13);
+            this.scalingLabel.Size = new System.Drawing.Size(61, 20);
             this.scalingLabel.TabIndex = 5;
             this.scalingLabel.Text = "Scaling";
             // 
             // applyBtnTemplate
             // 
-            this.applyBtnTemplate.Location = new System.Drawing.Point(515, 48);
-            this.applyBtnTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.applyBtnTemplate.Location = new System.Drawing.Point(772, 74);
             this.applyBtnTemplate.Name = "applyBtnTemplate";
-            this.applyBtnTemplate.Size = new System.Drawing.Size(50, 27);
+            this.applyBtnTemplate.Size = new System.Drawing.Size(75, 42);
             this.applyBtnTemplate.TabIndex = 6;
             this.applyBtnTemplate.Text = "Apply";
             this.applyBtnTemplate.UseVisualStyleBackColor = true;
@@ -125,10 +118,9 @@
             // 
             // resetBtnTemplate
             // 
-            this.resetBtnTemplate.Location = new System.Drawing.Point(569, 48);
-            this.resetBtnTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.resetBtnTemplate.Location = new System.Drawing.Point(854, 74);
             this.resetBtnTemplate.Name = "resetBtnTemplate";
-            this.resetBtnTemplate.Size = new System.Drawing.Size(50, 27);
+            this.resetBtnTemplate.Size = new System.Drawing.Size(75, 42);
             this.resetBtnTemplate.TabIndex = 7;
             this.resetBtnTemplate.Text = "Reset";
             this.resetBtnTemplate.UseVisualStyleBackColor = true;
@@ -136,49 +128,47 @@
             // 
             // chArm1LengthTemplate
             // 
-            this.chArm1LengthTemplate.Location = new System.Drawing.Point(299, 52);
-            this.chArm1LengthTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chArm1LengthTemplate.Location = new System.Drawing.Point(448, 80);
             this.chArm1LengthTemplate.Name = "chArm1LengthTemplate";
-            this.chArm1LengthTemplate.Size = new System.Drawing.Size(68, 20);
+            this.chArm1LengthTemplate.Size = new System.Drawing.Size(100, 26);
             this.chArm1LengthTemplate.TabIndex = 8;
             this.chArm1LengthTemplate.Visible = false;
             // 
             // arm1LengthLabel
             // 
             this.arm1LengthLabel.AutoSize = true;
-            this.arm1LengthLabel.Location = new System.Drawing.Point(296, 32);
-            this.arm1LengthLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.arm1LengthLabel.Location = new System.Drawing.Point(444, 49);
             this.arm1LengthLabel.Name = "arm1LengthLabel";
-            this.arm1LengthLabel.Size = new System.Drawing.Size(41, 13);
+            this.arm1LengthLabel.Size = new System.Drawing.Size(60, 20);
             this.arm1LengthLabel.TabIndex = 9;
             this.arm1LengthLabel.Text = "Arm #1";
             // 
             // arm2LengthLabel
             // 
             this.arm2LengthLabel.AutoSize = true;
-            this.arm2LengthLabel.Location = new System.Drawing.Point(368, 32);
-            this.arm2LengthLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.arm2LengthLabel.Location = new System.Drawing.Point(552, 49);
             this.arm2LengthLabel.Name = "arm2LengthLabel";
-            this.arm2LengthLabel.Size = new System.Drawing.Size(41, 13);
+            this.arm2LengthLabel.Size = new System.Drawing.Size(60, 20);
             this.arm2LengthLabel.TabIndex = 11;
             this.arm2LengthLabel.Text = "Arm #2";
             // 
             // chArm2LengthTemplate
             // 
-            this.chArm2LengthTemplate.Location = new System.Drawing.Point(371, 52);
-            this.chArm2LengthTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chArm2LengthTemplate.Location = new System.Drawing.Point(556, 80);
             this.chArm2LengthTemplate.Name = "chArm2LengthTemplate";
-            this.chArm2LengthTemplate.Size = new System.Drawing.Size(68, 20);
+            this.chArm2LengthTemplate.Size = new System.Drawing.Size(100, 26);
             this.chArm2LengthTemplate.TabIndex = 10;
             this.chArm2LengthTemplate.Visible = false;
             // 
             // ChannelConfigMenu
             // 
+            this.ChannelConfigMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.ChannelConfigMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
             this.ChannelConfigMenu.Location = new System.Drawing.Point(0, 0);
             this.ChannelConfigMenu.Name = "ChannelConfigMenu";
-            this.ChannelConfigMenu.Size = new System.Drawing.Size(631, 24);
+            this.ChannelConfigMenu.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.ChannelConfigMenu.Size = new System.Drawing.Size(946, 35);
             this.ChannelConfigMenu.TabIndex = 12;
             this.ChannelConfigMenu.Text = "menuStrip1";
             // 
@@ -189,54 +179,53 @@
             this.saveToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(140, 30);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(140, 30);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(140, 30);
             this.closeToolStripMenuItem.Text = "Close";
             // 
             // armAxisDistanceLabel
             // 
             this.armAxisDistanceLabel.AutoSize = true;
-            this.armAxisDistanceLabel.Location = new System.Drawing.Point(440, 32);
-            this.armAxisDistanceLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.armAxisDistanceLabel.Location = new System.Drawing.Point(660, 49);
             this.armAxisDistanceLabel.Name = "armAxisDistanceLabel";
-            this.armAxisDistanceLabel.Size = new System.Drawing.Size(69, 13);
+            this.armAxisDistanceLabel.Size = new System.Drawing.Size(105, 20);
             this.armAxisDistanceLabel.TabIndex = 14;
             this.armAxisDistanceLabel.Text = "Arm-Axis dist.";
             // 
             // chArmAxisDistanceTemplate
             // 
-            this.chArmAxisDistanceTemplate.Location = new System.Drawing.Point(443, 52);
-            this.chArmAxisDistanceTemplate.Margin = new System.Windows.Forms.Padding(2);
+            this.chArmAxisDistanceTemplate.Location = new System.Drawing.Point(664, 80);
             this.chArmAxisDistanceTemplate.Name = "chArmAxisDistanceTemplate";
-            this.chArmAxisDistanceTemplate.Size = new System.Drawing.Size(68, 20);
+            this.chArmAxisDistanceTemplate.Size = new System.Drawing.Size(100, 26);
             this.chArmAxisDistanceTemplate.TabIndex = 13;
             this.chArmAxisDistanceTemplate.Visible = false;
             // 
             // chIsTempTemplate
             // 
             this.chIsTempTemplate.AutoSize = true;
-            this.chIsTempTemplate.Location = new System.Drawing.Point(15, 55);
+            this.chIsTempTemplate.Location = new System.Drawing.Point(22, 85);
+            this.chIsTempTemplate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chIsTempTemplate.Name = "chIsTempTemplate";
-            this.chIsTempTemplate.Size = new System.Drawing.Size(15, 14);
+            this.chIsTempTemplate.Size = new System.Drawing.Size(22, 21);
             this.chIsTempTemplate.TabIndex = 15;
             this.chIsTempTemplate.UseVisualStyleBackColor = true;
             this.chIsTempTemplate.Visible = false;
@@ -244,9 +233,10 @@
             // isTempLabel
             // 
             this.isTempLabel.AutoSize = true;
-            this.isTempLabel.Location = new System.Drawing.Point(12, 32);
+            this.isTempLabel.Location = new System.Drawing.Point(18, 49);
+            this.isTempLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.isTempLabel.Name = "isTempLabel";
-            this.isTempLabel.Size = new System.Drawing.Size(18, 13);
+            this.isTempLabel.Size = new System.Drawing.Size(25, 20);
             this.isTempLabel.TabIndex = 16;
             this.isTempLabel.Text = "°C";
             // 
@@ -262,10 +252,10 @@
             // 
             // ChannelConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(631, 84);
+            this.ClientSize = new System.Drawing.Size(946, 129);
             this.Controls.Add(this.isTempLabel);
             this.Controls.Add(this.chIsTempTemplate);
             this.Controls.Add(this.armAxisDistanceLabel);
@@ -285,7 +275,6 @@
             this.Controls.Add(this.ChannelConfigMenu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MainMenuStrip = this.ChannelConfigMenu;
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "ChannelConfigForm";
             this.Text = "ChannelConfigForm";
             this.ChannelConfigMenu.ResumeLayout(false);

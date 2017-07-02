@@ -66,7 +66,31 @@
     <Compile Include="ChannelConfigForm.Designer.cs">
       <DependentUpon>ChannelConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChartType.cs" />
+    <Compile Include="DataChannels\ChannelManagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataChannels\ChannelManagementForm.Designer.cs">
+      <DependentUpon>ChannelManagementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataChannels\ChannelManager.cs" />
+    <Compile Include="DataChannels\DataChannel.cs" />
+    <Compile Include="DataChannels\DataChannelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataChannels\DataChannelEditor.Designer.cs">
+      <DependentUpon>DataChannelEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataChannels\Suspension\SuspensionChannel.cs" />
+    <Compile Include="DataChannels\Suspension\SuspensionChannelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataChannels\Suspension\SuspensionChannelEditor.Designer.cs">
+      <DependentUpon>SuspensionChannelEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="GMapRouteExtensions.cs" />
+    <Compile Include="Icons\Icon.cs" />
+    <Compile Include="Icons\IconProvider.cs" />
     <Compile Include="LapAnalysis.cs" />
     <Compile Include="LogSegment.cs" />
     <Compile Include="DateTimeExtensions.cs" />
@@ -105,6 +129,15 @@
     <EmbeddedResource Include="ChannelConfigForm.resx">
       <DependentUpon>ChannelConfigForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataChannels\ChannelManagementForm.resx">
+      <DependentUpon>ChannelManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataChannels\DataChannelEditor.resx">
+      <DependentUpon>DataChannelEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataChannels\Suspension\SuspensionChannelEditor.resx">
+      <DependentUpon>SuspensionChannelEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -139,6 +172,23 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SampleData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\0 datachannel.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\2 gear-position.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\3 handle-bar.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\1 suspension.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\4 throttle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
