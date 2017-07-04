@@ -80,7 +80,7 @@ namespace DatalogAnalyzer
 
             if (Segment != null)
             {
-                var segmentRoute = Segment.GetMapRoute();
+                var segmentRoute = Segment.GetMapRoute(Track);
                 _segmentOverlay.Routes.Add(segmentRoute);
                 trackMap.ZoomAndCenterRoute(segmentRoute);
             }
@@ -215,12 +215,12 @@ namespace DatalogAnalyzer
             InitializeActivePolygon();
         }
 
-        private bool ValidateActivePolygon()
+        private bool ValidateActivePolygon(int minCount = 4)
         {
-            if (_activePolygon.Points.Count >= 4) return true;
+            if (_activePolygon.Points.Count >= minCount) return true;
 
             MessageBox.Show(
-                "Need at least 4 points to make a polygon of this type", "Not enough points",
+                $"Need at least {minCount} points to make a polygon of this type", "Not enough points",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             return false;
@@ -377,6 +377,25 @@ namespace DatalogAnalyzer
             }
 
             NewSection();
+        }
+
+        private void defineToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            if (!ValidateActivePolygon(2))
+                return;
+
+            var latCorrection = _activePolygon.Points[1].Lat - _activePolygon.Points[0].Lat;
+            var lngCorrection = _activePolygon.Points[1].Lng - _activePolygon.Points[0].Lng;
+
+            Track.LatLongCorrection = new PointLatLng(latCorrection, lngCorrection);
+
+            Track.ChangedDate = DateTime.Now;
+
+            var segmentRoute = Segment.GetMapRoute(Track);
+            _segmentOverlay.Clear();
+            _segmentOverlay.Routes.Add(segmentRoute);
+
+            InitializeActivePolygon();
         }
     }
 }

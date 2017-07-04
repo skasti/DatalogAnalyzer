@@ -19,7 +19,7 @@ namespace DatalogAnalyzer.DataChannels
         public int IconIndex { get; set; } = 0;
 
         [JsonIgnore]
-        public Series ChartSeries { get; set; }
+        public Dictionary<LogSegment, Series> ChartSeries { get; set; } = new Dictionary<LogSegment, Series>();
 
         public event EventHandler<DataChannel> OnChanged;
 
@@ -54,11 +54,14 @@ namespace DatalogAnalyzer.DataChannels
             OnChanged?.Invoke(sender, this);
         }
 
-        public void ClearChart()
+        public void ClearCharts()
         {
-            ChartSeries.Points.Clear();
-            ChartSeries.LegendText = Name;
-            ChartSeries.Name = Name;
+            foreach (var chartSeries in ChartSeries)
+            {
+                chartSeries.Value.Points.Clear();
+                chartSeries.Value.LegendText = Name;
+                chartSeries.Value.Name = Name;
+            }
         }
     }
 }

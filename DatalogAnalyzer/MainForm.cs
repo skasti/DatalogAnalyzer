@@ -14,7 +14,10 @@ namespace DatalogAnalyzer
 {
     public partial class MainForm : Form, ILogger
     {
-        private LogSegment CurrentSegment { get; set; }
+        private LogSegment CurrentLog { get; set; }
+
+        private List<LogSegment> _displayedSegments = new List<LogSegment>(); 
+
         private SessionAnalysis _analysis;
         private Track _track;
 
@@ -31,7 +34,7 @@ namespace DatalogAnalyzer
         private GMapOverlay _lineOverlay = null;
         private GMapOverlay _startFinishOverlay = null;
         private GMapMarker _mapMarker = null;
-        private GMapRoute _lineRoute = null;
+        private List<GMapRoute> _lineRoutes = new List<GMapRoute>();
         private GMapOverlay _accellerationOverlay = null;
 
         private GMapMarker _cursorMarker = null;
@@ -69,7 +72,11 @@ namespace DatalogAnalyzer
 
             _trackRepository.Load();
 
-            _channelManager.OnLoaded += (sender, args) => RefreshGraph();
+            _channelManager.OnLoaded += (sender, args) =>
+            {
+                InitializeChannelEnable();
+                RefreshGraph();
+            };
             _channelManager.OnAdded += (sender, channel) => AddChartSeries(channel);
             _channelManager.OnRemoved += (sender, channel) => RemoveChartSeries(channel);
             _channelManager.OnChannelChanged += (sender, channel) => RefreshGraph(channel);
@@ -80,13 +87,22 @@ namespace DatalogAnalyzer
             switch (channel.Chart)
             {
                 case ChartType.Speed:
-                    speedChart.Series.Remove(channel.ChartSeries);
+                    foreach (var chartSeries in channel.ChartSeries.Values)
+                    {
+                        speedChart.Series.Remove(chartSeries);
+                    }
                     break;
                 case ChartType.Temperature:
-                    tempChart.Series.Remove(channel.ChartSeries);
+                    foreach (var chartSeries in channel.ChartSeries.Values)
+                    {
+                        tempChart.Series.Remove(chartSeries);
+                    }
                     break;
                 case ChartType.Sensor:
-                    sensorChart.Series.Remove(channel.ChartSeries);
+                    foreach (var chartSeries in channel.ChartSeries.Values)
+                    {
+                        sensorChart.Series.Remove(chartSeries);
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -95,21 +111,36 @@ namespace DatalogAnalyzer
 
         private void AddChartSeries(DataChannel channel)
         {
-            channel.ChartSeries = new Series
+            foreach (var segment in _displayedSegments)
             {
-                Name = channel.Name, LegendText = channel.Name, ChartType = SeriesChartType.FastLine
-            };
+                AddChartSeries(segment, channel);
+            }
+        }
+
+        private void AddChartSeries(LogSegment displayedSegment, DataChannel channel)
+        {
+            if (!channel.ChartSeries.ContainsKey(displayedSegment))
+            {
+                var series = new Series
+                {
+                    Name = $"{channel.Name} ({displayedSegment.Name})",
+                    LegendText = $"{channel.Name} ({displayedSegment.Name})",
+                    ChartType = SeriesChartType.FastLine
+                };
+
+                channel.ChartSeries.Add(displayedSegment, series);
+            }
 
             switch (channel.Chart)
             {
                 case ChartType.Speed:
-                    speedChart.Series.Add(channel.ChartSeries);
+                    speedChart.Series.Add(channel.ChartSeries[displayedSegment]);
                     break;
                 case ChartType.Temperature:
-                    tempChart.Series.Add(channel.ChartSeries);
+                    tempChart.Series.Add(channel.ChartSeries[displayedSegment]);
                     break;
                 case ChartType.Sensor:
-                    sensorChart.Series.Add(channel.ChartSeries);
+                    sensorChart.Series.Add(channel.ChartSeries[displayedSegment]);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -118,11 +149,18 @@ namespace DatalogAnalyzer
 
         private void LoadLog(LogSegment newSegment)
         {
-            DisplaySegment(newSegment);
+            CurrentLog = newSegment;
 
-            FindTrack();
+            InitializeChannelEnable();
+
+            FindTrack(CurrentLog);
 
             InitializeStartFinish();
+
+            DisplaySegments(CurrentLog);
+
+            if (_lineRoutes.Any())
+                gMap.ZoomAndCenterRoute(_lineRoutes.FirstOrDefault());
 
             if (_track != null)
                 AnalyzeCurrentLog();
@@ -130,14 +168,14 @@ namespace DatalogAnalyzer
             {
                 if (MessageBox.Show(this, text: "Can't find existing track matching this log. Do you want to create a new track?", caption: "Track not identified", buttons: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    var editor = new TrackEditor(segment: CurrentSegment);
+                    var editor = new TrackEditor(segment: CurrentLog);
                     editor.ShowDialog(this);
 
                     if (editor.Saved)
                     {
                         _trackRepository.Tracks.Add(editor.Track);
 
-                        FindTrack();
+                        FindTrack(CurrentLog);
 
                         if (_track != null)
                         {
@@ -149,15 +187,26 @@ namespace DatalogAnalyzer
             }
         }
 
-        private void DisplaySegment(LogSegment newSegment)
+        private void ClearMap()
         {
-            CurrentSegment = newSegment;
+            _accellerationOverlay?.Clear();
+            _lineOverlay?.Clear();
+            _lineRoutes?.Clear();
+        }
 
-            InitializeChannelEnable();
+        private void DisplaySegments(params LogSegment[] segments)
+        {
+            _displayedSegments.Clear();
+            _displayedSegments.AddRange(segments);
 
-            RenderTrack();
             InitializeChartSeries();
-            RefreshGraph();
+            ClearMap();
+
+            foreach (var displayedSegment in _displayedSegments)
+            {
+                RenderTrack(displayedSegment, RandomColors.GetNext());
+                RefreshGraph();
+            }
         }
 
         private void InitializeStartFinish()
@@ -176,29 +225,29 @@ namespace DatalogAnalyzer
             }
         }
 
-        private void FindTrack()
+        private void FindTrack(LogSegment segment)
         {
             int index = 0;
             _track = null;
 
             while (_track == null)
             {
-                if (index >= CurrentSegment.Entries.Count)
+                if (index >= segment.Entries.Count)
                     break;
 
-                _track = _trackRepository.FindTrackAt(CurrentSegment.Entries[index].Position);
+                _track = _trackRepository.FindTrackAt(segment.Entries[index].Position);
 
                 index += 200;
             }
         }
 
-        private void RenderTrack()
+        private void RenderTrack(LogSegment segment, Color strokeColor)
         {
-            var latitudes = CurrentSegment.Entries.Select(e => e.Latitude);
+            var latitudes = segment.Entries.Select(e => e.Latitude);
             var minLat = latitudes.Min();
             var maxLat = latitudes.Max();
 
-            var longitudes = CurrentSegment.Entries.Select(e => e.Longitude);
+            var longitudes = segment.Entries.Select(e => e.Longitude);
             var minLon = longitudes.Min();
             var maxLon = longitudes.Max();
 
@@ -207,8 +256,9 @@ namespace DatalogAnalyzer
 
             gMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
 
-            _lineRoute = new GMapRoute("Route");
-            _lineRoute.Stroke = new Pen(Color.CornflowerBlue, 2.0f);
+            var route = new GMapRoute("Route");
+            route.Stroke = new Pen(strokeColor, 2.0f);
+            _lineRoutes.Add(route);
 
             if (_lineOverlay == null)
             {
@@ -233,7 +283,7 @@ namespace DatalogAnalyzer
             int accellerationCount = 0;
             var currentAccellerationPositive = true;
 
-            foreach (var logEntry in CurrentSegment.Entries)
+            foreach (var logEntry in segment.Entries)
             {
                 if ((logEntry.Latitude == prevLat) && (logEntry.Longitude == prevLong))
                     continue;
@@ -244,19 +294,23 @@ namespace DatalogAnalyzer
                 if (logEntry.SpeedAccuracy > 5)
                     continue;
 
+                var latLng = new PointLatLng(
+                    logEntry.Latitude + _track?.LatLongCorrection.Lat ?? 0.0,
+                    logEntry.Longitude + _track?.LatLongCorrection.Lng ?? 0.0);
+
                 if (currentAccellerationRoute == null)
                 {
                     if (logEntry.Accelleration > Settings.AccelleratingThreshold)
                     {
                         currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
-                        currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                        currentAccellerationRoute.Points.Add(latLng);
                         currentAccellerationRoute.Stroke = new Pen(Color.Green, 3.0f);
                         currentAccellerationPositive = true;
                     }
                     else if (logEntry.Accelleration < Settings.BrakingThreshold)
                     {
                         currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
-                        currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                        currentAccellerationRoute.Points.Add(latLng);
                         currentAccellerationRoute.Stroke = new Pen(Color.Red, 3.0f);
                         currentAccellerationPositive = false;
                     }
@@ -268,40 +322,34 @@ namespace DatalogAnalyzer
                 }
                 else
                 {
-                    currentAccellerationRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                    currentAccellerationRoute.Points.Add(latLng);
                 }
 
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
-                _lineRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                route.Points.Add(latLng);
             }
 
-            var directions = new GDirections();
-            directions.Route = _lineRoute.Points;
-
-            _lineOverlay.Clear();
-            _lineOverlay.Routes.Add(_lineRoute);
-
-            gMap.ZoomAndCenterRoute(_lineRoute);
+            _lineOverlay.Routes.Add(route);
 
             _mapMarker = null;
 
             toggleAccelerationButton.BackColor = _accellerationOverlay.IsVisibile ? _enabledColor : _disabledColor;
         }
 
-        private void RefreshGraph(DataChannel channel)
+        private void RefreshGraph(LogSegment segment, DataChannel channel)
         {
-            if (CurrentSegment == null)
+            if (segment == null)
                 return;
 
-            channel.ClearChart();
+            channel.ClearCharts();
 
             var nextEntry = TimeSpan.Zero;
 
-            foreach (var logEntry in CurrentSegment.Entries)
+            foreach (var logEntry in segment.Entries)
             {
-                var timeStamp = logEntry.GetTimeSpan(CurrentSegment.LogStart);
+                var timeStamp = logEntry.GetTimeSpan(segment.LogStart);
 
                 if (timeStamp < nextEntry)
                     continue;
@@ -310,33 +358,44 @@ namespace DatalogAnalyzer
 
                 if (ChannelEnabled[channel])
                 {
-                    channel.ChartSeries.Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, channel.Value(logEntry));
+                    channel.ChartSeries[segment].Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, channel.Value(logEntry));
                 }
             }
         }
 
-        private void RefreshGraph()
+        private void RefreshGraph(DataChannel channel = null)
         {
-            if (CurrentSegment == null)
+            foreach (var segment in _displayedSegments)
+            {
+                if (channel == null)
+                    RefreshGraph(segment);
+                else
+                    RefreshGraph(segment, channel);
+            }
+        }
+
+        private void RefreshGraph(LogSegment segment)
+        {
+            if (segment == null)
                 return;
 
             foreach (var dataChannel in _channelManager.Channels)
             {
-                dataChannel.ClearChart();
+                dataChannel.ChartSeries[segment].Points.Clear();
             }
 
-            speedChart.Series[0].Points.Clear();
-            speedChart.Series[1].Points.Clear();
-            speedChart.Series[2].Points.Clear();
-            speedChart.Series[3].Points.Clear();
-
+            segment.SpeedSeries.Points.Clear();
+            segment.AccelerationSeries.Points.Clear();
+            segment.SpeedAccuracySeries.Points.Clear();
+            segment.DeltaSeries.Points.Clear();
+            
             var nextEntry = TimeSpan.Zero;
             var nextAcceleration = TimeSpan.Zero;
             var accelerationInterval = TimeSpan.FromMilliseconds(500);
 
-            foreach (var logEntry in CurrentSegment.Entries)
+            foreach (var logEntry in segment.Entries)
             {
-                var timeStamp = logEntry.GetTimeSpan(CurrentSegment.LogStart);
+                var timeStamp = logEntry.GetTimeSpan(segment.LogStart);
 
                 if (timeStamp < nextEntry)
                     continue;
@@ -348,31 +407,31 @@ namespace DatalogAnalyzer
                 {
                     if (ChannelEnabled[channel])
                     {
-                        channel.ChartSeries.Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, channel.Value(logEntry));
+                        channel.ChartSeries[segment].Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, channel.Value(logEntry));
                     }
                 }
 
 
                 if (_showSpeed && (logEntry.SpeedAccuracy < 5.0))
                 {
-                    speedChart.Series[0].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, logEntry.Speed);
+                    segment.SpeedSeries.Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, logEntry.Speed);
                 }
 
                 if (_showSpeedAccuracy)
                 {
-                    speedChart.Series[1].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, logEntry.SpeedAccuracy);
+                    segment.SpeedAccuracySeries.Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, logEntry.SpeedAccuracy);
                 }
 
                 if (_showDelta)
                 {
-                    speedChart.Series[2].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, Math.Min(logEntry.Delta/1000, 100));
+                    segment.DeltaSeries.Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, Math.Min(logEntry.Delta/1000, 100));
                 }
 
                 if (timeStamp > nextAcceleration)
                 {
                     nextAcceleration = timeStamp + accelerationInterval;
 
-                    speedChart.Series[3].Points.AddXY(logEntry.GetTimeSpan(CurrentSegment.LogStart).TotalSeconds, logEntry.Accelleration);
+                    segment.AccelerationSeries.Points.AddXY(logEntry.GetTimeSpan(segment.LogStart).TotalSeconds, logEntry.Accelleration);
                 }
             }
         }
@@ -383,29 +442,61 @@ namespace DatalogAnalyzer
             tempChart.Series.Clear();
             sensorChart.Series.Clear();
 
-            speedChart.Series.Add(new Series
+            foreach (var segment in _displayedSegments)
             {
-                Color = Color.DarkOrange, Name = "Speed (km/h)", ChartType = SeriesChartType.Spline
-            });
+                if (segment.SpeedSeries == null)
+                {
+                    segment.SpeedSeries = new Series
+                    {
+                        Name = $"Speed (km/h) ({segment.Name})",
+                        LegendText = $"Speed (km/h) ({segment.Name})",
+                        ChartType = SeriesChartType.FastLine,
+                        Color = Color.DarkOrange
+                    };
+                }
 
-            speedChart.Series.Add(new Series
-            {
-                Color = Color.DarkBlue, Name = "Speed Accuracy (m/s)", ChartType = SeriesChartType.FastLine
-            });
+                if (segment.SpeedAccuracySeries == null)
+                {
+                    segment.SpeedAccuracySeries = new Series
+                    {
+                        Name = $"Speed Accuracy (m/s) ({segment.Name})",
+                        LegendText = $"Speed Accuracy (m/s) ({segment.Name})",
+                        ChartType = SeriesChartType.FastLine,
+                        Color = Color.DarkBlue
+                    };
+                }
 
-            speedChart.Series.Add(new Series
-            {
-                Color = Color.CornflowerBlue, Name = "Delta", ChartType = SeriesChartType.FastLine
-            });
+                if (segment.AccelerationSeries == null)
+                {
+                    segment.AccelerationSeries = new Series
+                    {
+                        Name = $"Acceleration (m/s2) ({segment.Name})",
+                        LegendText = $"Acceleration (m/s2) ({segment.Name})",
+                        ChartType = SeriesChartType.FastLine,
+                        Color = Color.Crimson
+                    };
+                }
 
-            speedChart.Series.Add(new Series
-            {
-                Color = Color.Red, Name = "Acceleration", ChartType = SeriesChartType.Spline
-            });
+                if (segment.DeltaSeries == null)
+                {
+                    segment.DeltaSeries = new Series
+                    {
+                        Name = $"Delta ({segment.Name})",
+                        LegendText = $"Delta ({segment.Name})",
+                        ChartType = SeriesChartType.FastLine,
+                        Color = Color.CornflowerBlue
+                    };
+                }
 
-            foreach (var channel in _channelManager.Channels)
-            {
-                AddChartSeries(channel);
+                speedChart.Series.Add(segment.SpeedSeries);
+                speedChart.Series.Add(segment.SpeedAccuracySeries);
+                speedChart.Series.Add(segment.AccelerationSeries);
+                speedChart.Series.Add(segment.DeltaSeries);
+                
+                foreach (var channel in _channelManager.Channels)
+                {
+                    AddChartSeries(segment, channel);
+                }
             }
         }
 
@@ -493,10 +584,10 @@ namespace DatalogAnalyzer
             if (cursor < 0.1)
                 return;
 
-            var closestEntry = CurrentSegment.GetClosestEntry(cursor);
-            var lastEntry = CurrentSegment.Entries.Last();
+            var closestEntry = CurrentLog.GetClosestEntry(cursor);
+            var lastEntry = CurrentLog.Entries.Last();
 
-            LoadLog(CurrentSegment.SubSet(closestEntry, lastEntry));
+            LoadLog(CurrentLog.SubSet("AFTER", closestEntry, lastEntry));
         }
 
         private void keepBeforeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -506,10 +597,10 @@ namespace DatalogAnalyzer
             if (cursor < 0.1)
                 return;
 
-            var closestEntry = CurrentSegment.GetClosestEntry(cursor);
-            var firstEntry = CurrentSegment.Entries.First();
+            var closestEntry = CurrentLog.GetClosestEntry(cursor);
+            var firstEntry = CurrentLog.Entries.First();
 
-            LoadLog(CurrentSegment.SubSet(firstEntry, closestEntry));
+            LoadLog(CurrentLog.SubSet("BEFORE", firstEntry, closestEntry));
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -544,7 +635,7 @@ namespace DatalogAnalyzer
             {
                 try
                 {
-                    CurrentSegment.Save(saveFileDialog.FileName);
+                    CurrentLog.Save(saveFileDialog.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -555,7 +646,7 @@ namespace DatalogAnalyzer
 
         private void MoveCursor(int x, int y)
         {
-            if (CurrentSegment == null)
+            if (CurrentLog == null)
                 return;
 
             var newPosition = gMap.FromLocalToLatLng(x, y);
@@ -598,7 +689,7 @@ namespace DatalogAnalyzer
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_track == null)
-                FindTrack();
+                FindTrack(CurrentLog);
 
             if (_track != null)
                 AnalyzeCurrentLog();
@@ -606,7 +697,10 @@ namespace DatalogAnalyzer
 
         private void AnalyzeCurrentLog()
         {
-            _analysis = new SessionAnalysis(CurrentSegment, _track);
+            if (CurrentLog == null)
+                return;
+
+            _analysis = new SessionAnalysis(CurrentLog, _track);
 
             logWindow.Clear();
             segmentsList.Items.Clear();
@@ -657,8 +751,8 @@ namespace DatalogAnalyzer
 
             var lap = (LapAnalysis) segmentsList.SelectedItems[0].Tag;
 
-            if (lap.Sections[sectionIndex].Segment != CurrentSegment)
-                DisplaySegment(lap.Sections[sectionIndex].Segment);
+            if (lap.Sections[sectionIndex].Segment != CurrentLog)
+                DisplaySegments(lap.Sections[sectionIndex].Segment);
         }
 
         private void AddLap(string text, LogSegment lap)
@@ -700,24 +794,24 @@ namespace DatalogAnalyzer
             {
                 var segment = (LogSegment) segmentsList.SelectedItems[0].Tag;
 
-                if (segment != CurrentSegment)
-                    DisplaySegment(segment);
+                if (segment != CurrentLog)
+                    DisplaySegments(segment);
             }
             else if (segmentsList.SelectedItems[0].Tag is LapAnalysis)
             {
                 var lap = (LapAnalysis) segmentsList.SelectedItems[0].Tag;
 
-                if (lap.Segment != CurrentSegment)
-                    DisplaySegment(lap.Segment);
+                if (lap.Segment != CurrentLog)
+                    DisplaySegments(lap.Segment);
             }
         }
 
         private void MoveMapMarker(double timeStamp)
         {
-            if (CurrentSegment == null)
+            if (CurrentLog == null)
                 return;
 
-            var closestEntry = CurrentSegment.GetClosestEntry(timeStamp);
+            var closestEntry = CurrentLog.GetClosestEntry(timeStamp);
 
             if (_mapMarker == null)
             {
@@ -782,10 +876,10 @@ namespace DatalogAnalyzer
                 viewStart = 0.0;
                 viewEnd = zoomLevel;
             }
-            else if (_graphCursorX > CurrentSegment.Length.TotalSeconds - zoomLevel)
+            else if (_graphCursorX > CurrentLog.Length.TotalSeconds - zoomLevel)
             {
-                viewStart = CurrentSegment.Length.TotalSeconds - zoomLevel;
-                viewEnd = CurrentSegment.Length.TotalSeconds;
+                viewStart = CurrentLog.Length.TotalSeconds - zoomLevel;
+                viewEnd = CurrentLog.Length.TotalSeconds;
             }
             else
             {
@@ -800,9 +894,9 @@ namespace DatalogAnalyzer
 
         private void segmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ZoomGraphs(CurrentSegment.Length.TotalSeconds);
+            ZoomGraphs(CurrentLog.Length.TotalSeconds);
 
-            _interval = TimeSpan.FromMilliseconds(Math.Min(CurrentSegment.Length.TotalSeconds, 500.0));
+            _interval = TimeSpan.FromMilliseconds(Math.Min(CurrentLog.Length.TotalSeconds, 500.0));
             RefreshGraph();
         }
 
@@ -869,13 +963,13 @@ namespace DatalogAnalyzer
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var editor = new TrackEditor(segment: CurrentSegment);
+            var editor = new TrackEditor(segment: CurrentLog);
             editor.ShowDialog(this);
         }
 
         private void openLibraryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var library = new TrackLibrary(_trackRepository);
+            var library = new TrackLibrary(_trackRepository, _displayedSegments.FirstOrDefault());
             library.ShowDialog(this);
         }
 
@@ -884,20 +978,23 @@ namespace DatalogAnalyzer
             if (segmentsList.SelectedIndices.Count == 0)
                 return;
 
-            if (segmentsList.SelectedItems[0].Tag is LogSegment)
-            {
-                var segment = (LogSegment) segmentsList.SelectedItems[0].Tag;
+            var selectedSegments = new List<LogSegment>();
 
-                if (segment != CurrentSegment)
-                    DisplaySegment(segment);
-            }
-            else if (segmentsList.SelectedItems[0].Tag is LapAnalysis)
+            foreach (ListViewItem selectedItem in segmentsList.SelectedItems)
             {
-                var lap = (LapAnalysis) segmentsList.SelectedItems[0].Tag;
-
-                if (lap.Segment != CurrentSegment)
-                    DisplaySegment(lap.Segment);
+                if (selectedItem.Tag is LogSegment)
+                {
+                    var segment = (LogSegment) selectedItem.Tag;
+                    selectedSegments.Add(segment);
+                }
+                else if (selectedItem.Tag is LapAnalysis)
+                {
+                    var lap = (LapAnalysis) selectedItem.Tag;
+                    selectedSegments.Add(lap.Segment);
+                }
             }
+            
+            DisplaySegments(selectedSegments.ToArray());
         }
 
         private void toggleAccelerationButton_Click(object sender, EventArgs e)

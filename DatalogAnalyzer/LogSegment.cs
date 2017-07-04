@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 
@@ -22,11 +23,18 @@ namespace DatalogAnalyzer
         public double TopSpeed { get; private set; }
         public double LowestSpeed { get; private set; }
 
-        public LogSegment(LogStart logStart, List<LogEntry> entries)
+        public Series SpeedSeries { get; set; }
+        public Series SpeedAccuracySeries { get; set; }
+        public Series AccelerationSeries { get; set; }
+        public Series DeltaSeries { get; set; }
+        public string Name { get; set; }
+
+        public LogSegment(LogStart logStart, List<LogEntry> entries, string name)
         {
             LogStart = logStart;
             Entries = entries;
             ValueCount = entries.Select(e => e.Values.Count).Max();
+            Name = name;
 
             InitializeStats();
         }
@@ -181,17 +189,17 @@ namespace DatalogAnalyzer
             return sortedEntries.First();
         }
 
-        public LogSegment SubSet(LogEntry start, LogEntry end = null)
+        public LogSegment SubSet(string name, LogEntry start, LogEntry end = null)
         {
             var startIndex = Entries.IndexOf(start);
             var endIndex = Entries.IndexOf(end);
 
             var count = endIndex - startIndex + 1;
 
-            return SubSet(startIndex, count);
+            return SubSet(name, startIndex, count);
         }
 
-        public LogSegment SubSet(int startIndex, int count = 0)
+        public LogSegment SubSet(string name, int startIndex, int count = 0)
         {
             if (count == 0)
                 count = Entries.Count - startIndex;
@@ -201,10 +209,10 @@ namespace DatalogAnalyzer
 
             var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).Ticks);
 
-            return new LogSegment(logStart, entries.Skip(1).ToList());
+            return new LogSegment(logStart, entries.Skip(1).ToList(), name);
         }
 
-        public GMapRoute GetMapRoute()
+        public GMapRoute GetMapRoute(Track track = null)
         {
             var lineRoute = new GMapRoute("Route")
             {
@@ -227,7 +235,9 @@ namespace DatalogAnalyzer
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
-                lineRoute.Points.Add(new PointLatLng(logEntry.Latitude, logEntry.Longitude));
+                lineRoute.Points.Add(new PointLatLng(
+                    logEntry.Latitude + track?.LatLongCorrection.Lat ?? 0.0, 
+                    logEntry.Longitude + track?.LatLongCorrection.Lng ?? 0.0));
             }
 
             return lineRoute;

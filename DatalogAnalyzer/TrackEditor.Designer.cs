@@ -48,6 +48,8 @@
             this.sectionStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backwardsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forwardsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gPSCorrectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defineToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,6 +110,7 @@
             this.fileToolStripMenuItem,
             this.startFinishToolStripMenuItem,
             this.areaToolStripMenuItem,
+            this.gPSCorrectionToolStripMenuItem,
             this.polygonToolStripMenuItem,
             this.newSectionToolStripMenuItem,
             this.finishSectionToolStripMenuItem,
@@ -155,14 +158,14 @@
             // showHideToolStripMenuItem
             // 
             this.showHideToolStripMenuItem.Name = "showHideToolStripMenuItem";
-            this.showHideToolStripMenuItem.Size = new System.Drawing.Size(184, 30);
+            this.showHideToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.showHideToolStripMenuItem.Text = "Show/Hide";
             this.showHideToolStripMenuItem.Click += new System.EventHandler(this.showHideToolStripMenuItem_Click);
             // 
             // defineToolStripMenuItem
             // 
             this.defineToolStripMenuItem.Name = "defineToolStripMenuItem";
-            this.defineToolStripMenuItem.Size = new System.Drawing.Size(184, 30);
+            this.defineToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.defineToolStripMenuItem.Text = "Define";
             this.defineToolStripMenuItem.Click += new System.EventHandler(this.defineToolStripMenuItem_Click);
             // 
@@ -178,14 +181,14 @@
             // showHideToolStripMenuItem1
             // 
             this.showHideToolStripMenuItem1.Name = "showHideToolStripMenuItem1";
-            this.showHideToolStripMenuItem1.Size = new System.Drawing.Size(184, 30);
+            this.showHideToolStripMenuItem1.Size = new System.Drawing.Size(210, 30);
             this.showHideToolStripMenuItem1.Text = "Show/Hide";
             this.showHideToolStripMenuItem1.Click += new System.EventHandler(this.showHideToolStripMenuItem1_Click);
             // 
             // defineToolStripMenuItem1
             // 
             this.defineToolStripMenuItem1.Name = "defineToolStripMenuItem1";
-            this.defineToolStripMenuItem1.Size = new System.Drawing.Size(184, 30);
+            this.defineToolStripMenuItem1.Size = new System.Drawing.Size(210, 30);
             this.defineToolStripMenuItem1.Text = "Define";
             this.defineToolStripMenuItem1.Click += new System.EventHandler(this.defineToolStripMenuItem1_Click);
             // 
@@ -232,16 +235,31 @@
             // backwardsToolStripMenuItem
             // 
             this.backwardsToolStripMenuItem.Name = "backwardsToolStripMenuItem";
-            this.backwardsToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.backwardsToolStripMenuItem.Size = new System.Drawing.Size(179, 30);
             this.backwardsToolStripMenuItem.Text = "Backwards";
             this.backwardsToolStripMenuItem.Click += new System.EventHandler(this.backwardsToolStripMenuItem_Click);
             // 
             // forwardsToolStripMenuItem
             // 
             this.forwardsToolStripMenuItem.Name = "forwardsToolStripMenuItem";
-            this.forwardsToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.forwardsToolStripMenuItem.Size = new System.Drawing.Size(179, 30);
             this.forwardsToolStripMenuItem.Text = "Forwards";
             this.forwardsToolStripMenuItem.Click += new System.EventHandler(this.forwardsToolStripMenuItem_Click);
+            // 
+            // gPSCorrectionToolStripMenuItem
+            // 
+            this.gPSCorrectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defineToolStripMenuItem2});
+            this.gPSCorrectionToolStripMenuItem.Name = "gPSCorrectionToolStripMenuItem";
+            this.gPSCorrectionToolStripMenuItem.Size = new System.Drawing.Size(143, 29);
+            this.gPSCorrectionToolStripMenuItem.Text = "GPS Correction";
+            // 
+            // defineToolStripMenuItem2
+            // 
+            this.defineToolStripMenuItem2.Name = "defineToolStripMenuItem2";
+            this.defineToolStripMenuItem2.Size = new System.Drawing.Size(210, 30);
+            this.defineToolStripMenuItem2.Text = "Define";
+            this.defineToolStripMenuItem2.Click += new System.EventHandler(this.defineToolStripMenuItem2_Click);
             // 
             // TrackEditor
             // 
@@ -286,5 +304,7 @@
         private System.Windows.Forms.ToolStripMenuItem sectionStartToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem backwardsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forwardsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gPSCorrectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defineToolStripMenuItem2;
     }
 }

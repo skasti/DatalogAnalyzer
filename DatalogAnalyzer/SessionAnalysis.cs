@@ -43,9 +43,9 @@ namespace DatalogAnalyzer
                 else if (latestInside != null)
                 {
                     if (previousEntry == null)
-                        LeadIn = Segment.SubSet(Segment.Entries.First(), entry);
+                        LeadIn = Segment.SubSet("Lead in", Segment.Entries.First(), entry);
                     else
-                        laps.Add(Segment.SubSet(previousEntry, entry));
+                        laps.Add(Segment.SubSet($"Lap {laps.Count + 1}", previousEntry, entry));
 
                     previousEntry = entry;
                     latestInside = null;
@@ -53,7 +53,7 @@ namespace DatalogAnalyzer
             }
 
             if (previousEntry != null)
-                LeadOut = Segment.SubSet(previousEntry, Segment.Entries.Last());
+                LeadOut = Segment.SubSet("Lead out", previousEntry, Segment.Entries.Last());
 
             return laps.Select(lapSegment => new LapAnalysis(Track, lapSegment)).ToList();
         }

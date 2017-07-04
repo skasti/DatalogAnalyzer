@@ -17,10 +17,12 @@ namespace DatalogAnalyzer
         private readonly Dictionary<Track, ListViewItem> _trackItems = new Dictionary<Track, ListViewItem>();
         private Track _selectedTrack;
         private GMapOverlay _mapOverlay = new GMapOverlay();
+        private LogSegment _activeSegment;
 
-        public TrackLibrary(TrackRepository repository)
+        public TrackLibrary(TrackRepository repository, LogSegment activeSegment)
         {
             _repository = repository;
+            _activeSegment = activeSegment;
             InitializeComponent();
 
             InitializeTrackList();
@@ -53,7 +55,7 @@ namespace DatalogAnalyzer
 
         private void newTrackToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var editor = new TrackEditor();
+            var editor = new TrackEditor(null, _activeSegment);
             editor.ShowDialog(this);
 
             if (editor.Saved)
@@ -68,7 +70,7 @@ namespace DatalogAnalyzer
             if (_selectedTrack == null)
                 return;
 
-            var editor = new TrackEditor(_selectedTrack);
+            var editor = new TrackEditor(_selectedTrack, _activeSegment);
             editor.ShowDialog(this);
 
             UpdateListItem(_selectedTrack);

@@ -52,7 +52,7 @@ namespace DatalogAnalyzer
                     }
                     else
                     {
-                        var sectionSegment = Segment.SubSet(firstInside, entry);
+                        var sectionSegment = Segment.SubSet($"Sector {sectionIndex + 1}", firstInside, entry);
                         var sectionAnalysis = new LapSectionAnalysis(Track, Track.Sections[sectionIndex], sectionSegment);
 
                         sections.Add(sectionAnalysis);
