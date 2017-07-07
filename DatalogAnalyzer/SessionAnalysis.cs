@@ -37,7 +37,7 @@ namespace DatalogAnalyzer
 
             foreach (var entry in Segment.Entries)
             {
-                var latLong = new PointLatLng(entry.Latitude, entry.Longitude);
+                var latLong = entry.Position(Track);
                 if (Track.StartFinishPolygon.IsInside(latLong))
                     latestInside = entry;
                 else if (latestInside != null)

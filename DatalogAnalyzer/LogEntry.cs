@@ -82,8 +82,17 @@ namespace DatalogAnalyzer
         public double Accelleration { get; set; } = 0.0;
         public List<double> Values { get; }
 
-        [JsonIgnore]
-        public PointLatLng Position => new PointLatLng(Latitude, Longitude);
+        public PointLatLng Position(Track track = null)
+        {
+            if (track?.LatLongCorrection != null)
+            {
+                return new PointLatLng(
+                    Latitude + track?.LatLongCorrection.Lat ?? 0.0,
+                    Longitude + track?.LatLongCorrection.Lng ?? 0.0);
+            }
+
+            return new PointLatLng(Latitude,Longitude);
+        } 
 
         public DateTime GetTimeStamp(LogStart logStart)
         {

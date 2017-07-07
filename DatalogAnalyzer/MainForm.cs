@@ -33,7 +33,6 @@ namespace DatalogAnalyzer
 
         private GMapOverlay _lineOverlay = null;
         private GMapOverlay _startFinishOverlay = null;
-        private GMapMarker _mapMarker = null;
         private List<GMapRoute> _lineRoutes = new List<GMapRoute>();
         private GMapOverlay _accellerationOverlay = null;
 
@@ -235,7 +234,7 @@ namespace DatalogAnalyzer
                 if (index >= segment.Entries.Count)
                     break;
 
-                _track = _trackRepository.FindTrackAt(segment.Entries[index].Position);
+                _track = _trackRepository.FindTrackAt(segment.Entries[index].Position());
 
                 index += 200;
             }
@@ -294,9 +293,7 @@ namespace DatalogAnalyzer
                 if (logEntry.SpeedAccuracy > 5)
                     continue;
 
-                var latLng = new PointLatLng(
-                    logEntry.Latitude + _track?.LatLongCorrection.Lat ?? 0.0,
-                    logEntry.Longitude + _track?.LatLongCorrection.Lng ?? 0.0);
+                var latLng = logEntry.Position(_track);
 
                 if (currentAccellerationRoute == null)
                 {
@@ -332,8 +329,6 @@ namespace DatalogAnalyzer
             }
 
             _lineOverlay.Routes.Add(route);
-
-            _mapMarker = null;
 
             toggleAccelerationButton.BackColor = _accellerationOverlay.IsVisibile ? _enabledColor : _disabledColor;
         }
@@ -808,19 +803,16 @@ namespace DatalogAnalyzer
 
         private void MoveMapMarker(double timeStamp)
         {
-            if (CurrentLog == null)
+            if (!_displayedSegments.Any())
                 return;
 
-            var closestEntry = CurrentLog.GetClosestEntry(timeStamp);
+            _lineOverlay.Markers.Clear();
 
-            if (_mapMarker == null)
+            foreach (var segment in _displayedSegments)
             {
-                _mapMarker = new GMarkerGoogle(new PointLatLng(closestEntry.Latitude, closestEntry.Longitude), GMarkerGoogleType.red_pushpin);
-                _lineOverlay.Markers.Add(_mapMarker);
-            }
-            else
-            {
-                _mapMarker.Position = new PointLatLng(closestEntry.Latitude, closestEntry.Longitude);
+                var closestEntry = segment.GetClosestEntry(timeStamp);
+                var mapMarker = new GMarkerGoogle(closestEntry.Position(_track), GMarkerGoogleType.red_pushpin);
+                _lineOverlay.Markers.Add(mapMarker);
             }
         }
 

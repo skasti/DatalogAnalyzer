@@ -235,9 +235,7 @@ namespace DatalogAnalyzer
                 prevLat = logEntry.Latitude;
                 prevLong = logEntry.Longitude;
 
-                lineRoute.Points.Add(new PointLatLng(
-                    logEntry.Latitude + track?.LatLongCorrection.Lat ?? 0.0, 
-                    logEntry.Longitude + track?.LatLongCorrection.Lng ?? 0.0));
+                lineRoute.Points.Add(logEntry.Position(track));
             }
 
             return lineRoute;

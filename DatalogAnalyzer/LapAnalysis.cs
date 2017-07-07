@@ -38,7 +38,7 @@ namespace DatalogAnalyzer
 
             foreach (var entry in Segment.Entries)
             {
-                var latLong = new PointLatLng(entry.Latitude, entry.Longitude);
+                var latLong = entry.Position(Track);
                 int entrySection = GetSectionIndex(latLong);
 
                 if ((entrySection == sectionIndex) && (sectionIndex == -1))
