@@ -18,6 +18,9 @@ namespace DatalogAnalyzer.DataChannels
         public double Scaling { get; set; }
         public int IconIndex { get; set; } = 0;
 
+        private double[] Buffer = new double[10];
+        private int bufferIndex = 0;
+
         [JsonIgnore]
         public Dictionary<LogSegment, Series> ChartSeries { get; set; } = new Dictionary<LogSegment, Series>();
 
@@ -39,7 +42,12 @@ namespace DatalogAnalyzer.DataChannels
 
         public virtual double Value(LogEntry entry)
         {
-            return (Raw(entry) - ZeroPoint) * Scaling;
+            Buffer[bufferIndex++] = (Raw(entry) - ZeroPoint) * Scaling;
+
+            if (bufferIndex >= Buffer.Length)
+                bufferIndex = 0;
+
+            return Buffer.Average();
         }
 
         public virtual DataChannelEditor CreateEditor()
