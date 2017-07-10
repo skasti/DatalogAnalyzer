@@ -81,6 +81,7 @@
             this.sensorChartTab = new System.Windows.Forms.TabPage();
             this.tempChartTab = new System.Windows.Forms.TabPage();
             this.toggleAccelerationButton = new System.Windows.Forms.Button();
+            this.lapColors = new System.Windows.Forms.ImageList(this.components);
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sensorChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tempChart)).BeginInit();
@@ -197,27 +198,27 @@
             this.keepBeforeToolStripMenuItem,
             this.keepAfterToolStripMenuItem});
             this.splitToolStripMenuItem.Name = "splitToolStripMenuItem";
-            this.splitToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.splitToolStripMenuItem.Size = new System.Drawing.Size(202, 30);
             this.splitToolStripMenuItem.Text = "Split";
             // 
             // keepBeforeToolStripMenuItem
             // 
             this.keepBeforeToolStripMenuItem.Name = "keepBeforeToolStripMenuItem";
-            this.keepBeforeToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.keepBeforeToolStripMenuItem.Size = new System.Drawing.Size(192, 30);
             this.keepBeforeToolStripMenuItem.Text = "Keep before";
             this.keepBeforeToolStripMenuItem.Click += new System.EventHandler(this.keepBeforeToolStripMenuItem_Click);
             // 
             // keepAfterToolStripMenuItem
             // 
             this.keepAfterToolStripMenuItem.Name = "keepAfterToolStripMenuItem";
-            this.keepAfterToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.keepAfterToolStripMenuItem.Size = new System.Drawing.Size(192, 30);
             this.keepAfterToolStripMenuItem.Text = "Keep after";
             this.keepAfterToolStripMenuItem.Click += new System.EventHandler(this.keepAfterToolStripMenuItem_Click);
             // 
             // newChannelsToolStripMenuItem
             // 
             this.newChannelsToolStripMenuItem.Name = "newChannelsToolStripMenuItem";
-            this.newChannelsToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
+            this.newChannelsToolStripMenuItem.Size = new System.Drawing.Size(202, 30);
             this.newChannelsToolStripMenuItem.Text = "Edit Channels";
             this.newChannelsToolStripMenuItem.Click += new System.EventHandler(this.newChannelsToolStripMenuItem_Click);
             // 
@@ -356,10 +357,10 @@
             this.segmentsList.Location = new System.Drawing.Point(3, 3);
             this.segmentsList.Name = "segmentsList";
             this.segmentsList.Size = new System.Drawing.Size(1158, 268);
+            this.segmentsList.SmallImageList = this.lapColors;
             this.segmentsList.TabIndex = 0;
             this.segmentsList.UseCompatibleStateImageBehavior = false;
             this.segmentsList.View = System.Windows.Forms.View.Details;
-            this.segmentsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.segmentsList_ItemSelectionChanged);
             this.segmentsList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.segmentsList_MouseDoubleClick);
             // 
             // indexColumn
@@ -542,6 +543,12 @@
             this.toggleAccelerationButton.UseVisualStyleBackColor = true;
             this.toggleAccelerationButton.Click += new System.EventHandler(this.toggleAccelerationButton_Click);
             // 
+            // lapColors
+            // 
+            this.lapColors.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.lapColors.ImageSize = new System.Drawing.Size(16, 16);
+            this.lapColors.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -618,6 +625,7 @@
         private System.Windows.Forms.TabPage lapsTab;
         private System.Windows.Forms.Button toggleAccelerationButton;
         private System.Windows.Forms.ToolStripMenuItem newChannelsToolStripMenuItem;
+        private System.Windows.Forms.ImageList lapColors;
     }
 }
 

@@ -47,6 +47,9 @@ namespace DatalogAnalyzer
         readonly TrackRepository _trackRepository = new TrackRepository();
         readonly ChannelManager _channelManager = new ChannelManager();
 
+        private Dictionary<LogSegment, Color> _trackColors = new Dictionary<LogSegment, Color>();
+        private Dictionary<Color, int> _colorImages = new Dictionary<Color, int>();
+
         public MainForm()
         {
             InitializeComponent();
@@ -203,7 +206,10 @@ namespace DatalogAnalyzer
 
             foreach (var displayedSegment in _displayedSegments)
             {
-                RenderTrack(displayedSegment, RandomColors.GetNext());
+                if (_trackColors.ContainsKey(displayedSegment))
+                    RenderTrack(displayedSegment, _trackColors[displayedSegment]);
+                else
+                    RenderTrack(displayedSegment, RandomColors.GetNext(Color.CornflowerBlue));
                 RefreshGraph();
             }
         }
@@ -443,10 +449,10 @@ namespace DatalogAnalyzer
                 {
                     segment.SpeedSeries = new Series
                     {
-                        Name = $"Speed (km/h) ({segment.Name})",
-                        LegendText = $"Speed (km/h) ({segment.Name})",
+                        Name = $"Speed ({segment.Name})",
+                        LegendText = $"Speed ({segment.Name})",
                         ChartType = SeriesChartType.FastLine,
-                        Color = Color.DarkOrange
+                        Color = RandomColors.GetNext(Color.DarkOrange)
                     };
                 }
 
@@ -454,10 +460,10 @@ namespace DatalogAnalyzer
                 {
                     segment.SpeedAccuracySeries = new Series
                     {
-                        Name = $"Speed Accuracy (m/s) ({segment.Name})",
-                        LegendText = $"Speed Accuracy (m/s) ({segment.Name})",
+                        Name = $"Accuracy ({segment.Name})",
+                        LegendText = $" Accuracy ({segment.Name})",
                         ChartType = SeriesChartType.FastLine,
-                        Color = Color.DarkBlue
+                        Color = RandomColors.GetNext(Color.DarkBlue)
                     };
                 }
 
@@ -465,10 +471,10 @@ namespace DatalogAnalyzer
                 {
                     segment.AccelerationSeries = new Series
                     {
-                        Name = $"Acceleration (m/s2) ({segment.Name})",
-                        LegendText = $"Acceleration (m/s2) ({segment.Name})",
+                        Name = $"Acceleration ({segment.Name})",
+                        LegendText = $"Acceleration ({segment.Name})",
                         ChartType = SeriesChartType.FastLine,
-                        Color = Color.Crimson
+                        Color = RandomColors.GetNext(Color.Crimson)
                     };
                 }
 
@@ -479,7 +485,7 @@ namespace DatalogAnalyzer
                         Name = $"Delta ({segment.Name})",
                         LegendText = $"Delta ({segment.Name})",
                         ChartType = SeriesChartType.FastLine,
-                        Color = Color.CornflowerBlue
+                        Color = RandomColors.GetNext(Color.CornflowerBlue)
                     };
                 }
 
@@ -701,12 +707,17 @@ namespace DatalogAnalyzer
             segmentsList.Items.Clear();
             LapContextMenu.Items.Clear();
 
+            var compareLaps = new ToolStripMenuItem("Compare Laps");
+            compareLaps.Click += compareLaps_Click;
+            LapContextMenu.Items.Add(compareLaps);
+
             segmentsList.Columns.Clear();
             segmentsList.Columns.Add("Lap", 100);
             segmentsList.Columns.Add("Laptime", 100);
             segmentsList.Columns.Add("Avg. Speed", 100);
             segmentsList.Columns.Add("Top Speed", 100);
             segmentsList.Columns.Add("Min. Speed", 100);
+            _trackColors.Clear();
 
             if (_analysis.Track.Sections != null)
             {
@@ -752,19 +763,51 @@ namespace DatalogAnalyzer
 
         private void AddLap(string text, LogSegment lap)
         {
-            var lvItem = new ListViewItem {Text = text};
+            Color lapColor = GetLapColor(lap);
+            var lvItem = new ListViewItem { Text = text };
             lvItem.SubItems.Add(lap.Length.ToString("hh\\:mm\\:ss\\.fff"));
             lvItem.Tag = lap;
+            lvItem.ImageIndex = GetColorImage(lapColor);
             segmentsList.Items.Add(lvItem);
+        }
+
+        private int GetColorImage(Color lapColor)
+        {
+            if (_colorImages.ContainsKey(lapColor))
+                return _colorImages[lapColor];
+
+            var image = new Bitmap(16,16);
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    image.SetPixel(x, y, lapColor);
+                }
+            }
+
+            lapColors.Images.Add(image);
+
+            _colorImages.Add(lapColor, lapColors.Images.Count - 1);
+
+            return _colorImages[lapColor];
+        }
+
+        private Color GetLapColor(LogSegment lap)
+        {
+            var lapColor = RandomColors.GetNext(Color.CornflowerBlue);
+            _trackColors.Add(lap, lapColor);
+            return lapColor;
         }
 
         private void AddLap(string text, LapAnalysis lap)
         {
+            var lapColor = GetLapColor(lap.Segment);
             var lvItem = new ListViewItem {Text = text};
             lvItem.SubItems.Add(lap.LapTime.ToString("hh\\:mm\\:ss\\.fff"));
             lvItem.SubItems.Add(lap.AverageSpeed.ToString("0.00"));
             lvItem.SubItems.Add(lap.TopSpeed.ToString("0.00"));
             lvItem.SubItems.Add(lap.LowestSpeed.ToString("0.00"));
+            lvItem.ImageIndex = GetColorImage(lapColor);
 
             if ((lap.Sections != null) && lap.Sections.Any())
             {
@@ -965,7 +1008,7 @@ namespace DatalogAnalyzer
             library.ShowDialog(this);
         }
 
-        private void segmentsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void compareLaps_Click(object sender, EventArgs e)
         {
             if (segmentsList.SelectedIndices.Count == 0)
                 return;

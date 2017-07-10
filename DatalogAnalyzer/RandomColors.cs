@@ -47,8 +47,17 @@ namespace DatalogAnalyzer
             return colors;
         }
 
-        public static Color GetNext()
+        /// <summary>
+        /// Gets a new random color based of the last one.
+        /// Use color parameter to get a color similar to a base.
+        /// </summary>
+        /// <param name="color">Base color on this one</param>
+        /// <returns></returns>
+        public static Color GetNext(Color? color = null)
         {
+            if (color != null)
+                lastColor = color.Value;
+
             // use the previous value as a mix color as demonstrated by David Crow
             // http://stackoverflow.com/a/43235/578411
             Color nextColor = Color.FromArgb(
