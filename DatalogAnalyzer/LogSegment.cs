@@ -175,18 +175,47 @@ namespace DatalogAnalyzer
             
         }
 
-        public LogEntry GetClosestEntry(double timeSpan)
+        public LogEntry GetClosestEntry(double timeSpan, int skip = 0)
         {
-            var sortedEntries = Entries.ToList();
-            sortedEntries.Sort((a, b) =>
+            int index;
+            return GetClosestEntry(timeSpan,out index, skip);
+        }
+
+        public LogEntry GetClosestEntry(double timeSpan, out int index, int skip = 0)
+        {
+            for (var i = skip; i < Entries.Count; i++)
             {
-                var aD = Math.Abs(timeSpan - a.GetTimeSpan(LogStart).TotalSeconds);
-                var bD = Math.Abs(timeSpan - b.GetTimeSpan(LogStart).TotalSeconds);
+                index = i;
+                var entry = Entries[i];
 
-                return aD.CompareTo(bD);
-            });
+                var entrySeconds = entry.GetTimeSpan(LogStart).TotalSeconds;
 
-            return sortedEntries.First();
+                if (entrySeconds < timeSpan)
+                    continue;
+
+                if (i == 0)
+                    return entry;
+
+                var previousEntry = Entries[i - 1];
+                var previousEntrySeconds = previousEntry.GetTimeSpan(LogStart).TotalSeconds;
+
+                if (timeSpan - previousEntrySeconds < entrySeconds - timeSpan)
+                    return previousEntry;
+
+                return entry;
+            }
+            index = Entries.Count - 1;
+            return Entries.LastOrDefault();
+            //var sortedEntries = Entries.ToList();
+            //sortedEntries.Sort((a, b) =>
+            //{
+            //    var aD = Math.Abs(timeSpan - a.GetTimeSpan(LogStart).TotalSeconds);
+            //    var bD = Math.Abs(timeSpan - b.GetTimeSpan(LogStart).TotalSeconds);
+
+            //    return aD.CompareTo(bD);
+            //});
+
+            //return sortedEntries.First();
         }
 
         public LogSegment SubSet(string name, LogEntry start, LogEntry end = null)

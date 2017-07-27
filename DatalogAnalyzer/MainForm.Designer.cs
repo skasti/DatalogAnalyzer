@@ -71,6 +71,7 @@
             this.indexColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LapContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.lapColors = new System.Windows.Forms.ImageList(this.components);
             this.sensorChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tempChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.speedChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -80,8 +81,10 @@
             this.speedChartTab = new System.Windows.Forms.TabPage();
             this.sensorChartTab = new System.Windows.Forms.TabPage();
             this.tempChartTab = new System.Windows.Forms.TabPage();
+            this.consoleTab = new System.Windows.Forms.TabPage();
             this.toggleAccelerationButton = new System.Windows.Forms.Button();
-            this.lapColors = new System.Windows.Forms.ImageList(this.components);
+            this.playbackTimer = new System.Windows.Forms.Timer(this.components);
+            this.togglePlaybackButton = new System.Windows.Forms.Button();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sensorChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tempChart)).BeginInit();
@@ -91,12 +94,13 @@
             this.speedChartTab.SuspendLayout();
             this.sensorChartTab.SuspendLayout();
             this.tempChartTab.SuspendLayout();
+            this.consoleTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // ChannelToggleButtonTemplate
             // 
             this.ChannelToggleButtonTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(12, 1000);
+            this.ChannelToggleButtonTemplate.Location = new System.Drawing.Point(12, 1003);
             this.ChannelToggleButtonTemplate.Name = "ChannelToggleButtonTemplate";
             this.ChannelToggleButtonTemplate.Size = new System.Drawing.Size(140, 42);
             this.ChannelToggleButtonTemplate.TabIndex = 1;
@@ -106,12 +110,11 @@
             // 
             // logWindow
             // 
-            this.logWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.logWindow.Location = new System.Drawing.Point(12, 1048);
+            this.logWindow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logWindow.Location = new System.Drawing.Point(3, 3);
             this.logWindow.Name = "logWindow";
             this.logWindow.ReadOnly = true;
-            this.logWindow.Size = new System.Drawing.Size(1172, 181);
+            this.logWindow.Size = new System.Drawing.Size(1158, 268);
             this.logWindow.TabIndex = 2;
             this.logWindow.Text = "";
             // 
@@ -126,7 +129,7 @@
             this.toggleDelta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleDelta.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleDelta.ForeColor = System.Drawing.Color.White;
-            this.toggleDelta.Location = new System.Drawing.Point(1099, 1000);
+            this.toggleDelta.Location = new System.Drawing.Point(1099, 1003);
             this.toggleDelta.Name = "toggleDelta";
             this.toggleDelta.Size = new System.Drawing.Size(81, 42);
             this.toggleDelta.TabIndex = 3;
@@ -320,7 +323,7 @@
             this.toggleSpeedAcc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeedAcc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeedAcc.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeedAcc.Location = new System.Drawing.Point(910, 1000);
+            this.toggleSpeedAcc.Location = new System.Drawing.Point(910, 1003);
             this.toggleSpeedAcc.Name = "toggleSpeedAcc";
             this.toggleSpeedAcc.Size = new System.Drawing.Size(183, 42);
             this.toggleSpeedAcc.TabIndex = 8;
@@ -333,7 +336,7 @@
             this.toggleSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.toggleSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toggleSpeed.ForeColor = System.Drawing.Color.White;
-            this.toggleSpeed.Location = new System.Drawing.Point(814, 1000);
+            this.toggleSpeed.Location = new System.Drawing.Point(814, 1003);
             this.toggleSpeed.Name = "toggleSpeed";
             this.toggleSpeed.Size = new System.Drawing.Size(90, 42);
             this.toggleSpeed.TabIndex = 9;
@@ -376,6 +379,12 @@
             this.LapContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.LapContextMenu.Name = "LapContextMenu";
             this.LapContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
+            // lapColors
+            // 
+            this.lapColors.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.lapColors.ImageSize = new System.Drawing.Size(16, 16);
+            this.lapColors.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // sensorChart
             // 
@@ -453,7 +462,7 @@
             this.gMap.GrayScaleMode = false;
             this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.gMap.LevelsKeepInMemmory = 5;
-            this.gMap.Location = new System.Drawing.Point(8, 38);
+            this.gMap.Location = new System.Drawing.Point(19, 38);
             this.gMap.MarkersEnabled = true;
             this.gMap.MaxZoom = 20;
             this.gMap.MinZoom = 1;
@@ -466,7 +475,7 @@
             this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(1172, 595);
+            this.gMap.Size = new System.Drawing.Size(1161, 598);
             this.gMap.TabIndex = 6;
             this.gMap.Zoom = 0D;
             this.gMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gMap_MouseDown);
@@ -482,7 +491,8 @@
             this.tabControl1.Controls.Add(this.speedChartTab);
             this.tabControl1.Controls.Add(this.sensorChartTab);
             this.tabControl1.Controls.Add(this.tempChartTab);
-            this.tabControl1.Location = new System.Drawing.Point(12, 687);
+            this.tabControl1.Controls.Add(this.consoleTab);
+            this.tabControl1.Location = new System.Drawing.Point(12, 690);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1172, 307);
@@ -532,35 +542,56 @@
             this.tempChartTab.Text = "Temperatures";
             this.tempChartTab.UseVisualStyleBackColor = true;
             // 
+            // consoleTab
+            // 
+            this.consoleTab.Controls.Add(this.logWindow);
+            this.consoleTab.Location = new System.Drawing.Point(4, 29);
+            this.consoleTab.Name = "consoleTab";
+            this.consoleTab.Padding = new System.Windows.Forms.Padding(3);
+            this.consoleTab.Size = new System.Drawing.Size(1164, 274);
+            this.consoleTab.TabIndex = 4;
+            this.consoleTab.Text = "Console";
+            this.consoleTab.UseVisualStyleBackColor = true;
+            // 
             // toggleAccelerationButton
             // 
             this.toggleAccelerationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.toggleAccelerationButton.Location = new System.Drawing.Point(984, 639);
+            this.toggleAccelerationButton.Location = new System.Drawing.Point(984, 642);
             this.toggleAccelerationButton.Name = "toggleAccelerationButton";
-            this.toggleAccelerationButton.Size = new System.Drawing.Size(200, 42);
+            this.toggleAccelerationButton.Size = new System.Drawing.Size(196, 42);
             this.toggleAccelerationButton.TabIndex = 11;
             this.toggleAccelerationButton.Text = "Acceleration Overlay";
             this.toggleAccelerationButton.UseVisualStyleBackColor = true;
             this.toggleAccelerationButton.Click += new System.EventHandler(this.toggleAccelerationButton_Click);
             // 
-            // lapColors
+            // playbackTimer
             // 
-            this.lapColors.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.lapColors.ImageSize = new System.Drawing.Size(16, 16);
-            this.lapColors.TransparentColor = System.Drawing.Color.Transparent;
+            this.playbackTimer.Interval = 50;
+            this.playbackTimer.Tick += new System.EventHandler(this.playbackTimer_Tick);
+            // 
+            // togglePlaybackButton
+            // 
+            this.togglePlaybackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.togglePlaybackButton.Location = new System.Drawing.Point(19, 642);
+            this.togglePlaybackButton.Name = "togglePlaybackButton";
+            this.togglePlaybackButton.Size = new System.Drawing.Size(119, 42);
+            this.togglePlaybackButton.TabIndex = 12;
+            this.togglePlaybackButton.Text = "Playback";
+            this.togglePlaybackButton.UseVisualStyleBackColor = true;
+            this.togglePlaybackButton.Click += new System.EventHandler(this.togglePlaybackButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1196, 1241);
+            this.ClientSize = new System.Drawing.Size(1196, 1057);
+            this.Controls.Add(this.togglePlaybackButton);
             this.Controls.Add(this.toggleAccelerationButton);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.gMap);
             this.Controls.Add(this.toggleSpeed);
             this.Controls.Add(this.toggleSpeedAcc);
             this.Controls.Add(this.toggleDelta);
-            this.Controls.Add(this.logWindow);
             this.Controls.Add(this.ChannelToggleButtonTemplate);
             this.Controls.Add(this.MainMenu);
             this.MainMenuStrip = this.MainMenu;
@@ -576,6 +607,7 @@
             this.speedChartTab.ResumeLayout(false);
             this.sensorChartTab.ResumeLayout(false);
             this.tempChartTab.ResumeLayout(false);
+            this.consoleTab.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -626,6 +658,9 @@
         private System.Windows.Forms.Button toggleAccelerationButton;
         private System.Windows.Forms.ToolStripMenuItem newChannelsToolStripMenuItem;
         private System.Windows.Forms.ImageList lapColors;
+        private System.Windows.Forms.TabPage consoleTab;
+        private System.Windows.Forms.Timer playbackTimer;
+        private System.Windows.Forms.Button togglePlaybackButton;
     }
 }
 

@@ -387,7 +387,7 @@ namespace DatalogAnalyzer
             var latCorrection = _activePolygon.Points[1].Lat - _activePolygon.Points[0].Lat;
             var lngCorrection = _activePolygon.Points[1].Lng - _activePolygon.Points[0].Lng;
 
-            Track.LatLongCorrection = new PointLatLng(latCorrection, lngCorrection);
+            Track.LatLongCorrection = new PointLatLng(Track.LatLongCorrection.Lat + latCorrection, Track.LatLongCorrection.Lng + lngCorrection);
 
             Track.ChangedDate = DateTime.Now;
 
@@ -396,6 +396,16 @@ namespace DatalogAnalyzer
             _segmentOverlay.Routes.Add(segmentRoute);
 
             InitializeActivePolygon();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Track.LatLongCorrection = PointLatLng.Empty;
+            Track.ChangedDate = DateTime.Now;
+
+            var segmentRoute = Segment.GetMapRoute(Track);
+            _segmentOverlay.Clear();
+            _segmentOverlay.Routes.Add(segmentRoute);
         }
     }
 }

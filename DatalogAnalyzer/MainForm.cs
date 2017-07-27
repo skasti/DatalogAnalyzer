@@ -49,6 +49,8 @@ namespace DatalogAnalyzer
 
         private Dictionary<LogSegment, Color> _trackColors = new Dictionary<LogSegment, Color>();
         private Dictionary<Color, int> _colorImages = new Dictionary<Color, int>();
+        private double _playBackTimestamp = 0.0;
+        private Dictionary<LogSegment, GMapMarker> _mapMarkers = new Dictionary<LogSegment, GMapMarker>();
 
         public MainForm()
         {
@@ -194,6 +196,7 @@ namespace DatalogAnalyzer
             _accellerationOverlay?.Clear();
             _lineOverlay?.Clear();
             _lineRoutes?.Clear();
+            _mapMarkers.Clear();
         }
 
         private void DisplaySegments(params LogSegment[] segments)
@@ -307,14 +310,14 @@ namespace DatalogAnalyzer
                     {
                         currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
                         currentAccellerationRoute.Points.Add(latLng);
-                        currentAccellerationRoute.Stroke = new Pen(Color.Green, 3.0f);
+                        currentAccellerationRoute.Stroke = new Pen(Color.Green, 1.2f);
                         currentAccellerationPositive = true;
                     }
                     else if (logEntry.Accelleration < Settings.BrakingThreshold)
                     {
                         currentAccellerationRoute = new GMapRoute($"Accelleration {accellerationCount++}");
                         currentAccellerationRoute.Points.Add(latLng);
-                        currentAccellerationRoute.Stroke = new Pen(Color.Red, 3.0f);
+                        currentAccellerationRoute.Stroke = new Pen(Color.Red, 1.2f);
                         currentAccellerationPositive = false;
                     }
                 }
@@ -531,7 +534,12 @@ namespace DatalogAnalyzer
                 {
                     var button = new Button
                     {
-                        Size = new Size(50, ChannelToggleButtonTemplate.Height), Left = ChannelToggleButtonTemplate.Left + (i*56), Top = ChannelToggleButtonTemplate.Top, Anchor = ChannelToggleButtonTemplate.Anchor, Text = dataChannel.Name, BackColor = _enabledColor, ForeColor = Color.White,
+                        Size = new Size(80, ChannelToggleButtonTemplate.Height),
+                        Left = ChannelToggleButtonTemplate.Left + (i*86),
+                        Top = ChannelToggleButtonTemplate.Top,
+                        Anchor = ChannelToggleButtonTemplate.Anchor,
+                        Text = dataChannel.Name,
+                        BackColor = _enabledColor, ForeColor = Color.White,
                     };
 
                     button.Font = new Font(button.Font, FontStyle.Bold);
@@ -849,13 +857,17 @@ namespace DatalogAnalyzer
             if (!_displayedSegments.Any())
                 return;
 
-            _lineOverlay.Markers.Clear();
-
             foreach (var segment in _displayedSegments)
             {
                 var closestEntry = segment.GetClosestEntry(timeStamp);
-                var mapMarker = new GMarkerGoogle(closestEntry.Position(_track), GMarkerGoogleType.red_pushpin);
-                _lineOverlay.Markers.Add(mapMarker);
+                if (!_mapMarkers.ContainsKey(segment))
+                {
+                    var mapMarker = new GMarkerGoogle(closestEntry.Position(_track), GMarkerGoogleType.blue_small);
+                    _mapMarkers.Add(segment, mapMarker);
+                    _lineOverlay.Markers.Add(mapMarker);
+                }
+                else
+                    _mapMarkers[segment].Position = closestEntry.Position(_track);
             }
         }
 
@@ -1042,6 +1054,25 @@ namespace DatalogAnalyzer
         private void newChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _channelManager.Show(this);
+        }
+
+        private void playbackTimer_Tick(object sender, EventArgs e)
+        {
+            var maxTime = _displayedSegments.Max(s => s.Length.TotalSeconds);
+            _playBackTimestamp += 0.1;
+
+            if (_playBackTimestamp > maxTime)
+                _playBackTimestamp -= maxTime;
+
+            MoveMapMarker(_playBackTimestamp);
+        }
+
+        private void togglePlaybackButton_Click(object sender, EventArgs e)
+        {
+            playbackTimer.Enabled = !playbackTimer.Enabled;
+
+            if (!_displayedSegments.Any())
+                playbackTimer.Enabled = false;
         }
     }
 }

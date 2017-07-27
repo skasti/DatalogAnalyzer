@@ -61,9 +61,9 @@ namespace DatalogAnalyzer
             // use the previous value as a mix color as demonstrated by David Crow
             // http://stackoverflow.com/a/43235/578411
             Color nextColor = Color.FromArgb(
-                (rnd.Next(MaxColor) + lastColor.R) / 2,
-                (rnd.Next(MaxColor) + lastColor.G) / 2,
-                (rnd.Next(MaxColor) + lastColor.B) / 2
+                (rnd.Next(MaxColor) + lastColor.R + lastColor.R) / 3,
+                (rnd.Next(MaxColor) + lastColor.G + lastColor.G) / 3,
+                (rnd.Next(MaxColor) + lastColor.B + lastColor.B) / 3
                 );
             lastColor = nextColor;
             return nextColor;
