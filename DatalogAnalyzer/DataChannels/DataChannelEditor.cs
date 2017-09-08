@@ -71,6 +71,7 @@ namespace DatalogAnalyzer.DataChannels
             chartInput.SelectedItem = _channel.Chart;
             zeroPointInput.Text = _channel.ZeroPoint.ToString(CultureInfo.CurrentUICulture);
             scalingInput.Text = _channel.Scaling.ToString(CultureInfo.CurrentUICulture);
+            smoothingInput.Text = _channel.Smoothing.ToString();
 
             SelectIcon(_channel.IconIndex);
         }
@@ -91,9 +92,10 @@ namespace DatalogAnalyzer.DataChannels
 
             double zero;
             double scaling;
+            int smoothing;
 
             if (double.TryParse(zeroPointInput.Text,
-                NumberStyles.AllowDecimalPoint, CultureInfo.CurrentUICulture,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentUICulture,
                 out zero))
             {
                 _channel.ZeroPoint = zero;
@@ -104,7 +106,7 @@ namespace DatalogAnalyzer.DataChannels
             }
 
             if (double.TryParse(scalingInput.Text,
-                NumberStyles.AllowDecimalPoint, CultureInfo.CurrentUICulture,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentUICulture,
                 out scaling))
             {
                 _channel.Scaling = scaling;
@@ -112,6 +114,15 @@ namespace DatalogAnalyzer.DataChannels
             else
             {
                 MessageBox.Show("Failed to parse Scaling");
+            }
+
+            if (int.TryParse(smoothingInput.Text, out smoothing))
+            {
+                _channel.Smoothing = smoothing;
+            }
+            else
+            {
+                MessageBox.Show("Failed to parse Smoothing");
             }
         }
 

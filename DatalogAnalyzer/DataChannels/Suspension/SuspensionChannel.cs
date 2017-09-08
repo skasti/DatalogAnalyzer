@@ -10,14 +10,17 @@ namespace DatalogAnalyzer.DataChannels.Suspension
 
         public double Arm1Length { get; set; }
 
+        public double Offset { get; set; }
+
         public SuspensionChannel(int source, string name = null, ChartType chart = ChartType.Sensor, 
             double zeroPoint = 0.0, double scaling = 1.0, 
-            double arm1Length = 100.0, double arm2Length = 100.0, double armAxisDistance = 0.0) 
-            :base(source, name, chart, zeroPoint, scaling)
+            double arm1Length = 100.0, double arm2Length = 100.0, double armAxisDistance = 0.0, double offset = 0.0, int smoothing = 2) 
+            :base(source, name, chart, zeroPoint, scaling, smoothing)
         {
             Arm1Length = arm1Length;
             Arm2Length = arm2Length;
             ArmAxisDistance = armAxisDistance;
+            Offset = offset;
             IconIndex = 1;
         }
 
@@ -38,7 +41,7 @@ namespace DatalogAnalyzer.DataChannels.Suspension
             var arm2Cos = (arm1X - ArmAxisDistance) / Arm2Length;
             var arm2Sin = Math.Sqrt(1 - Math.Pow(arm2Cos, 2));
 
-            return arm2Sin * Arm2Length + arm1Sin * Arm1Length;
+            return (arm2Sin * Arm2Length + arm1Sin * Arm1Length) - Offset;
         }
 
         public override DataChannelEditor CreateEditor()

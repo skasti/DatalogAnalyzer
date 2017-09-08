@@ -28,6 +28,7 @@ namespace DatalogAnalyzer.DataChannels.Suspension
             double arm1Length;
             double arm2Length;
             double armAxisDistance;
+            double offset;
 
             if (double.TryParse(arm1Input.Text,
                 NumberStyles.AllowDecimalPoint, CultureInfo.CurrentUICulture,
@@ -61,6 +62,17 @@ namespace DatalogAnalyzer.DataChannels.Suspension
             {
                 MessageBox.Show("Failed to parse Arm-Axis");
             }
+
+            if (double.TryParse(offsetInput.Text,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentUICulture,
+                out offset))
+            {
+                _suspensionChannel.Offset = offset;
+            }
+            else
+            {
+                MessageBox.Show("Failed to parse Offset");
+            }
         }
 
         private void LoadFromChannel()
@@ -68,6 +80,7 @@ namespace DatalogAnalyzer.DataChannels.Suspension
             arm1Input.Text = _suspensionChannel.Arm1Length.ToString(CultureInfo.CurrentUICulture);
             arm2Input.Text = _suspensionChannel.Arm2Length.ToString(CultureInfo.CurrentUICulture);
             armAxisInput.Text = _suspensionChannel.ArmAxisDistance.ToString(CultureInfo.CurrentUICulture);
+            offsetInput.Text = _suspensionChannel.Offset.ToString(CultureInfo.CurrentUICulture);
         }
 
         public override void Reset()

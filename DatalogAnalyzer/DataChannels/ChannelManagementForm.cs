@@ -48,7 +48,7 @@ namespace DatalogAnalyzer.DataChannels
 
         private void dataChannelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var channel = new DataChannel(_manager.Channels.Count);
+            var channel = new DataChannel(source: _manager.Channels.Count);
             _manager.Add(channel);
             AppendChannel(channel);
         }

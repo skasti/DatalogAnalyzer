@@ -18,6 +18,12 @@ namespace DatalogAnalyzer.DataChannels
         public double Scaling { get; set; }
         public int IconIndex { get; set; } = 0;
 
+        public int Smoothing
+        {
+            get => Buffer.Length;
+            set => Buffer = new double[Math.Max(value, 1)];
+        }
+
         private double[] Buffer = new double[10];
         private int bufferIndex = 0;
 
@@ -26,13 +32,14 @@ namespace DatalogAnalyzer.DataChannels
 
         public event EventHandler<DataChannel> OnChanged;
 
-        public DataChannel(int source, string name = null, ChartType chart = ChartType.Sensor, double zeroPoint = 0.0, double scaling = 1.0)
+        public DataChannel(int source, string name = null, ChartType chart = ChartType.Sensor, double zeroPoint = 0.0, double scaling = 1.0, int smoothing = 10)
         {
             Source = source;
             Name = name ?? $"Channel {source}";
             Chart = chart;
             ZeroPoint = zeroPoint;
             Scaling = scaling;
+            Smoothing = smoothing;
         }
 
         public double Raw(LogEntry entry)

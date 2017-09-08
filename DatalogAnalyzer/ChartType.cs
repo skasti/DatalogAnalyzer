@@ -4,6 +4,7 @@
     {
         Speed,
         Temperature,
-        Sensor
+        Sensor,
+        Source
     }
 }
