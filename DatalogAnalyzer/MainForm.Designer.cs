@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.ChannelToggleButtonTemplate = new System.Windows.Forms.Button();
             this.logWindow = new System.Windows.Forms.RichTextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -167,7 +167,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(205, 30);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -175,14 +175,14 @@
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(205, 30);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(205, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -389,18 +389,18 @@
             // sensorChart
             // 
             this.sensorChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea1.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea1.Name = "ChartArea1";
-            this.sensorChart.ChartAreas.Add(chartArea1);
+            chartArea4.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea4.Name = "ChartArea1";
+            this.sensorChart.ChartAreas.Add(chartArea4);
             this.sensorChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.sensorChart.Legends.Add(legend1);
+            legend4.Name = "Legend1";
+            this.sensorChart.Legends.Add(legend4);
             this.sensorChart.Location = new System.Drawing.Point(3, 3);
             this.sensorChart.Name = "sensorChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.sensorChart.Series.Add(series1);
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            this.sensorChart.Series.Add(series4);
             this.sensorChart.Size = new System.Drawing.Size(1158, 268);
             this.sensorChart.TabIndex = 1;
             this.sensorChart.Text = "chart1";
@@ -410,19 +410,19 @@
             // tempChart
             // 
             this.tempChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea2.Name = "ChartArea1";
-            this.tempChart.ChartAreas.Add(chartArea2);
+            chartArea5.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea5.Name = "ChartArea1";
+            this.tempChart.ChartAreas.Add(chartArea5);
             this.tempChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.tempChart.Legends.Add(legend2);
+            legend5.Name = "Legend1";
+            this.tempChart.Legends.Add(legend5);
             this.tempChart.Location = new System.Drawing.Point(3, 3);
             this.tempChart.Name = "tempChart";
             this.tempChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Fire;
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.tempChart.Series.Add(series2);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.tempChart.Series.Add(series5);
             this.tempChart.Size = new System.Drawing.Size(1158, 268);
             this.tempChart.TabIndex = 2;
             this.tempChart.Text = "chart1";
@@ -432,19 +432,19 @@
             // speedChart
             // 
             this.speedChart.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea3.BackColor = System.Drawing.SystemColors.WindowFrame;
-            chartArea3.Name = "ChartArea1";
-            this.speedChart.ChartAreas.Add(chartArea3);
+            chartArea6.BackColor = System.Drawing.SystemColors.WindowFrame;
+            chartArea6.Name = "ChartArea1";
+            this.speedChart.ChartAreas.Add(chartArea6);
             this.speedChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.speedChart.Legends.Add(legend3);
+            legend6.Name = "Legend1";
+            this.speedChart.Legends.Add(legend6);
             this.speedChart.Location = new System.Drawing.Point(3, 3);
             this.speedChart.Name = "speedChart";
             this.speedChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.speedChart.Series.Add(series3);
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            this.speedChart.Series.Add(series6);
             this.speedChart.Size = new System.Drawing.Size(1158, 268);
             this.speedChart.TabIndex = 3;
             this.speedChart.Text = "chart1";

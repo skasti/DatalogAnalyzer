@@ -20,12 +20,12 @@ namespace DatalogAnalyzer.DataChannels
 
         public int Smoothing
         {
-            get => Buffer.Length;
-            set => Buffer = new double[Math.Max(value, 1)];
+            get { return _buffer.Length; }
+            set { _buffer = new double[Math.Max(value, 1)]; }
         }
 
-        private double[] Buffer = new double[10];
-        private int bufferIndex = 0;
+        private double[] _buffer = new double[10];
+        private int _bufferIndex = 0;
 
         [JsonIgnore]
         public Dictionary<LogSegment, Series> ChartSeries { get; set; } = new Dictionary<LogSegment, Series>();
@@ -49,12 +49,12 @@ namespace DatalogAnalyzer.DataChannels
 
         public virtual double Value(LogEntry entry)
         {
-            Buffer[bufferIndex++] = (Raw(entry) - ZeroPoint) * Scaling;
+            _buffer[_bufferIndex++] = (Raw(entry) - ZeroPoint) * Scaling;
 
-            if (bufferIndex >= Buffer.Length)
-                bufferIndex = 0;
+            if (_bufferIndex >= _buffer.Length)
+                _bufferIndex = 0;
 
-            return Buffer.Average();
+            return _buffer.Average();
         }
 
         public virtual DataChannelEditor CreateEditor()
