@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenLogger.Core;
 
-namespace OpenLogger.Analysis.Inputs
+namespace OpenLogger.Analysis.Vehicle.Inputs
 {
     public class Input
     {
         public string Name { get; set; }
         public InputSource Source { get; set; }
+        public InputGraphType GraphType { get; set; }
         public int AnalogSource { get; set; }
 
         private int _smoothing = 0;
@@ -50,12 +48,19 @@ namespace OpenLogger.Analysis.Inputs
                     return Smooth(entry.VerticalAccuracy);
                 case InputSource.FixType:
                     return Smooth(entry.FixType);
-                case InputSource.Analog:
+                case InputSource.Temperature:
                 {
-                    if ((AnalogSource >= entry.Values.Count) || (AnalogSource < 0))
+                    if ((AnalogSource >= 6) || (AnalogSource < 0))
                         return 0.0;
 
                     return Smooth(entry.Values[AnalogSource]);
+                }
+                case InputSource.Analog:
+                {
+                    if ((AnalogSource >= entry.Values.Count - 6) || (AnalogSource < 0))
+                        return 0.0;
+
+                    return Smooth(entry.Values[AnalogSource + 6]);
                 }
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -29,14 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ImportFromCardButton = new System.Windows.Forms.ToolStripMenuItem();
             this.ManualImportButton = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NewTrackButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.NewInputButton = new System.Windows.Forms.ToolStripMenuItem();
             this.LogLibraryList = new System.Windows.Forms.ListView();
             this.DateHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TimeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -50,10 +49,21 @@
             this.MainTabs = new System.Windows.Forms.TabControl();
             this.LogLibraryTab = new System.Windows.Forms.TabPage();
             this.AnalysisTab = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.AnalysisViewMapButton = new System.Windows.Forms.Button();
+            this.AnalysisTrackBar = new System.Windows.Forms.TrackBar();
+            this.AnalysisShowMarkers = new System.Windows.Forms.CheckBox();
+            this.AnalysisLapList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AnalysisInputTabs = new System.Windows.Forms.TabControl();
             this.MapTab = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.AnalysisTrackbar = new System.Windows.Forms.TrackBar();
-            this.ShowMarkersCheckBox = new System.Windows.Forms.CheckBox();
+            this.MapTrackBar = new System.Windows.Forms.TrackBar();
+            this.MapShowMarkers = new System.Windows.Forms.CheckBox();
             this.MapOverlayPanel = new System.Windows.Forms.Panel();
             this.MapOverlayLapList = new System.Windows.Forms.ListView();
             this.OverlayLapHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,19 +77,23 @@
             this.TrackLibraryList = new System.Windows.Forms.ListView();
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.changedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.NewTrackButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.NewInputButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.AnalysisListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.CompareAnalysis = new System.Windows.Forms.ToolStripMenuItem();
+            this.MapLapListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.compareMapLaps = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
             this.AnalysisTab.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackBar)).BeginInit();
             this.MapTab.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackbar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).BeginInit();
             this.MapOverlayPanel.SuspendLayout();
             this.TrackLibraryTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.AnalysisListMenu.SuspendLayout();
+            this.MapLapListMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -124,6 +138,21 @@
             this.preferencesMenuItem.Size = new System.Drawing.Size(234, 30);
             this.preferencesMenuItem.Text = "Preferences";
             this.preferencesMenuItem.Click += new System.EventHandler(this.preferencesMenuItem_Click);
+            // 
+            // NewTrackButton
+            // 
+            this.NewTrackButton.Name = "NewTrackButton";
+            this.NewTrackButton.Size = new System.Drawing.Size(234, 30);
+            this.NewTrackButton.Text = "New track";
+            this.NewTrackButton.Click += new System.EventHandler(this.NewTrackButton_Click);
+            // 
+            // NewInputButton
+            // 
+            this.NewInputButton.Name = "NewInputButton";
+            this.NewInputButton.Size = new System.Drawing.Size(234, 30);
+            this.NewInputButton.Text = "New input";
+            this.NewInputButton.Visible = false;
+            this.NewInputButton.Click += new System.EventHandler(this.NewInputButton_Click);
             // 
             // LogLibraryList
             // 
@@ -216,7 +245,9 @@
             // 
             // AnalysisTab
             // 
-            this.AnalysisTab.Controls.Add(this.chart1);
+            this.AnalysisTab.Controls.Add(this.panel2);
+            this.AnalysisTab.Controls.Add(this.AnalysisLapList);
+            this.AnalysisTab.Controls.Add(this.AnalysisInputTabs);
             this.AnalysisTab.Location = new System.Drawing.Point(4, 29);
             this.AnalysisTab.Name = "AnalysisTab";
             this.AnalysisTab.Padding = new System.Windows.Forms.Padding(3);
@@ -224,6 +255,106 @@
             this.AnalysisTab.TabIndex = 1;
             this.AnalysisTab.Text = "Analysis";
             this.AnalysisTab.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.panel2.Controls.Add(this.AnalysisViewMapButton);
+            this.panel2.Controls.Add(this.AnalysisTrackBar);
+            this.panel2.Controls.Add(this.AnalysisShowMarkers);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(3, 654);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1544, 109);
+            this.panel2.TabIndex = 5;
+            // 
+            // AnalysisViewMapButton
+            // 
+            this.AnalysisViewMapButton.Location = new System.Drawing.Point(147, 6);
+            this.AnalysisViewMapButton.Name = "AnalysisViewMapButton";
+            this.AnalysisViewMapButton.Size = new System.Drawing.Size(108, 30);
+            this.AnalysisViewMapButton.TabIndex = 4;
+            this.AnalysisViewMapButton.Text = "View Map";
+            this.AnalysisViewMapButton.UseVisualStyleBackColor = true;
+            // 
+            // AnalysisTrackBar
+            // 
+            this.AnalysisTrackBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.AnalysisTrackBar.Location = new System.Drawing.Point(0, 40);
+            this.AnalysisTrackBar.Maximum = 1;
+            this.AnalysisTrackBar.Name = "AnalysisTrackBar";
+            this.AnalysisTrackBar.Size = new System.Drawing.Size(1544, 69);
+            this.AnalysisTrackBar.TabIndex = 2;
+            this.AnalysisTrackBar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.AnalysisTrackBar.Scroll += new System.EventHandler(this.AnalysisTrackBar_Scroll_1);
+            // 
+            // AnalysisShowMarkers
+            // 
+            this.AnalysisShowMarkers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AnalysisShowMarkers.AutoSize = true;
+            this.AnalysisShowMarkers.BackColor = System.Drawing.SystemColors.Control;
+            this.AnalysisShowMarkers.Location = new System.Drawing.Point(5, 10);
+            this.AnalysisShowMarkers.Name = "AnalysisShowMarkers";
+            this.AnalysisShowMarkers.Size = new System.Drawing.Size(136, 24);
+            this.AnalysisShowMarkers.TabIndex = 3;
+            this.AnalysisShowMarkers.Text = "Show Markers";
+            this.AnalysisShowMarkers.UseVisualStyleBackColor = false;
+            this.AnalysisShowMarkers.CheckedChanged += new System.EventHandler(this.AnalysisShowMarkers_CheckedChanged);
+            // 
+            // AnalysisLapList
+            // 
+            this.AnalysisLapList.BackColor = System.Drawing.SystemColors.Window;
+            this.AnalysisLapList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
+            this.AnalysisLapList.ContextMenuStrip = this.AnalysisListMenu;
+            this.AnalysisLapList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.AnalysisLapList.FullRowSelect = true;
+            this.AnalysisLapList.Location = new System.Drawing.Point(3, 3);
+            this.AnalysisLapList.Name = "AnalysisLapList";
+            this.AnalysisLapList.Size = new System.Drawing.Size(1544, 299);
+            this.AnalysisLapList.TabIndex = 2;
+            this.AnalysisLapList.UseCompatibleStateImageBehavior = false;
+            this.AnalysisLapList.View = System.Windows.Forms.View.Details;
+            this.AnalysisLapList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.AnalysisLapList_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Lap";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Time";
+            this.columnHeader2.Width = 120;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Max";
+            this.columnHeader3.Width = 70;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Min";
+            this.columnHeader4.Width = 70;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Avg.";
+            this.columnHeader5.Width = 70;
+            // 
+            // AnalysisInputTabs
+            // 
+            this.AnalysisInputTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AnalysisInputTabs.Location = new System.Drawing.Point(3, 337);
+            this.AnalysisInputTabs.Name = "AnalysisInputTabs";
+            this.AnalysisInputTabs.SelectedIndex = 0;
+            this.AnalysisInputTabs.Size = new System.Drawing.Size(1544, 311);
+            this.AnalysisInputTabs.TabIndex = 1;
             // 
             // MapTab
             // 
@@ -241,36 +372,37 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.Controls.Add(this.AnalysisTrackbar);
-            this.panel1.Controls.Add(this.ShowMarkersCheckBox);
+            this.panel1.Controls.Add(this.MapTrackBar);
+            this.panel1.Controls.Add(this.MapShowMarkers);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(3, 658);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1544, 105);
             this.panel1.TabIndex = 4;
             // 
-            // AnalysisTrackbar
+            // MapTrackBar
             // 
-            this.AnalysisTrackbar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.AnalysisTrackbar.Location = new System.Drawing.Point(0, 36);
-            this.AnalysisTrackbar.Maximum = 1;
-            this.AnalysisTrackbar.Name = "AnalysisTrackbar";
-            this.AnalysisTrackbar.Size = new System.Drawing.Size(1544, 69);
-            this.AnalysisTrackbar.TabIndex = 2;
-            this.AnalysisTrackbar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this.AnalysisTrackbar.Scroll += new System.EventHandler(this.AnalysisTrackbar_Scroll);
+            this.MapTrackBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.MapTrackBar.Location = new System.Drawing.Point(0, 36);
+            this.MapTrackBar.Maximum = 1;
+            this.MapTrackBar.Name = "MapTrackBar";
+            this.MapTrackBar.Size = new System.Drawing.Size(1544, 69);
+            this.MapTrackBar.TabIndex = 2;
+            this.MapTrackBar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.MapTrackBar.Scroll += new System.EventHandler(this.MapTrackbar_Scroll);
             // 
-            // ShowMarkersCheckBox
+            // MapShowMarkers
             // 
-            this.ShowMarkersCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ShowMarkersCheckBox.AutoSize = true;
-            this.ShowMarkersCheckBox.BackColor = System.Drawing.SystemColors.Control;
-            this.ShowMarkersCheckBox.Location = new System.Drawing.Point(5, 6);
-            this.ShowMarkersCheckBox.Name = "ShowMarkersCheckBox";
-            this.ShowMarkersCheckBox.Size = new System.Drawing.Size(136, 24);
-            this.ShowMarkersCheckBox.TabIndex = 3;
-            this.ShowMarkersCheckBox.Text = "Show Markers";
-            this.ShowMarkersCheckBox.UseVisualStyleBackColor = false;
+            this.MapShowMarkers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MapShowMarkers.AutoSize = true;
+            this.MapShowMarkers.BackColor = System.Drawing.SystemColors.Control;
+            this.MapShowMarkers.Location = new System.Drawing.Point(5, 6);
+            this.MapShowMarkers.Name = "MapShowMarkers";
+            this.MapShowMarkers.Size = new System.Drawing.Size(136, 24);
+            this.MapShowMarkers.TabIndex = 3;
+            this.MapShowMarkers.Text = "Show Markers";
+            this.MapShowMarkers.UseVisualStyleBackColor = false;
+            this.MapShowMarkers.CheckedChanged += new System.EventHandler(this.MapShowMarkers_CheckedChanged);
             // 
             // MapOverlayPanel
             // 
@@ -290,6 +422,7 @@
             this.OverlayTopSpeedHeader,
             this.OverlayMinSpeedHeader,
             this.OverlayAvgSpeedHeader});
+            this.MapOverlayLapList.ContextMenuStrip = this.MapLapListMenu;
             this.MapOverlayLapList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MapOverlayLapList.FullRowSelect = true;
             this.MapOverlayLapList.Location = new System.Drawing.Point(0, 0);
@@ -419,36 +552,35 @@
             this.changedHeader.Text = "Changed Date";
             this.changedHeader.Width = 144;
             // 
-            // NewTrackButton
+            // AnalysisListMenu
             // 
-            this.NewTrackButton.Name = "NewTrackButton";
-            this.NewTrackButton.Size = new System.Drawing.Size(234, 30);
-            this.NewTrackButton.Text = "New track";
-            this.NewTrackButton.Click += new System.EventHandler(this.NewTrackButton_Click);
+            this.AnalysisListMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.AnalysisListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CompareAnalysis});
+            this.AnalysisListMenu.Name = "AnalysisListMenu";
+            this.AnalysisListMenu.Size = new System.Drawing.Size(158, 34);
             // 
-            // chart1
+            // CompareAnalysis
             // 
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
-            this.chart1.Location = new System.Drawing.Point(102, 352);
-            this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            this.chart1.Series.Add(series4);
-            this.chart1.Size = new System.Drawing.Size(1172, 250);
-            this.chart1.TabIndex = 0;
-            this.chart1.Text = "chart1";
+            this.CompareAnalysis.Name = "CompareAnalysis";
+            this.CompareAnalysis.Size = new System.Drawing.Size(157, 30);
+            this.CompareAnalysis.Text = "Compare";
+            this.CompareAnalysis.Click += new System.EventHandler(this.CompareAnalysis_Click);
             // 
-            // NewInputButton
+            // MapLapListMenu
             // 
-            this.NewInputButton.Name = "NewInputButton";
-            this.NewInputButton.Size = new System.Drawing.Size(234, 30);
-            this.NewInputButton.Text = "New input";
-            this.NewInputButton.Visible = false;
-            this.NewInputButton.Click += new System.EventHandler(this.NewInputButton_Click);
+            this.MapLapListMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.MapLapListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.compareMapLaps});
+            this.MapLapListMenu.Name = "MapLapListMenu";
+            this.MapLapListMenu.Size = new System.Drawing.Size(158, 34);
+            // 
+            // compareMapLaps
+            // 
+            this.compareMapLaps.Name = "compareMapLaps";
+            this.compareMapLaps.Size = new System.Drawing.Size(198, 30);
+            this.compareMapLaps.Text = "Compare";
+            this.compareMapLaps.Click += new System.EventHandler(this.compareMapLaps_Click);
             // 
             // MainForm
             // 
@@ -466,13 +598,17 @@
             this.MainTabs.ResumeLayout(false);
             this.LogLibraryTab.ResumeLayout(false);
             this.AnalysisTab.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackBar)).EndInit();
             this.MapTab.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackbar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).EndInit();
             this.MapOverlayPanel.ResumeLayout(false);
             this.TrackLibraryTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            this.AnalysisListMenu.ResumeLayout(false);
+            this.MapLapListMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -512,12 +648,26 @@
         private System.Windows.Forms.ColumnHeader OverlayTopSpeedHeader;
         private System.Windows.Forms.ColumnHeader OverlayMinSpeedHeader;
         private System.Windows.Forms.ColumnHeader OverlayAvgSpeedHeader;
-        private System.Windows.Forms.TrackBar AnalysisTrackbar;
-        private System.Windows.Forms.CheckBox ShowMarkersCheckBox;
+        private System.Windows.Forms.TrackBar MapTrackBar;
+        private System.Windows.Forms.CheckBox MapShowMarkers;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem NewTrackButton;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.ToolStripMenuItem NewInputButton;
+        private System.Windows.Forms.TabControl AnalysisInputTabs;
+        private System.Windows.Forms.ListView AnalysisLapList;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TrackBar AnalysisTrackBar;
+        private System.Windows.Forms.CheckBox AnalysisShowMarkers;
+        private System.Windows.Forms.Button AnalysisViewMapButton;
+        private System.Windows.Forms.ContextMenuStrip AnalysisListMenu;
+        private System.Windows.Forms.ToolStripMenuItem CompareAnalysis;
+        private System.Windows.Forms.ContextMenuStrip MapLapListMenu;
+        private System.Windows.Forms.ToolStripMenuItem compareMapLaps;
     }
 }
 

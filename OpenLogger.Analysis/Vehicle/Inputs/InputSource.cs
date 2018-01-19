@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenLogger.Analysis.Inputs
+﻿namespace OpenLogger.Analysis.Vehicle.Inputs
 {
     public enum InputSource
     {
@@ -13,6 +7,7 @@ namespace OpenLogger.Analysis.Inputs
         HorizontalAccuracy,
         VerticalAccuracy,
         FixType,
+        Temperature,
         Analog
     }
 }

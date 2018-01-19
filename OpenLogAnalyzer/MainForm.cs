@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json;
@@ -16,6 +17,8 @@ using OpenLogAnalyzer.Extensions;
 using OpenLogger;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Extensions;
+using OpenLogger.Analysis.Vehicle;
+using OpenLogger.Analysis.Vehicle.Inputs;
 using OpenLogger.Core;
 using OpenLogger.Core.Debugging;
 
@@ -26,8 +29,12 @@ namespace OpenLogAnalyzer
         List<DriveInfo> _knownDrives = new List<DriveInfo>();
         private readonly TrackRepository _trackRepository = new TrackRepository();
         private SessionAnalysis _currentAnalysis = null;
-        private readonly List<SegmentAnalysis> _renderedSegments = new List<SegmentAnalysis>(); 
-        private readonly Dictionary<SegmentAnalysis, GMapMarker> _renderedSegmentMarkers = new Dictionary<SegmentAnalysis, GMapMarker>();
+        private Vehicle _currentVehicle = null;
+        private Dictionary<Input, Chart> _inputChart;
+        private RenderingController _renderingController;
+        private double _analysisResolution = 1.0;
+        //private readonly List<SegmentAnalysis> RenderedSegments = new List<SegmentAnalysis>(); 
+        //private readonly Dictionary<SegmentAnalysis, GMapMarker> RenderedSegmentMarkers = new Dictionary<SegmentAnalysis, GMapMarker>();
 
         public MainForm()
         {
@@ -35,6 +42,64 @@ namespace OpenLogAnalyzer
             Log.Instance = this;
             Map.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
             TrackLibraryMap.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
+
+            _renderingController = new RenderingController();
+            _renderingController.OnRoutes += RenderingControllerOnOnRoutes;
+            _renderingController.OnMarkers += RenderingControllerOnOnMarkers;
+        }
+
+        private void RenderingControllerOnOnMarkers(object sender, IEnumerable<GMapMarker> gMapMarkers)
+        {
+            var mapOverlay = Map.Overlays.FirstOrDefault(o => o.Id == "RenderedSegments");
+
+            if (mapOverlay == null)
+            {
+                mapOverlay = new GMapOverlay("RenderedSegments");
+                Map.Overlays.Add(mapOverlay);
+            }
+
+            var markersToRemove = mapOverlay.Markers.Where(r => !gMapMarkers.Contains(r)).ToList();
+
+            foreach (var marker in markersToRemove)
+                mapOverlay.Markers.Remove(marker);
+
+            foreach (var route in gMapMarkers)
+            {
+                if (!mapOverlay.Markers.Contains(route))
+                    mapOverlay.Markers.Add(route);
+            }
+        }
+
+        private void RenderingControllerOnOnRoutes(object sender, IEnumerable<GMapRoute> gMapRoutes)
+        {
+            var mapOverlay = Map.Overlays.FirstOrDefault(o => o.Id == "RenderedSegments");
+
+            if (mapOverlay == null)
+            {
+                mapOverlay = new GMapOverlay("RenderedSegments");
+                Map.Overlays.Add(mapOverlay);
+            }
+
+            var routesToRemove = mapOverlay.Routes.Where(r => !gMapRoutes.Contains(r)).ToList();
+
+            foreach (var route in routesToRemove)
+                mapOverlay.Routes.Remove(route);
+
+            var maxDistance = 0.0;
+
+            foreach (var route in gMapRoutes)
+            {
+                if (!mapOverlay.Routes.Contains(route))
+                    mapOverlay.Routes.Add(route);
+
+                if (route.Distance > maxDistance)
+                    maxDistance = route.Distance;
+            }
+
+            AnalysisTrackBar.Maximum = (int) (maxDistance*1000);
+            MapTrackBar.Maximum = (int)(maxDistance * 1000);
+            _renderingController.MarkerDistance = MapTrackBar.Value;
+            Map.ZoomAndCenterRoutes("RenderedSegments");
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -184,18 +249,87 @@ namespace OpenLogAnalyzer
         private void SetCurrentAnalysis(SessionAnalysis analysis)
         {
             _currentAnalysis = analysis;
+            _currentVehicle = new Vehicle();
 
-            RenderSegments(analysis.Full);
+            _renderingController.RenderSegments(analysis.Full);
 
             LoadMapOverlayLaps(_currentAnalysis);
-
-            CreateInputCharts(_currentAnalysis);
+            LoadAnalysisLaps(_currentAnalysis);
+            CreateInputCharts();
         }
 
-        private void CreateInputCharts(SessionAnalysis currentAnalysis)
+        private void LoadAnalysisLaps(SessionAnalysis analysis)
         {
-            //AnalysisTab.Controls.Clear();
+            AnalysisLapList.Items.Clear();
+            AnalysisLapList.Items.Add(analysis.Full.ToMapOverlayListViewItem(TimeSpan.Zero));
 
+            if (analysis.LeadIn != null)
+                AnalysisLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
+
+            AnalysisLapList.Items.AddRange(
+                analysis.Laps.Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
+
+            if (analysis.LeadOut != null)
+                AnalysisLapList.Items.Add(analysis.LeadOut.ToMapOverlayListViewItem(TimeSpan.Zero));
+        }
+
+        private void CreateInputCharts()
+        {
+            AnalysisInputTabs.TabPages.Clear();
+            _inputChart = new Dictionary<Input, Chart>();
+
+            foreach (var input in _currentVehicle.Inputs)
+            {
+                var tabPage = AddInputTab(input);
+                var chart = AddInputChart(tabPage, input);
+
+                _inputChart.Add(input, chart);
+            }
+        }
+
+        private void AnalyzeSegment(SegmentAnalysis analysis)
+        {
+            //var logStart = analysis.Segment.LogStart;
+            var route = new GMapRoute("DistanceRoute");
+            var prevPosition = new PointLatLng();
+            var distance = 0.0;
+            var prevDistance = -5.0;
+
+            foreach (var entry in analysis.Segment.Entries)
+            {
+                var position = entry.GetLocation();
+
+                if (position != prevPosition)
+                {
+                    route.Points.Add(position);
+                    distance = route.Distance * 1000;
+                    prevPosition = position;
+                }
+
+                if (distance < prevDistance + _analysisResolution)
+                    continue;
+
+                prevDistance = distance;
+
+                foreach (var input in _currentVehicle.Inputs)
+                {
+                    var series = _inputChart[input].Series.FindByName(analysis.Name);
+
+                    if (series == null)
+                    {
+                        series = input.CreateSeries(analysis);
+                        _inputChart[input].Series.Add(series);
+                    }
+                
+                    var value = input.GetValue(entry);
+                    
+                    series.Points.AddXY(distance, value);
+                }
+            }
+        }
+
+        private Chart AddInputChart(TabPage tabPage, Input input)
+        {
             var chart = new Chart();
 
             var chartArea = new ChartArea("ChartArea1");
@@ -203,44 +337,17 @@ namespace OpenLogAnalyzer
             chart.ChartAreas.Add(chartArea);
             chart.Legends.Add("Legend1");
 
-            for (int i = 0; i < currentAnalysis.LogFile.ValueCount; i++)
-            {
-                var series = new Series
-                {
-                    Name = $"Channel {i + 1}",
-                    LegendText = $"Channel {i + 1}",
-                    ChartType = SeriesChartType.FastLine,
-                    XValueType = ChartValueType.Time
-                };
+            tabPage.Controls.Add(chart);
+            chart.Dock = DockStyle.Fill;
 
-                chart.Series.Add(series);
-                //chart1.Series.Add(series);
-            }
+            return chart;
+        }
 
-            
-            for (int i = 6; i < 8; i++)
-            {
-                foreach (var entry in currentAnalysis.Full.Segment.Entries.Take(200 * 60))
-                {
-                    var time = entry.GetTimeStamp(currentAnalysis.LogFile.LogStart)
-                        .AddHours(-currentAnalysis.LogFile.LogStart.Timestamp.Hour)
-                        .AddMinutes(-currentAnalysis.LogFile.LogStart.Timestamp.Minute)
-                        .AddSeconds(-currentAnalysis.LogFile.LogStart.Timestamp.Second)
-                        .ToOADate();
-
-                    chart.Series[i].Points.AddXY(time, entry.Values[i]);
-                }
-            }
-
-            //chart.Series.Add(chart1.Series[0]);
-            
-            AnalysisTab.Controls.Add(chart);
-            chart.Left = 0;
-            chart.Top = 0;
-            chart.Width = AnalysisTab.Width;
-            chart.Height = 200;
-
-            //chart.BeginInit();
+        private TabPage AddInputTab(Input input)
+        {
+            var tabPage = new TabPage(input.Name);
+            AnalysisInputTabs.TabPages.Add(tabPage);
+            return tabPage;
         }
 
         private void LoadMapOverlayLaps(SessionAnalysis analysis)
@@ -256,81 +363,6 @@ namespace OpenLogAnalyzer
 
             if (analysis.LeadOut != null)
                 MapOverlayLapList.Items.Add(analysis.LeadOut.ToMapOverlayListViewItem(TimeSpan.Zero));
-        }
-
-        private void RenderSegments(params SegmentAnalysis[] segments)
-        {
-            var mapOverlay = Map.Overlays.FirstOrDefault(o => o.Id == "RenderedSegments");
-
-            if (mapOverlay == null)
-            {
-                mapOverlay = new GMapOverlay("RenderedSegments");
-                Map.Overlays.Add(mapOverlay);
-            }
-
-            mapOverlay.Clear();
-            _renderedSegments.Clear();
-            foreach (var segment in segments)
-            {
-                mapOverlay.Routes.Add(segment.Route);
-                _renderedSegments.Add(segment);
-            }
-
-            InitializeSegmentMarkers();
-
-            Map.ZoomAndCenterRoute(mapOverlay.Routes.FirstOrDefault());
-
-            AnalysisTrackbar.Maximum = _renderedSegments.Max(s => s.Segment.Entries.Count);
-        }
-
-        private void InitializeSegmentMarkers()
-        {
-            var mapOverlay = Map.Overlays.FirstOrDefault(o => o.Id == "RenderedSegments");
-
-            if (mapOverlay == null)
-            {
-                mapOverlay = new GMapOverlay("RenderedSegments");
-                Map.Overlays.Add(mapOverlay);
-            }
-
-            var markerEntry = AnalysisTrackbar.Value;
-
-            _renderedSegmentMarkers.Clear();
-            mapOverlay.Markers.Clear();
-            
-            foreach (var segment in _renderedSegments)
-            {
-                var entry = segment.Segment.Entries.Count > markerEntry
-                    ? segment.Segment.Entries[markerEntry]
-                    : segment.Segment.Entries.Last();
-
-                var marker = new GMarkerGoogle(entry.GetLocation(_currentAnalysis.Track), GMarkerGoogleType.blue_small);
-                _renderedSegmentMarkers.Add(segment, marker);
-                mapOverlay.Markers.Add(marker);
-            }
-        }
-
-        private void UpdateSegmentMarkers()
-        {
-            var mapOverlay = Map.Overlays.FirstOrDefault(o => o.Id == "RenderedSegments");
-
-            if (mapOverlay == null)
-            {
-                mapOverlay = new GMapOverlay("RenderedSegments");
-                Map.Overlays.Add(mapOverlay);
-            }
-
-            var markerEntry = AnalysisTrackbar.Value;
-            
-            foreach (var segment in _renderedSegments)
-            {
-                var entry = segment.Segment.Entries.Count > markerEntry
-                    ? segment.Segment.Entries[markerEntry]
-                    : segment.Segment.Entries.Last();
-
-                var marker = _renderedSegmentMarkers[segment];
-                marker.Position = entry.GetLocation(_currentAnalysis.Track);
-            }
         }
 
         private void TrackLibraryList_SelectedIndexChanged(object sender, EventArgs e)
@@ -364,9 +396,10 @@ namespace OpenLogAnalyzer
             }
         }
 
-        private void AnalysisTrackbar_Scroll(object sender, EventArgs e)
+        private void MapTrackbar_Scroll(object sender, EventArgs e)
         {
-            UpdateSegmentMarkers();
+            AnalysisTrackBar.Value = MapTrackBar.Value;
+            _renderingController.MarkerDistance = MapTrackBar.Value;
         }
 
         private void MapOverlayLapList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -375,7 +408,7 @@ namespace OpenLogAnalyzer
                 return;
 
             var selectedItem = MapOverlayLapList.SelectedItems[0].Tag as SegmentAnalysis;
-            RenderSegments(selectedItem);
+            _renderingController.RenderSegments(selectedItem);
         }
 
         private void NewTrackButton_Click(object sender, EventArgs e)
@@ -429,6 +462,76 @@ namespace OpenLogAnalyzer
             if (editor.Saved)
             {
                 UpdateTrackLibraryList();
+            }
+        }
+
+        private void AnalysisLapList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (AnalysisLapList.SelectedItems.Count == 0)
+                return;
+
+            var selectedItem = AnalysisLapList.SelectedItems[0].Tag as SegmentAnalysis;
+            AnalyzeSegments(selectedItem);
+        }
+
+        private void AnalyzeSegments(params SegmentAnalysis[] segments)
+        {
+            foreach (var input in _currentVehicle.Inputs)
+            {
+                _inputChart[input].Series.Clear();
+            }
+
+            foreach (var segment in segments)
+            {
+                AnalyzeSegment(segment);
+            }
+        }
+
+        private void AnalysisShowMarkers_CheckedChanged(object sender, EventArgs e)
+        {
+            MapShowMarkers.Checked = AnalysisShowMarkers.Checked;
+            _renderingController.RenderMarkers = MapShowMarkers.Checked;
+        }
+
+        private void MapShowMarkers_CheckedChanged(object sender, EventArgs e)
+        {
+            AnalysisShowMarkers.Checked = MapShowMarkers.Checked;
+            _renderingController.RenderMarkers = MapShowMarkers.Checked;
+        }
+
+        private void CompareAnalysis_Click(object sender, EventArgs e)
+        {
+            if (AnalysisLapList.SelectedItems.Count == 0)
+                return;
+
+            var segments = AnalysisLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
+            AnalyzeSegments(segments);
+        }
+
+        private void AnalysisTrackBar_Scroll_1(object sender, EventArgs e)
+        {
+            MapTrackBar.Value = AnalysisTrackBar.Value;
+            _renderingController.MarkerDistance = MapTrackBar.Value;
+
+            foreach (var chart in _inputChart.Values)
+            {
+                chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
+                chart.UpdateCursor();
+            }
+        }
+
+        private void compareMapLaps_Click(object sender, EventArgs e)
+        {
+            if (MapOverlayLapList.SelectedItems.Count == 0)
+                return;
+
+            var segments = AnalysisLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
+            _renderingController.RenderSegments(segments);
+
+            foreach (var chart in _inputChart.Values)
+            {
+                chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
+                chart.UpdateCursor();
             }
         }
     }

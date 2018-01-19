@@ -12,7 +12,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Extensions;
-using OpenLogger.Analysis.Inputs;
+using OpenLogger.Analysis.Vehicle.Inputs;
 using OpenLogger.Core;
 
 namespace OpenLogAnalyzer

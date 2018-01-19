@@ -57,8 +57,10 @@
     <Compile Include="Extensions\LogEntryExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\LogSegmentExtensions.cs" />
-    <Compile Include="Inputs\Input.cs" />
-    <Compile Include="Inputs\InputSource.cs" />
+    <Compile Include="RandomColors.cs" />
+    <Compile Include="Vehicle\Inputs\Input.cs" />
+    <Compile Include="Vehicle\Inputs\InputGraphType.cs" />
+    <Compile Include="Vehicle\Inputs\InputSource.cs" />
     <Compile Include="JsonConverter\LogFileConverter.cs" />
     <Compile Include="LapAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="SessionAnalysis.cs" />
     <Compile Include="Track.cs" />
     <Compile Include="JsonConverter\PolygonConverter.cs" />
+    <Compile Include="Vehicle\Vehicle.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenLogger\OpenLogger.Core.csproj">
