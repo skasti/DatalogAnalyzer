@@ -433,12 +433,18 @@ namespace OpenLogAnalyzer
 
         private void MapOverlayLapList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (MapOverlayLapList.SelectedItems.Count > 0)
-                NewInputButton.Visible = true;
+            NewInputButton.Visible = MapOverlayLapList.SelectedItems.Count > 0;
         }
 
         private void NewInputButton_Click(object sender, EventArgs e)
         {
+            if (MapOverlayLapList.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("You must select a segment to use for raw data for new input", "Must select segment",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
             var segment = MapOverlayLapList.SelectedItems[0].Tag as SegmentAnalysis;
 
             if (segment == null)
