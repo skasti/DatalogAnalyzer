@@ -33,8 +33,7 @@ namespace OpenLogger.Analysis.Vehicle
                     Name = "TPS",
                     Source = InputSource.Analog,
                     AnalogSource = 0,
-                    Smoothing = 10,
-                    GraphType = InputGraphType.Spline
+                    Smoothing = 10
                 },
 
                 new Input
@@ -42,8 +41,7 @@ namespace OpenLogger.Analysis.Vehicle
                     Name = "Fork Position",
                     Source = InputSource.Analog,
                     AnalogSource = 1,
-                    Smoothing = 10,
-                    GraphType = InputGraphType.Spline
+                    Smoothing = 10
                 }
             };
         }
