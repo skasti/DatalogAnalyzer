@@ -31,12 +31,16 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.NameLabel = new System.Windows.Forms.Label();
             this.NameInput = new System.Windows.Forms.TextBox();
             this.SourceInput = new System.Windows.Forms.ComboBox();
             this.SourceLabel = new System.Windows.Forms.Label();
             this.Map = new GMap.NET.WindowsForms.GMapControl();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.PreChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.SegmentPosition = new System.Windows.Forms.TrackBar();
             this.SmoothingInput = new System.Windows.Forms.NumericUpDown();
             this.SmoothingLabel = new System.Windows.Forms.Label();
@@ -45,10 +49,13 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CursorLabel = new System.Windows.Forms.Label();
             this.SelectionLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.TransformChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.TransformList = new System.Windows.Forms.ListView();
+            ((System.ComponentModel.ISupportInitialize)(this.PreChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SegmentPosition)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SmoothingInput)).BeginInit();
             this.Menu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TransformChart)).BeginInit();
             this.SuspendLayout();
             // 
             // NameLabel
@@ -88,8 +95,7 @@
             // 
             // Map
             // 
-            this.Map.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Map.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Map.Bearing = 0F;
             this.Map.CanDragMap = true;
             this.Map.EmptyTileColor = System.Drawing.Color.Navy;
@@ -110,14 +116,13 @@
             this.Map.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.Map.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.Map.ShowTileGridLines = false;
-            this.Map.Size = new System.Drawing.Size(508, 773);
+            this.Map.Size = new System.Drawing.Size(508, 560);
             this.Map.TabIndex = 4;
             this.Map.Zoom = 0D;
             // 
-            // chart1
+            // PreChart
             // 
-            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.PreChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.AxisY.ScaleView.Zoomable = false;
             chartArea1.AxisY2.ScaleView.Zoomable = false;
@@ -129,28 +134,33 @@
             chartArea1.CursorY.LineColor = System.Drawing.Color.RoyalBlue;
             chartArea1.CursorY.SelectionColor = System.Drawing.Color.LightGreen;
             chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            this.PreChart.ChartAreas.Add(chartArea1);
             legend1.Enabled = false;
             legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(12, 89);
-            this.chart1.Name = "chart1";
+            this.PreChart.Legends.Add(legend1);
+            this.PreChart.Location = new System.Drawing.Point(12, 89);
+            this.PreChart.Name = "PreChart";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series1.Legend = "Legend1";
             series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(905, 621);
-            this.chart1.TabIndex = 5;
-            this.chart1.Text = "chart1";
-            this.chart1.CursorPositionChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chart1_CursorPositionChanged);
-            this.chart1.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chart1_SelectionRangeChanged);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
+            this.PreChart.Series.Add(series1);
+            this.PreChart.Series.Add(series2);
+            this.PreChart.Size = new System.Drawing.Size(905, 408);
+            this.PreChart.TabIndex = 5;
+            this.PreChart.Text = "chart1";
+            this.PreChart.CursorPositionChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chart1_CursorPositionChanged);
+            this.PreChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chart1_SelectionRangeChanged);
             // 
             // SegmentPosition
             // 
-            this.SegmentPosition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.SegmentPosition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SegmentPosition.Location = new System.Drawing.Point(12, 716);
+            this.SegmentPosition.Location = new System.Drawing.Point(12, 503);
             this.SegmentPosition.Name = "SegmentPosition";
             this.SegmentPosition.Size = new System.Drawing.Size(905, 69);
             this.SegmentPosition.TabIndex = 6;
@@ -224,17 +234,59 @@
             this.SelectionLabel.Text = "1024.00 / 1024.00";
             this.SelectionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // TransformChart
+            // 
+            this.TransformChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea2.AxisY.ScaleView.Zoomable = false;
+            chartArea2.AxisY2.ScaleView.Zoomable = false;
+            chartArea2.CursorX.Interval = 0.01D;
+            chartArea2.CursorX.IsUserEnabled = true;
+            chartArea2.CursorY.Interval = 0.01D;
+            chartArea2.CursorY.IsUserEnabled = true;
+            chartArea2.CursorY.IsUserSelectionEnabled = true;
+            chartArea2.CursorY.LineColor = System.Drawing.Color.RoyalBlue;
+            chartArea2.CursorY.SelectionColor = System.Drawing.Color.LightGreen;
+            chartArea2.Name = "ChartArea1";
+            this.TransformChart.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
+            legend2.Name = "Legend1";
+            this.TransformChart.Legends.Add(legend2);
+            this.TransformChart.Location = new System.Drawing.Point(12, 578);
+            this.TransformChart.Name = "TransformChart";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.TransformChart.Series.Add(series3);
+            this.TransformChart.Size = new System.Drawing.Size(905, 468);
+            this.TransformChart.TabIndex = 16;
+            this.TransformChart.Text = "chart1";
+            // 
+            // TransformList
+            // 
+            this.TransformList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TransformList.Location = new System.Drawing.Point(923, 578);
+            this.TransformList.Name = "TransformList";
+            this.TransformList.Size = new System.Drawing.Size(508, 468);
+            this.TransformList.TabIndex = 17;
+            this.TransformList.UseCompatibleStateImageBehavior = false;
+            // 
             // InputConfigurator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1443, 797);
+            this.ClientSize = new System.Drawing.Size(1443, 1058);
+            this.Controls.Add(this.TransformList);
+            this.Controls.Add(this.TransformChart);
             this.Controls.Add(this.SelectionLabel);
             this.Controls.Add(this.CursorLabel);
             this.Controls.Add(this.SmoothingLabel);
             this.Controls.Add(this.SmoothingInput);
             this.Controls.Add(this.SegmentPosition);
-            this.Controls.Add(this.chart1);
+            this.Controls.Add(this.PreChart);
             this.Controls.Add(this.Map);
             this.Controls.Add(this.SourceLabel);
             this.Controls.Add(this.SourceInput);
@@ -245,11 +297,12 @@
             this.Name = "InputConfigurator";
             this.Text = "InputConfigurator";
             this.Load += new System.EventHandler(this.InputConfigurator_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PreChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SegmentPosition)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SmoothingInput)).EndInit();
             this.Menu.ResumeLayout(false);
             this.Menu.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TransformChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,7 +315,7 @@
         private System.Windows.Forms.ComboBox SourceInput;
         private System.Windows.Forms.Label SourceLabel;
         private GMap.NET.WindowsForms.GMapControl Map;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart PreChart;
         private System.Windows.Forms.TrackBar SegmentPosition;
         private System.Windows.Forms.NumericUpDown SmoothingInput;
         private System.Windows.Forms.Label SmoothingLabel;
@@ -271,5 +324,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.Label CursorLabel;
         private System.Windows.Forms.Label SelectionLabel;
+        private System.Windows.Forms.DataVisualization.Charting.Chart TransformChart;
+        private System.Windows.Forms.ListView TransformList;
     }
 }
