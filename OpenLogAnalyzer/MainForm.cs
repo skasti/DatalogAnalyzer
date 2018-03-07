@@ -306,10 +306,10 @@ namespace OpenLogAnalyzer
                     prevPosition = position;
                 }
 
-                if (distance < prevDistance + _analysisResolution)
-                    continue;
+                //if (distance < prevDistance + _analysisResolution)
+                //    continue;
 
-                prevDistance = distance;
+                //prevDistance = distance;
 
                 foreach (var input in _currentVehicle.Inputs)
                 {

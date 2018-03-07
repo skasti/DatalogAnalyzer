@@ -37,11 +37,6 @@ namespace OpenLogAnalyzer
             {
                 Name = "Unnamed"
             };
-            
-            Input.Transforms.Add(new LinearMapTransform
-            {
-                SourceMin = 200,SourceMax = 850,TargetMax = 90,TargetMin = -90
-            });
 
             var firstPos = segment.Entries.First().GetLocation();
 
@@ -119,25 +114,25 @@ namespace OpenLogAnalyzer
 
         private void UpdateSmoothedChart()
         {
-            PreChart.Series[1].Points.Clear();
+            RawChart.Series[1].Points.Clear();
 
             foreach (var entry in _segment.Entries)
             {
                 var value = Input.GetSmoothedValue(entry);
 
-                PreChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                RawChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
         }
 
         private void UpdateRawChart()
         {
-            PreChart.Series[0].Points.Clear();
+            RawChart.Series[0].Points.Clear();
 
             foreach (var entry in _segment.Entries)
             {
                 var value = Input.GetRawValue(entry);
 
-                PreChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                RawChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
         }
 
@@ -172,7 +167,7 @@ namespace OpenLogAnalyzer
         private void chart1_CursorPositionChanged(object sender, CursorEventArgs e)
         {
             CursorLabel.Text =
-                $"{PreChart.ChartAreas[0].CursorX.Position:0.00} / {PreChart.ChartAreas[0].CursorY.Position:0.00}";
+                $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
         }
 
         private void SegmentPosition_Scroll(object sender, EventArgs e)
@@ -183,13 +178,30 @@ namespace OpenLogAnalyzer
             var zoomMin = Math.Max(cursorPosition - 10, 0.0);
             var zoomMax = Math.Min(cursorPosition + 10, _segment.Length.TotalSeconds);
 
-            PreChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
-            PreChart.ChartAreas[0].CursorX.Position = cursorPosition;
+            RawChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
+            RawChart.ChartAreas[0].CursorX.Position = cursorPosition;
 
             CursorLabel.Text =
-                $"{PreChart.ChartAreas[0].CursorX.Position:0.00} / {PreChart.ChartAreas[0].CursorY.Position:0.00}";
+                $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
+
+            TransformChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
+            TransformChart.ChartAreas[0].CursorX.Position = cursorPosition;
+
+            TransformCursorLabel.Text =
+                $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
 
             _marker.Position = entry.GetLocation();
+        }
+
+        private void TransformChart_CursorPositionChanged(object sender, CursorEventArgs e)
+        {
+            TransformCursorLabel.Text =
+                $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
+        }
+
+        private void TransformChart_SelectionRangeChanged(object sender, CursorEventArgs e)
+        {
+            TransformSelectionLabel.Text = $"{e.NewSelectionStart} - {e.NewSelectionEnd}";
         }
     }
 }
