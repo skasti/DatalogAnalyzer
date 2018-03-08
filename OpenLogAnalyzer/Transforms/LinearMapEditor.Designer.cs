@@ -42,73 +42,82 @@
             // 
             // FromMinInput
             // 
-            this.FromMinInput.Location = new System.Drawing.Point(15, 25);
+            this.FromMinInput.Location = new System.Drawing.Point(22, 38);
+            this.FromMinInput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.FromMinInput.Name = "FromMinInput";
-            this.FromMinInput.Size = new System.Drawing.Size(100, 20);
+            this.FromMinInput.Size = new System.Drawing.Size(148, 26);
             this.FromMinInput.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(18, 14);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.Size = new System.Drawing.Size(75, 20);
             this.label1.TabIndex = 1;
             this.label1.Text = "From min";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(121, 9);
+            this.label2.Location = new System.Drawing.Point(182, 14);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.Size = new System.Drawing.Size(79, 20);
             this.label2.TabIndex = 3;
             this.label2.Text = "From max";
             // 
             // FromMaxInput
             // 
-            this.FromMaxInput.Location = new System.Drawing.Point(124, 25);
+            this.FromMaxInput.Location = new System.Drawing.Point(186, 38);
+            this.FromMaxInput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.FromMaxInput.Name = "FromMaxInput";
-            this.FromMaxInput.Size = new System.Drawing.Size(100, 20);
+            this.FromMaxInput.Size = new System.Drawing.Size(148, 26);
             this.FromMaxInput.TabIndex = 2;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 58);
+            this.label3.Location = new System.Drawing.Point(18, 89);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 13);
+            this.label3.Size = new System.Drawing.Size(56, 20);
             this.label3.TabIndex = 5;
             this.label3.Text = "To min";
             // 
             // ToMinInput
             // 
-            this.ToMinInput.Location = new System.Drawing.Point(15, 74);
+            this.ToMinInput.Location = new System.Drawing.Point(22, 114);
+            this.ToMinInput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ToMinInput.Name = "ToMinInput";
-            this.ToMinInput.Size = new System.Drawing.Size(100, 20);
+            this.ToMinInput.Size = new System.Drawing.Size(148, 26);
             this.ToMinInput.TabIndex = 4;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(121, 58);
+            this.label4.Location = new System.Drawing.Point(182, 89);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(42, 13);
+            this.label4.Size = new System.Drawing.Size(60, 20);
             this.label4.TabIndex = 7;
             this.label4.Text = "To max";
             // 
             // ToMaxInput
             // 
-            this.ToMaxInput.Location = new System.Drawing.Point(124, 74);
+            this.ToMaxInput.Location = new System.Drawing.Point(186, 114);
+            this.ToMaxInput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ToMaxInput.Name = "ToMaxInput";
-            this.ToMaxInput.Size = new System.Drawing.Size(100, 20);
+            this.ToMaxInput.Size = new System.Drawing.Size(148, 26);
             this.ToMaxInput.TabIndex = 6;
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(15, 110);
+            this.SaveButton.Location = new System.Drawing.Point(22, 169);
+            this.SaveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 30);
+            this.SaveButton.Size = new System.Drawing.Size(112, 46);
             this.SaveButton.TabIndex = 8;
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
@@ -116,18 +125,20 @@
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(149, 110);
+            this.CancelButton.Location = new System.Drawing.Point(224, 169);
+            this.CancelButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 30);
+            this.CancelButton.Size = new System.Drawing.Size(112, 46);
             this.CancelButton.TabIndex = 9;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // LinearMapEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(239, 152);
+            this.ClientSize = new System.Drawing.Size(358, 234);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.label4);
@@ -138,6 +149,7 @@
             this.Controls.Add(this.FromMaxInput);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FromMinInput);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "LinearMapEditor";
             this.Text = "LinearMapEditor";
             this.Load += new System.EventHandler(this.LinearMapEditor_Load);

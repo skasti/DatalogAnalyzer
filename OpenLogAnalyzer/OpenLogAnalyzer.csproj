@@ -119,6 +119,8 @@
     <Compile Include="Transforms\LinearMapEditor.Designer.cs">
       <DependentUpon>LinearMapEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Transforms\IEditInputTransforms.cs" />
+    <Compile Include="Transforms\TransformEditors.cs" />
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>

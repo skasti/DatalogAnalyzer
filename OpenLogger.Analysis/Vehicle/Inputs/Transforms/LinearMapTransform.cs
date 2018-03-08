@@ -20,5 +20,10 @@ namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
         {
             return (input - SourceMin) / SourceRange * TargetRange + TargetMin;
         }
+
+        public override string ToString()
+        {
+            return $"Linear map [{SourceMin}/{SourceMax}] to [{TargetMin}/{TargetMax}]";
+        }
     }
 }

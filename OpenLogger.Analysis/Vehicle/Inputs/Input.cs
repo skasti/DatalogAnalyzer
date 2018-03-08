@@ -37,10 +37,10 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
         private int _bufferPosition = 0;
         private double[] _ringBuffer;
 
-        public double GetValue(LogEntry entry)
+        public double GetValue(LogEntry entry, InputTransform LastTransform = null)
         {
             var smoothed = GetSmoothedValue(entry);
-            return Transform(smoothed);
+            return Transform(smoothed, LastTransform);
         }
 
         public double GetSmoothedValue(LogEntry entry)
@@ -91,9 +91,18 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             return rawValue;
         }
 
-        private double Transform(double input)
+        private double Transform(double input, InputTransform lastTransform)
         {
-            return Transforms.Aggregate(input, (current, transform) => transform.Transform(current));
+            var current = input;
+            foreach (var transform in Transforms)
+            {
+                current = transform.Transform(current);
+
+                if (transform == lastTransform)
+                    break;
+            }
+
+            return current;
         }
 
         private double Smooth(double value)

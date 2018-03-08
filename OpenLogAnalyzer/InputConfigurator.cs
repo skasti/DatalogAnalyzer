@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using OpenLogAnalyzer.Transforms;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle.Inputs;
@@ -24,6 +25,7 @@ namespace OpenLogAnalyzer
         private LogSegment _segment;
         private GMapOverlay _segmentOverlay = new GMapOverlay("Segment");
         private GMapMarker _marker;
+
         public InputConfigurator()
         {
             InitializeComponent();
@@ -37,20 +39,17 @@ namespace OpenLogAnalyzer
             {
                 Name = "Unnamed"
             };
-
-            var firstPos = segment.Entries.First().GetLocation();
-
-            Map.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
-            _marker = new GMarkerGoogle(firstPos, GMarkerGoogleType.red_small);
-
-            var route = segment.GetRoute("Segment");
-            _segmentOverlay.Markers.Add(_marker);
-            _segmentOverlay.Routes.Add(route);
-            Map.Overlays.Add(_segmentOverlay);
-            Map.ZoomAndCenterMarkers(_segmentOverlay.Id);
-
-            SegmentPosition.Maximum = segment.Entries.Count-1;
         }
+
+        private double TransformedCursorY => TransformChart.ChartAreas[0].CursorY.Position;
+
+        private double TransformedCursorX => TransformChart.ChartAreas[0].CursorX.Position;
+
+        private double TransformedSelectionMax => TransformChart.ChartAreas[0].CursorY.SelectionStart > TransformChart.ChartAreas[0].CursorY.SelectionEnd ? 
+            TransformChart.ChartAreas[0].CursorY.SelectionStart : TransformChart.ChartAreas[0].CursorY.SelectionEnd;
+
+        private double TransformedSelectionMin => TransformChart.ChartAreas[0].CursorY.SelectionStart > TransformChart.ChartAreas[0].CursorY.SelectionEnd ? 
+            TransformChart.ChartAreas[0].CursorY.SelectionEnd : TransformChart.ChartAreas[0].CursorY.SelectionStart;
 
         private void InitSourceInput()
         {
@@ -73,6 +72,10 @@ namespace OpenLogAnalyzer
 
         private void InputConfigurator_Load(object sender, EventArgs e)
         {
+            InitMap();
+
+            SegmentPosition.Maximum = _segment.Entries.Count - 1;
+
             InitSourceInput();
 
             if (Input.Source == InputSource.Analog)
@@ -86,6 +89,65 @@ namespace OpenLogAnalyzer
 
             NameInput.Text = Input.Name;
             UpdateCharts();
+
+            InitTransformChartMenu();
+        }
+
+        private void InitTransformChartMenu()
+        {
+            foreach (var editorType in TransformEditors.EditorTypes)
+            {
+                var name = TransformEditors.GetEditorName(editorType);
+                var button = new ToolStripMenuItem(name);
+                button.Click += (sender, args) =>
+                {
+                    var editor = editorType.GetConstructor(new Type[0])?.Invoke(new object[0]) as IEditInputTransforms;
+                    editor.CreateTransform(
+                        TransformedSelectionMin, 
+                        TransformedSelectionMax, 
+                        TransformedCursorX, 
+                        TransformedCursorY);
+
+                    editor.Saved += (o, transform) =>
+                    {
+                        Input.Transforms.Add(transform);
+                        UpdateTransformsList();
+                        UpdateTransformChart();
+                    };
+
+                    editor.ShowDialog(this);
+                };
+
+
+                CreateTransformMenu.DropDownItems.Add(button);
+            }
+        }
+
+        private void UpdateTransformsList()
+        {
+            TransformList.Items.Clear();
+
+            foreach (var transform in Input.Transforms)
+            {
+                var item = new ListViewItem(transform.ToString());
+                item.Tag = transform;
+
+                TransformList.Items.Add(item);
+            }
+        }
+
+        private void InitMap()
+        {
+            var firstPos = _segment.Entries.First().GetLocation();
+
+            Map.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
+            _marker = new GMarkerGoogle(firstPos, GMarkerGoogleType.red_small);
+
+            var route = _segment.GetRoute("Segment");
+            _segmentOverlay.Markers.Add(_marker);
+            _segmentOverlay.Routes.Add(route);
+            Map.Overlays.Add(_segmentOverlay);
+            Map.ZoomAndCenterMarkers(_segmentOverlay.Id);
         }
 
         private void UpdateCharts()
@@ -97,10 +159,11 @@ namespace OpenLogAnalyzer
         private void UpdateTransformChart()
         {
             TransformChart.Series[0].Points.Clear();
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as InputTransform : null;
 
             foreach (var entry in _segment.Entries)
             {
-                var value = Input.GetValue(entry);
+                var value = Input.GetValue(entry, selectedTransform);
 
                 TransformChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
@@ -202,6 +265,11 @@ namespace OpenLogAnalyzer
         private void TransformChart_SelectionRangeChanged(object sender, CursorEventArgs e)
         {
             TransformSelectionLabel.Text = $"{e.NewSelectionStart} - {e.NewSelectionEnd}";
+        }
+
+        private void TransformList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateTransformChart();
         }
     }
 }

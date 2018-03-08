@@ -36,6 +36,7 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("This is a transform item");
             this.NameLabel = new System.Windows.Forms.Label();
             this.NameInput = new System.Windows.Forms.TextBox();
             this.SourceInput = new System.Windows.Forms.ComboBox();
@@ -51,12 +52,11 @@
             this.CursorLabel = new System.Windows.Forms.Label();
             this.SelectionLabel = new System.Windows.Forms.Label();
             this.TransformChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.TransformChartMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.CreateTransformMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.TransformList = new System.Windows.Forms.ListView();
             this.TransformSelectionLabel = new System.Windows.Forms.Label();
             this.TransformCursorLabel = new System.Windows.Forms.Label();
-            this.TransformChartMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.linearMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.RawChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SegmentPosition)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SmoothingInput)).BeginInit();
@@ -68,39 +68,35 @@
             // NameLabel
             // 
             this.NameLabel.AutoSize = true;
-            this.NameLabel.Location = new System.Drawing.Point(8, 21);
-            this.NameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.NameLabel.Location = new System.Drawing.Point(12, 32);
             this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(35, 13);
+            this.NameLabel.Size = new System.Drawing.Size(51, 20);
             this.NameLabel.TabIndex = 0;
             this.NameLabel.Text = "Name";
             // 
             // NameInput
             // 
-            this.NameInput.Location = new System.Drawing.Point(8, 36);
-            this.NameInput.Margin = new System.Windows.Forms.Padding(2);
+            this.NameInput.Location = new System.Drawing.Point(12, 55);
             this.NameInput.Name = "NameInput";
-            this.NameInput.Size = new System.Drawing.Size(127, 20);
+            this.NameInput.Size = new System.Drawing.Size(188, 26);
             this.NameInput.TabIndex = 1;
             // 
             // SourceInput
             // 
             this.SourceInput.DropDownWidth = 188;
             this.SourceInput.FormattingEnabled = true;
-            this.SourceInput.Location = new System.Drawing.Point(141, 35);
-            this.SourceInput.Margin = new System.Windows.Forms.Padding(2);
+            this.SourceInput.Location = new System.Drawing.Point(212, 54);
             this.SourceInput.Name = "SourceInput";
-            this.SourceInput.Size = new System.Drawing.Size(127, 21);
+            this.SourceInput.Size = new System.Drawing.Size(188, 28);
             this.SourceInput.TabIndex = 2;
             this.SourceInput.SelectedIndexChanged += new System.EventHandler(this.SourceInput_SelectedIndexChanged);
             // 
             // SourceLabel
             // 
             this.SourceLabel.AutoSize = true;
-            this.SourceLabel.Location = new System.Drawing.Point(141, 21);
-            this.SourceLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.SourceLabel.Location = new System.Drawing.Point(212, 32);
             this.SourceLabel.Name = "SourceLabel";
-            this.SourceLabel.Size = new System.Drawing.Size(41, 13);
+            this.SourceLabel.Size = new System.Drawing.Size(60, 20);
             this.SourceLabel.TabIndex = 3;
             this.SourceLabel.Text = "Source";
             // 
@@ -113,8 +109,7 @@
             this.Map.GrayScaleMode = false;
             this.Map.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.Map.LevelsKeepInMemmory = 5;
-            this.Map.Location = new System.Drawing.Point(615, 8);
-            this.Map.Margin = new System.Windows.Forms.Padding(2);
+            this.Map.Location = new System.Drawing.Point(922, 12);
             this.Map.MarkersEnabled = true;
             this.Map.MaxZoom = 20;
             this.Map.MinZoom = 12;
@@ -128,7 +123,7 @@
             this.Map.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.Map.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.Map.ShowTileGridLines = false;
-            this.Map.Size = new System.Drawing.Size(339, 364);
+            this.Map.Size = new System.Drawing.Size(508, 560);
             this.Map.TabIndex = 4;
             this.Map.Zoom = 0D;
             // 
@@ -150,8 +145,7 @@
             legend1.Enabled = false;
             legend1.Name = "Legend1";
             this.RawChart.Legends.Add(legend1);
-            this.RawChart.Location = new System.Drawing.Point(8, 58);
-            this.RawChart.Margin = new System.Windows.Forms.Padding(2);
+            this.RawChart.Location = new System.Drawing.Point(12, 89);
             this.RawChart.Name = "RawChart";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
@@ -163,7 +157,7 @@
             series2.Name = "Series2";
             this.RawChart.Series.Add(series1);
             this.RawChart.Series.Add(series2);
-            this.RawChart.Size = new System.Drawing.Size(603, 265);
+            this.RawChart.Size = new System.Drawing.Size(904, 408);
             this.RawChart.TabIndex = 5;
             this.RawChart.Text = "chart1";
             this.RawChart.CursorPositionChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chart1_CursorPositionChanged);
@@ -173,35 +167,32 @@
             // 
             this.SegmentPosition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SegmentPosition.Location = new System.Drawing.Point(8, 327);
-            this.SegmentPosition.Margin = new System.Windows.Forms.Padding(2);
+            this.SegmentPosition.Location = new System.Drawing.Point(12, 503);
             this.SegmentPosition.Name = "SegmentPosition";
-            this.SegmentPosition.Size = new System.Drawing.Size(603, 45);
+            this.SegmentPosition.Size = new System.Drawing.Size(904, 69);
             this.SegmentPosition.TabIndex = 6;
             this.SegmentPosition.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.SegmentPosition.Scroll += new System.EventHandler(this.SegmentPosition_Scroll);
             // 
             // SmoothingInput
             // 
-            this.SmoothingInput.Location = new System.Drawing.Point(275, 37);
-            this.SmoothingInput.Margin = new System.Windows.Forms.Padding(2);
+            this.SmoothingInput.Location = new System.Drawing.Point(412, 57);
             this.SmoothingInput.Maximum = new decimal(new int[] {
             200,
             0,
             0,
             0});
             this.SmoothingInput.Name = "SmoothingInput";
-            this.SmoothingInput.Size = new System.Drawing.Size(93, 20);
+            this.SmoothingInput.Size = new System.Drawing.Size(140, 26);
             this.SmoothingInput.TabIndex = 7;
             this.SmoothingInput.ValueChanged += new System.EventHandler(this.SmoothingInput_ValueChanged);
             // 
             // SmoothingLabel
             // 
             this.SmoothingLabel.AutoSize = true;
-            this.SmoothingLabel.Location = new System.Drawing.Point(275, 22);
-            this.SmoothingLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.SmoothingLabel.Location = new System.Drawing.Point(412, 34);
             this.SmoothingLabel.Name = "SmoothingLabel";
-            this.SmoothingLabel.Size = new System.Drawing.Size(57, 13);
+            this.SmoothingLabel.Size = new System.Drawing.Size(86, 20);
             this.SmoothingLabel.TabIndex = 8;
             this.SmoothingLabel.Text = "Smoothing";
             // 
@@ -212,8 +203,7 @@
             this.FileMenu});
             this.Menu.Location = new System.Drawing.Point(0, 0);
             this.Menu.Name = "Menu";
-            this.Menu.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-            this.Menu.Size = new System.Drawing.Size(962, 24);
+            this.Menu.Size = new System.Drawing.Size(1443, 33);
             this.Menu.TabIndex = 10;
             this.Menu.Text = "menuStrip1";
             // 
@@ -222,22 +212,21 @@
             this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem});
             this.FileMenu.Name = "FileMenu";
-            this.FileMenu.Size = new System.Drawing.Size(37, 22);
+            this.FileMenu.Size = new System.Drawing.Size(50, 29);
             this.FileMenu.Text = "File";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(133, 30);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // CursorLabel
             // 
             this.CursorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CursorLabel.Location = new System.Drawing.Point(478, 43);
-            this.CursorLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.CursorLabel.Location = new System.Drawing.Point(717, 66);
             this.CursorLabel.Name = "CursorLabel";
-            this.CursorLabel.Size = new System.Drawing.Size(133, 13);
+            this.CursorLabel.Size = new System.Drawing.Size(200, 20);
             this.CursorLabel.TabIndex = 14;
             this.CursorLabel.Text = "1024.00 / 1024.00";
             this.CursorLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -245,10 +234,9 @@
             // SelectionLabel
             // 
             this.SelectionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectionLabel.Location = new System.Drawing.Point(478, 30);
-            this.SelectionLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.SelectionLabel.Location = new System.Drawing.Point(717, 46);
             this.SelectionLabel.Name = "SelectionLabel";
-            this.SelectionLabel.Size = new System.Drawing.Size(133, 13);
+            this.SelectionLabel.Size = new System.Drawing.Size(200, 20);
             this.SelectionLabel.TabIndex = 15;
             this.SelectionLabel.Text = "1024.00 / 1024.00";
             this.SelectionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -269,41 +257,57 @@
             chartArea2.CursorY.SelectionColor = System.Drawing.Color.LightGreen;
             chartArea2.Name = "ChartArea1";
             this.TransformChart.ChartAreas.Add(chartArea2);
+            this.TransformChart.ContextMenuStrip = this.TransformChartMenu;
             legend2.Enabled = false;
             legend2.Name = "Legend1";
             this.TransformChart.Legends.Add(legend2);
-            this.TransformChart.Location = new System.Drawing.Point(8, 389);
-            this.TransformChart.Margin = new System.Windows.Forms.Padding(2);
+            this.TransformChart.Location = new System.Drawing.Point(12, 598);
             this.TransformChart.Name = "TransformChart";
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series3.Legend = "Legend1";
             series3.Name = "Series1";
             this.TransformChart.Series.Add(series3);
-            this.TransformChart.Size = new System.Drawing.Size(603, 291);
+            this.TransformChart.Size = new System.Drawing.Size(904, 448);
             this.TransformChart.TabIndex = 16;
             this.TransformChart.Text = "chart1";
             this.TransformChart.CursorPositionChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.TransformChart_CursorPositionChanged);
             this.TransformChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.TransformChart_SelectionRangeChanged);
             // 
+            // TransformChartMenu
+            // 
+            this.TransformChartMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.TransformChartMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CreateTransformMenu});
+            this.TransformChartMenu.Name = "TransformChartMenu";
+            this.TransformChartMenu.Size = new System.Drawing.Size(135, 34);
+            // 
+            // CreateTransformMenu
+            // 
+            this.CreateTransformMenu.Name = "CreateTransformMenu";
+            this.CreateTransformMenu.Size = new System.Drawing.Size(134, 30);
+            this.CreateTransformMenu.Text = "Create";
+            // 
             // TransformList
             // 
             this.TransformList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TransformList.Location = new System.Drawing.Point(615, 389);
-            this.TransformList.Margin = new System.Windows.Forms.Padding(2);
+            this.TransformList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1});
+            this.TransformList.Location = new System.Drawing.Point(922, 598);
             this.TransformList.Name = "TransformList";
-            this.TransformList.Size = new System.Drawing.Size(340, 293);
+            this.TransformList.Size = new System.Drawing.Size(508, 449);
             this.TransformList.TabIndex = 17;
             this.TransformList.UseCompatibleStateImageBehavior = false;
+            this.TransformList.View = System.Windows.Forms.View.List;
+            this.TransformList.SelectedIndexChanged += new System.EventHandler(this.TransformList_SelectedIndexChanged);
             // 
             // TransformSelectionLabel
             // 
             this.TransformSelectionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.TransformSelectionLabel.Location = new System.Drawing.Point(478, 374);
-            this.TransformSelectionLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.TransformSelectionLabel.Location = new System.Drawing.Point(717, 575);
             this.TransformSelectionLabel.Name = "TransformSelectionLabel";
-            this.TransformSelectionLabel.Size = new System.Drawing.Size(133, 13);
+            this.TransformSelectionLabel.Size = new System.Drawing.Size(200, 20);
             this.TransformSelectionLabel.TabIndex = 19;
             this.TransformSelectionLabel.Text = "1024.00 / 1024.00";
             this.TransformSelectionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -311,39 +315,17 @@
             // TransformCursorLabel
             // 
             this.TransformCursorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.TransformCursorLabel.Location = new System.Drawing.Point(5, 374);
-            this.TransformCursorLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.TransformCursorLabel.Location = new System.Drawing.Point(8, 575);
             this.TransformCursorLabel.Name = "TransformCursorLabel";
-            this.TransformCursorLabel.Size = new System.Drawing.Size(133, 13);
+            this.TransformCursorLabel.Size = new System.Drawing.Size(200, 20);
             this.TransformCursorLabel.TabIndex = 18;
             this.TransformCursorLabel.Text = "1024.00 / 1024.00";
             // 
-            // TransformChartMenu
-            // 
-            this.TransformChartMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createToolStripMenuItem});
-            this.TransformChartMenu.Name = "TransformChartMenu";
-            this.TransformChartMenu.Size = new System.Drawing.Size(153, 48);
-            // 
-            // createToolStripMenuItem
-            // 
-            this.createToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.linearMapToolStripMenuItem});
-            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
-            this.createToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.createToolStripMenuItem.Text = "Create";
-            // 
-            // linearMapToolStripMenuItem
-            // 
-            this.linearMapToolStripMenuItem.Name = "linearMapToolStripMenuItem";
-            this.linearMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.linearMapToolStripMenuItem.Text = "Linear Map";
-            // 
             // InputConfigurator
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(962, 688);
+            this.ClientSize = new System.Drawing.Size(1443, 1058);
             this.Controls.Add(this.TransformSelectionLabel);
             this.Controls.Add(this.TransformCursorLabel);
             this.Controls.Add(this.TransformList);
@@ -361,7 +343,6 @@
             this.Controls.Add(this.NameLabel);
             this.Controls.Add(this.Menu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "InputConfigurator";
             this.Text = "InputConfigurator";
             this.Load += new System.EventHandler(this.InputConfigurator_Load);
@@ -398,7 +379,6 @@
         private System.Windows.Forms.Label TransformSelectionLabel;
         private System.Windows.Forms.Label TransformCursorLabel;
         private System.Windows.Forms.ContextMenuStrip TransformChartMenu;
-        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem linearMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CreateTransformMenu;
     }
 }
