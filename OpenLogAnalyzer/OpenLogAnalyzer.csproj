@@ -113,6 +113,12 @@
       <DependentUpon>TrackLibrary.cs</DependentUpon>
     </Compile>
     <Compile Include="TrackRepository.cs" />
+    <Compile Include="Transforms\AngleBasedForkPositionEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Transforms\AngleBasedForkPositionEditor.Designer.cs">
+      <DependentUpon>AngleBasedForkPositionEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Transforms\LinearMapEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -152,6 +158,9 @@
     <EmbeddedResource Include="TrackLibrary.resx">
       <DependentUpon>TrackLibrary.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Transforms\AngleBasedForkPositionEditor.resx">
+      <DependentUpon>AngleBasedForkPositionEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Transforms\LinearMapEditor.resx">
       <DependentUpon>LinearMapEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -178,6 +187,20 @@
       <Project>{1EEF921C-F140-4E1C-8BB0-95EE71F1B3A5}</Project>
       <Name>OpenLogger.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\background.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Sensor Anchor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Sensor Point.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\upper fork.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

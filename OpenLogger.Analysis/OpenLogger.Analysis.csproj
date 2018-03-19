@@ -68,6 +68,7 @@
     <Compile Include="SessionAnalysis.cs" />
     <Compile Include="Track.cs" />
     <Compile Include="JsonConverter\PolygonConverter.cs" />
+    <Compile Include="Vehicle\Inputs\Transforms\AngleBasedForkPositionTransform.cs" />
     <Compile Include="Vehicle\Inputs\Transforms\InputTransform.cs" />
     <Compile Include="Vehicle\Inputs\Transforms\LinearMapTransform.cs" />
     <Compile Include="Vehicle\Vehicle.cs" />

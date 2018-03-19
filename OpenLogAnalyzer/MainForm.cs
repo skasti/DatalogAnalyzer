@@ -14,6 +14,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json;
 using OpenLogAnalyzer.Extensions;
+using OpenLogAnalyzer.Transforms;
 using OpenLogger;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Extensions;
@@ -539,6 +540,13 @@ namespace OpenLogAnalyzer
                 chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
                 chart.UpdateCursor();
             }
+        }
+
+        private void forkSensorEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = new AngleBasedForkPositionEditor();
+            editor.CreateTransform(0,0,0,0);
+            editor.ShowDialog(this);
         }
     }
 }
