@@ -141,7 +141,8 @@
             this.visualizationBox.Image = ((System.Drawing.Image)(resources.GetObject("visualizationBox.Image")));
             this.visualizationBox.Location = new System.Drawing.Point(231, 12);
             this.visualizationBox.Name = "visualizationBox";
-            this.visualizationBox.Size = new System.Drawing.Size(337, 452);
+            this.visualizationBox.Size = new System.Drawing.Size(373, 450);
+            this.visualizationBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.visualizationBox.TabIndex = 10;
             this.visualizationBox.TabStop = false;
             // 
@@ -149,11 +150,11 @@
             // 
             this.visualizationPositionInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.visualizationPositionInput.Location = new System.Drawing.Point(12, 464);
+            this.visualizationPositionInput.Location = new System.Drawing.Point(12, 468);
             this.visualizationPositionInput.Maximum = 90;
             this.visualizationPositionInput.Minimum = -90;
             this.visualizationPositionInput.Name = "visualizationPositionInput";
-            this.visualizationPositionInput.Size = new System.Drawing.Size(556, 69);
+            this.visualizationPositionInput.Size = new System.Drawing.Size(592, 69);
             this.visualizationPositionInput.TabIndex = 11;
             this.visualizationPositionInput.Scroll += new System.EventHandler(this.visualizationPositionInput_Scroll);
             // 
@@ -192,7 +193,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(578, 530);
+            this.ClientSize = new System.Drawing.Size(616, 534);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.forkPositionLabel);
@@ -208,6 +209,10 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.arm1LengthInput);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximumSize = new System.Drawing.Size(638, 590);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(638, 590);
             this.Name = "AngleBasedForkPositionEditor";
             this.Text = "AngleBasedForkPositionEditor";
             this.Load += new System.EventHandler(this.AngleBasedForkPositionEditor_Load);
