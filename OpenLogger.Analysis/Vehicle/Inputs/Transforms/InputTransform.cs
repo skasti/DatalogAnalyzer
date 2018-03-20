@@ -3,5 +3,6 @@
     public interface InputTransform
     {
         double Transform(double input);
+        InputTransform Copy();
     }
 }

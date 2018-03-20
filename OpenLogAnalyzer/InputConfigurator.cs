@@ -21,10 +21,13 @@ namespace OpenLogAnalyzer
 {
     public partial class InputConfigurator : Form
     {
+        public bool Saved { get; set; }
         public Input Input { get; }
+        private Input _editingInput;
         private LogSegment _segment;
         private GMapOverlay _segmentOverlay = new GMapOverlay("Segment");
         private GMapMarker _marker;
+        public event EventHandler<Input> OnSave; 
 
         public InputConfigurator()
         {
@@ -39,6 +42,8 @@ namespace OpenLogAnalyzer
             {
                 Name = "Unnamed"
             };
+
+            _editingInput = Input.Copy();
         }
 
         private double TransformedCursorY => TransformChart.ChartAreas[0].CursorY.Position;
@@ -78,16 +83,16 @@ namespace OpenLogAnalyzer
 
             InitSourceInput();
 
-            if (Input.Source == InputSource.Analog)
+            if (_editingInput.Source == InputSource.Analog)
             {
-                SourceInput.SelectedItem = $"{InputSource.Analog} {Input.AnalogSource}";
+                SourceInput.SelectedItem = $"{InputSource.Analog} {_editingInput.AnalogSource}";
             }
             else
             {
-                SourceInput.SelectedItem = Input.Source.ToString();
+                SourceInput.SelectedItem = _editingInput.Source.ToString();
             }
 
-            NameInput.Text = Input.Name;
+            NameInput.Text = _editingInput.Name;
             UpdateCharts();
 
             InitTransformChartMenu();
@@ -110,7 +115,7 @@ namespace OpenLogAnalyzer
 
                     editor.Saved += (o, transform) =>
                     {
-                        Input.Transforms.Add(transform);
+                        _editingInput.Transforms.Add(transform);
                         UpdateTransformsList();
                         UpdateTransformChart();
                     };
@@ -127,7 +132,7 @@ namespace OpenLogAnalyzer
         {
             TransformList.Items.Clear();
 
-            foreach (var transform in Input.Transforms)
+            foreach (var transform in _editingInput.Transforms)
             {
                 var item = new ListViewItem(transform.ToString());
                 item.Tag = transform;
@@ -163,7 +168,7 @@ namespace OpenLogAnalyzer
 
             foreach (var entry in _segment.Entries)
             {
-                var value = Input.GetValue(entry, selectedTransform);
+                var value = _editingInput.GetValue(entry, selectedTransform);
 
                 TransformChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
@@ -181,7 +186,7 @@ namespace OpenLogAnalyzer
 
             foreach (var entry in _segment.Entries)
             {
-                var value = Input.GetSmoothedValue(entry);
+                var value = _editingInput.GetSmoothedValue(entry);
 
                 RawChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
@@ -193,7 +198,7 @@ namespace OpenLogAnalyzer
 
             foreach (var entry in _segment.Entries)
             {
-                var value = Input.GetRawValue(entry);
+                var value = _editingInput.GetRawValue(entry);
 
                 RawChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
             }
@@ -204,12 +209,12 @@ namespace OpenLogAnalyzer
             InputSource newSource = InputSource.Analog;
             if (Enum.TryParse(SourceInput.Text, out newSource))
             {
-                Input.Source = newSource;
+                _editingInput.Source = newSource;
             }
             else
             {
-                Input.Source = InputSource.Analog;
-                Input.AnalogSource = int.Parse(SourceInput.Text.Split(' ').Last());
+                _editingInput.Source = InputSource.Analog;
+                _editingInput.AnalogSource = int.Parse(SourceInput.Text.Split(' ').Last());
             }
 
             UpdateCharts();
@@ -217,7 +222,7 @@ namespace OpenLogAnalyzer
 
         private void SmoothingInput_ValueChanged(object sender, EventArgs e)
         {
-            Input.Smoothing = (int)SmoothingInput.Value;
+            _editingInput.Smoothing = (int)SmoothingInput.Value;
             UpdateSmoothedChart();
             UpdateTransformChart();
         }
@@ -270,6 +275,27 @@ namespace OpenLogAnalyzer
         private void TransformList_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateTransformChart();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void Save()
+        {
+            _editingInput.SaveTo(Input);
+            Saved = true;
+            OnSave?.Invoke(this, Input);
+        }
+
+        private void InputConfigurator_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!Saved && MessageBox.Show("Do you want to save your changes?", "Save changes?", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Save();
+            }
         }
     }
 }

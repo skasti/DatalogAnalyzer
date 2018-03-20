@@ -35,14 +35,7 @@ namespace OpenLogAnalyzer.Transforms
         public void LoadTransform(InputTransform transform)
         {
             _transform = transform as AngleBasedForkPositionTransform;
-            _editingTransform = new AngleBasedForkPositionTransform
-            {
-                Arm1Length = _transform.Arm1Length,
-                Arm2Length = _transform.Arm2Length,
-                SensorForkDistance = _transform.SensorForkDistance,
-                BottomOutToSensorOffset = _transform.BottomOutToSensorOffset,
-                UpperForkLegOffset = _transform.UpperForkLegOffset
-            };
+            _editingTransform = _transform.Copy() as AngleBasedForkPositionTransform;
         }
 
         public void CreateTransform(double selectionMin, double selectionMax, double cursorX, double cursorY)

@@ -41,6 +41,18 @@ namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
             return arm2Pos.Item2 - UpperForkLegOffset + BottomOutToSensorOffset;
         }
 
+        public InputTransform Copy()
+        {
+            return new AngleBasedForkPositionTransform
+            {
+                Arm1Length = Arm1Length,
+                Arm2Length = Arm2Length,
+                SensorForkDistance = SensorForkDistance,
+                BottomOutToSensorOffset = BottomOutToSensorOffset,
+                UpperForkLegOffset = UpperForkLegOffset
+            };
+        }
+
         public Tuple<double, double> GetArm1Position(double degrees)
         {
             var radians = degrees * Math.PI / 180.0;

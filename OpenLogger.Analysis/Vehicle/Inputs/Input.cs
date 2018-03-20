@@ -115,5 +115,34 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
 
             return _ringBuffer.Average();
         }
+
+        public Input Copy()
+        {
+            var copy = new Input
+            {
+                AnalogSource = AnalogSource,
+                Smoothing = Smoothing,
+                Name = Name,
+                Source = Source,
+                GraphType = GraphType
+            };
+
+            foreach (var transform in Transforms)
+            {
+                copy.Transforms.Add(transform.Copy());
+            }
+
+            return copy;
+        }
+
+        public void SaveTo(Input input)
+        {
+            input.AnalogSource = AnalogSource;
+            input.Source = Source;
+            input.GraphType = GraphType;
+            input.Name = Name;
+            input.Smoothing = Smoothing;
+            input.Transforms = Transforms;
+        }
     }
 }

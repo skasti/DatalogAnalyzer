@@ -218,8 +218,9 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(133, 30);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(210, 30);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // CursorLabel
             // 
@@ -345,6 +346,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "InputConfigurator";
             this.Text = "InputConfigurator";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InputConfigurator_FormClosing);
             this.Load += new System.EventHandler(this.InputConfigurator_Load);
             ((System.ComponentModel.ISupportInitialize)(this.RawChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SegmentPosition)).EndInit();
