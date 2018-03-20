@@ -29,11 +29,14 @@ namespace OpenLogAnalyzer
     {
         List<DriveInfo> _knownDrives = new List<DriveInfo>();
         private readonly TrackRepository _trackRepository = new TrackRepository();
-        private SessionAnalysis _currentAnalysis = null;
-        private Vehicle _currentVehicle = null;
         private Dictionary<Input, Chart> _inputChart;
+        private Dictionary<Input, TabPage> _inputTab;
         private RenderingController _renderingController;
         private double _analysisResolution = 1.0;
+
+        private Vehicle _currentVehicle = null;
+        private SessionAnalysis _currentAnalysis = null;
+        private List<SegmentAnalysis> _currentSegments = null; 
         //private readonly List<SegmentAnalysis> RenderedSegments = new List<SegmentAnalysis>(); 
         //private readonly Dictionary<SegmentAnalysis, GMapMarker> RenderedSegmentMarkers = new Dictionary<SegmentAnalysis, GMapMarker>();
 
@@ -278,12 +281,14 @@ namespace OpenLogAnalyzer
         {
             AnalysisInputTabs.TabPages.Clear();
             _inputChart = new Dictionary<Input, Chart>();
+            _inputTab = new Dictionary<Input, TabPage>();
 
             foreach (var input in _currentVehicle.Inputs)
             {
                 var tabPage = AddInputTab(input);
                 var chart = AddInputChart(tabPage, input);
 
+                _inputTab.Add(input, tabPage);
                 _inputChart.Add(input, chart);
             }
         }
@@ -488,6 +493,9 @@ namespace OpenLogAnalyzer
                 _inputChart[input].Series.Clear();
             }
 
+            _currentSegments.Clear();
+            _currentSegments.AddRange(segments);
+
             foreach (var segment in segments)
             {
                 AnalyzeSegment(segment);
@@ -546,6 +554,23 @@ namespace OpenLogAnalyzer
         {
             var editor = new AngleBasedForkPositionEditor();
             editor.CreateTransform(0,0,0,0);
+            editor.ShowDialog(this);
+        }
+
+        private void editInputToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedInput = _inputTab.FirstOrDefault(kv => kv.Value == AnalysisInputTabs.SelectedTab).Key;
+
+            if (selectedInput == null)
+                return;
+
+            var editor = new InputConfigurator(null, selectedInput);
+            editor.OnSave += (o, input) =>
+            {
+                //TODO: Refresh charts
+                _inputTab[selectedInput].Text = selectedInput.Name;
+            };
+
             editor.ShowDialog(this);
         }
     }
