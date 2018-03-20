@@ -253,7 +253,7 @@ namespace OpenLogAnalyzer
         private void SetCurrentAnalysis(SessionAnalysis analysis)
         {
             _currentAnalysis = analysis;
-            _currentVehicle = new Vehicle();
+            _currentVehicle = VehicleRepository.GetVehicle(Guid.NewGuid());
 
             _renderingController.RenderSegments(analysis.Full);
 
@@ -493,7 +493,7 @@ namespace OpenLogAnalyzer
                 _inputChart[input].Series.Clear();
             }
 
-            _currentSegments.Clear();
+            _currentSegments = new List<SegmentAnalysis>(segments.Length);
             _currentSegments.AddRange(segments);
 
             foreach (var segment in segments)
@@ -564,7 +564,10 @@ namespace OpenLogAnalyzer
             if (selectedInput == null)
                 return;
 
-            var editor = new InputConfigurator(null, selectedInput);
+            if (_currentSegments == null || _currentSegments.Count == 0)
+                return;
+
+            var editor = new InputConfigurator(_currentSegments.First().Segment, selectedInput);
             editor.OnSave += (o, input) =>
             {
                 //TODO: Refresh charts

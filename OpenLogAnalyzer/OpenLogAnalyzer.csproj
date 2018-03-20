@@ -127,6 +127,7 @@
     </Compile>
     <Compile Include="Transforms\IEditInputTransforms.cs" />
     <Compile Include="Transforms\TransformEditors.cs" />
+    <Compile Include="VehicleRepository.cs" />
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
