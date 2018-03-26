@@ -11,6 +11,9 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
         public string Name { get; set; }
         public InputSource Source { get; set; }
         public InputGraphType GraphType { get; set; }
+        public double GraphMin { get; set; }
+        public double GraphMax { get; set; }
+        public bool AutoGraphRange { get; set; }
         public int AnalogSource { get; set; }
         public List<InputTransform> Transforms { get; set; } = new List<InputTransform>();
 

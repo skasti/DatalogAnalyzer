@@ -60,17 +60,27 @@ namespace OpenLogAnalyzer
         {
             foreach (var inputSource in Enum.GetValues(typeof(InputSource)).Cast<InputSource>())
             {
-                if (inputSource != InputSource.Analog)
+                if (inputSource == InputSource.Analog)
+                {
+                    var name = inputSource.ToString();
+
+                    for (int i = 0; i < _segment.ValueCount - 6; i++)
+                    {
+                        SourceInput.Items.Add($"{name} {i+1}");
+                    }
+                }
+                else if (inputSource == InputSource.Temperature)
+                {
+                    var name = inputSource.ToString();
+
+                    for (int i = 0; i < 6; i++)
+                    {
+                        SourceInput.Items.Add($"{name} {i+1}");
+                    }
+                }
+                else
                 {
                     SourceInput.Items.Add(inputSource.ToString());
-                    continue;
-                }
-
-                var name = inputSource.ToString();
-
-                for (int i = 0; i < _segment.ValueCount; i++)
-                {
-                    SourceInput.Items.Add($"{name} {i}");
                 }
             }
         }
@@ -93,6 +103,7 @@ namespace OpenLogAnalyzer
             }
 
             NameInput.Text = _editingInput.Name;
+            SmoothingInput.Value = _editingInput.Smoothing;
             UpdateCharts();
 
             InitTransformChartMenu();
@@ -296,6 +307,37 @@ namespace OpenLogAnalyzer
             {
                 Save();
             }
+        }
+
+        private void autoRangeInput_CheckedChanged(object sender, EventArgs e)
+        {
+            _editingInput.AutoGraphRange = autoRangeInput.Checked;
+
+            var chartArea = TransformChart.ChartAreas.FirstOrDefault();
+
+            if (!_editingInput.AutoGraphRange)
+            {
+                chartArea.AxisY.Maximum = (double) rangeMaxInput.Value;
+                chartArea.AxisY.Minimum = (double) rangeMinInput.Value;
+            }
+            else
+            {
+                chartArea.RecalculateAxesScale();
+            }
+        }
+
+        private void rangeMaxInput_ValueChanged(object sender, EventArgs e)
+        {
+            var chartArea = TransformChart.ChartAreas.FirstOrDefault();
+            _editingInput.GraphMax = (double)rangeMaxInput.Value;
+            chartArea.AxisY.Maximum = (double)rangeMaxInput.Value;
+        }
+
+        private void rangeMinInput_ValueChanged(object sender, EventArgs e)
+        {
+            var chartArea = TransformChart.ChartAreas.FirstOrDefault();
+            _editingInput.GraphMin = (double)rangeMinInput.Value;
+            chartArea.AxisY.Minimum = (double)rangeMinInput.Value;
         }
     }
 }
