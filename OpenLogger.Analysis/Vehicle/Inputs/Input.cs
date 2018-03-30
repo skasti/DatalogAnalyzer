@@ -11,6 +11,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
         public string Name { get; set; }
         public InputSource Source { get; set; }
         public InputGraphType GraphType { get; set; }
+        public InputXAxis XAxisType { get; set; } = InputXAxis.Distance;
         public double GraphMin { get; set; }
         public double GraphMax { get; set; }
         public bool AutoGraphRange { get; set; }
@@ -146,6 +147,10 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             input.Name = Name;
             input.Smoothing = Smoothing;
             input.Transforms = Transforms;
+            input.AutoGraphRange = AutoGraphRange;
+            input.GraphMin = GraphMin;
+            input.GraphMax = GraphMax;
+            input.XAxisType = XAxisType;
         }
     }
 }

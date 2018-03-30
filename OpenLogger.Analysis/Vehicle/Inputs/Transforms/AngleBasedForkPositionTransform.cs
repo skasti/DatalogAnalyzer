@@ -80,5 +80,10 @@ namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
 
             return new Tuple<double, double>(arm2X, arm2Y);
         }
+
+        public override string ToString()
+        {
+            return $"Fork position [{Arm1Length}/{Arm2Length}]";
+        }
     }
 }

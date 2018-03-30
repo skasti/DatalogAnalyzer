@@ -214,7 +214,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(638, 590);
             this.Name = "AngleBasedForkPositionEditor";
-            this.Text = "AngleBasedForkPositionEditor";
+            this.Text = "Fork Position Editor";
             this.Load += new System.EventHandler(this.AngleBasedForkPositionEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.visualizationBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.visualizationPositionInput)).EndInit();

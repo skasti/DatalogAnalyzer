@@ -253,7 +253,22 @@ namespace OpenLogAnalyzer
         private void SetCurrentAnalysis(SessionAnalysis analysis)
         {
             _currentAnalysis = analysis;
-            _currentVehicle = VehicleRepository.GetVehicle(Guid.NewGuid());
+            _currentVehicle = VehicleRepository.Get(analysis.VehicleName);
+
+            if (_currentVehicle == null)
+            {
+                var selector = new VehicleSelector();
+
+                selector.OnSelected += (sender, s) =>
+                {
+                    analysis.LogFile.Metadata.Bike = s;
+                    analysis.LogFile.SaveMetadata();
+
+                    _currentVehicle = VehicleRepository.Get(analysis.VehicleName);
+                };
+
+                selector.ShowDialog(this);
+            }
 
             _renderingController.RenderSegments(analysis.Full);
 
@@ -293,32 +308,16 @@ namespace OpenLogAnalyzer
             }
         }
 
-        private void AnalyzeSegment(SegmentAnalysis analysis)
+        private void RenderSegmentCharts(SegmentAnalysis analysis, Input singleInput)
         {
-            //var logStart = analysis.Segment.LogStart;
-            var route = new GMapRoute("DistanceRoute");
-            var prevPosition = new PointLatLng();
-            var distance = 0.0;
-            var prevDistance = -5.0;
 
             foreach (var entry in analysis.Segment.Entries)
             {
-                var position = entry.GetLocation();
-
-                if (position != prevPosition)
-                {
-                    route.Points.Add(position);
-                    distance = route.Distance * 1000;
-                    prevPosition = position;
-                }
-
-                //if (distance < prevDistance + _analysisResolution)
-                //    continue;
-
-                //prevDistance = distance;
-
                 foreach (var input in _currentVehicle.Inputs)
                 {
+                    if (singleInput != null && input != singleInput)
+                        continue;
+
                     var series = _inputChart[input].Series.FindByName(analysis.Name);
 
                     if (series == null)
@@ -328,8 +327,18 @@ namespace OpenLogAnalyzer
                     }
                 
                     var value = input.GetValue(entry);
-                    
-                    series.Points.AddXY(distance, value);
+
+                    switch (input.XAxisType)
+                    {
+                        case InputXAxis.Time:
+                            series.Points.AddXY(entry.GetTimeSpan(analysis.Segment.LogStart).TotalSeconds, value);
+                            break;
+                        case InputXAxis.Distance:
+                            series.Points.AddXY(entry.GetDistance(analysis.Segment), value);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
         }
@@ -364,8 +373,7 @@ namespace OpenLogAnalyzer
             if (analysis.LeadIn != null)
                 MapOverlayLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
 
-            MapOverlayLapList.Items.AddRange(
-                analysis.Laps.Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
+            MapOverlayLapList.Items.AddRange(analysis.Laps.Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
 
             if (analysis.LeadOut != null)
                 MapOverlayLapList.Items.Add(analysis.LeadOut.ToMapOverlayListViewItem(TimeSpan.Zero));
@@ -446,8 +454,7 @@ namespace OpenLogAnalyzer
         {
             if (MapOverlayLapList.SelectedItems.Count == 0)
             {
-                MessageBox.Show("You must select a segment to use for raw data for new input", "Must select segment",
-                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("You must select a segment to use for raw data for new input", "Must select segment", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
@@ -483,23 +490,38 @@ namespace OpenLogAnalyzer
                 return;
 
             var selectedItem = AnalysisLapList.SelectedItems[0].Tag as SegmentAnalysis;
-            AnalyzeSegments(selectedItem);
+            AnalyzeSegment(selectedItem);
         }
 
-        private void AnalyzeSegments(params SegmentAnalysis[] segments)
+        private void AnalyzeSegments(SegmentAnalysis[] segments = null, Input singleInput = null)
         {
-            foreach (var input in _currentVehicle.Inputs)
+            if (singleInput == null)
             {
-                _inputChart[input].Series.Clear();
+                foreach (var input in _currentVehicle.Inputs)
+                {
+                    _inputChart[input].Series.Clear();
+                }
+            }
+            else
+            {
+                _inputChart[singleInput].Series.Clear();
             }
 
-            _currentSegments = new List<SegmentAnalysis>(segments.Length);
-            _currentSegments.AddRange(segments);
-
-            foreach (var segment in segments)
+            if (segments != null)
             {
-                AnalyzeSegment(segment);
+                _currentSegments = new List<SegmentAnalysis>(segments.Length);
+                _currentSegments.AddRange(segments);
             }
+
+            foreach (var segment in _currentSegments)
+            {
+                RenderSegmentCharts(segment, singleInput);
+            }
+        }
+
+        private void AnalyzeSegment(SegmentAnalysis segment = null, Input singleInput = null)
+        {
+            AnalyzeSegments(new[] {segment}, singleInput);
         }
 
         private void AnalysisShowMarkers_CheckedChanged(object sender, EventArgs e)
@@ -528,9 +550,19 @@ namespace OpenLogAnalyzer
             MapTrackBar.Value = AnalysisTrackBar.Value;
             _renderingController.MarkerDistance = MapTrackBar.Value;
 
-            foreach (var chart in _inputChart.Values)
+            var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
+            var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;
+            var time = AnalysisTrackBar.Value*timeMultiplier;
+
+            foreach (var input in _inputChart.Keys)
             {
-                chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
+                var chart = _inputChart[input];
+
+                if (input.XAxisType == InputXAxis.Distance)
+                    chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
+                else
+                    chart.ChartAreas[0].CursorX.Position = time;
+
                 chart.UpdateCursor();
             }
         }
@@ -553,7 +585,7 @@ namespace OpenLogAnalyzer
         private void forkSensorEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = new AngleBasedForkPositionEditor();
-            editor.CreateTransform(0,0,0,0);
+            editor.CreateTransform(0, 0, 0, 0);
             editor.ShowDialog(this);
         }
 
@@ -570,7 +602,23 @@ namespace OpenLogAnalyzer
             var editor = new InputConfigurator(_currentSegments.First().Segment, selectedInput);
             editor.OnSave += (o, input) =>
             {
-                //TODO: Refresh charts
+                VehicleRepository.Save(_currentVehicle);
+
+                AnalyzeSegments(singleInput: selectedInput);
+
+                var chartArea = _inputChart[selectedInput].ChartAreas.FirstOrDefault();
+                if (selectedInput.AutoGraphRange)
+                {
+                    chartArea.AxisY.Minimum = double.NaN;
+                    chartArea.AxisY.Maximum = double.NaN;
+                    chartArea.RecalculateAxesScale();
+                }
+                else
+                {
+                    chartArea.AxisY.Minimum = selectedInput.GraphMin;
+                    chartArea.AxisY.Maximum = selectedInput.GraphMax;
+                }
+
                 _inputTab[selectedInput].Text = selectedInput.Name;
             };
 

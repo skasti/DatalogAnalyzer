@@ -19,6 +19,7 @@ namespace OpenLogger.Analysis
         public SegmentAnalysis LeadIn { get; private set; }
         public SegmentAnalysis LeadOut { get; private set; }
         public List<LapAnalysis> Laps { get; private set; }
+        public string VehicleName => LogFile.Metadata.Bike;
 
         public SessionAnalysis(LogFile logFile, Track track)
         {

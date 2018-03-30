@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using OpenLogAnalyzer.Transforms;
@@ -92,21 +93,40 @@ namespace OpenLogAnalyzer
             SegmentPosition.Maximum = _segment.Entries.Count - 1;
 
             InitSourceInput();
+            InitXAxisInput();
 
             if (_editingInput.Source == InputSource.Analog)
             {
-                SourceInput.SelectedItem = $"{InputSource.Analog} {_editingInput.AnalogSource}";
+                SourceInput.SelectedItem = $"{InputSource.Analog} {_editingInput.AnalogSource + 1}";
+            }
+            else if (_editingInput.Source == InputSource.Temperature)
+            {
+                SourceInput.SelectedItem = $"{InputSource.Temperature} {_editingInput.AnalogSource + 1}";
             }
             else
             {
                 SourceInput.SelectedItem = _editingInput.Source.ToString();
             }
 
+            xAxisInput.SelectedItem = _editingInput.XAxisType.ToString();
+
             NameInput.Text = _editingInput.Name;
             SmoothingInput.Value = _editingInput.Smoothing;
             UpdateCharts();
 
+            autoRangeInput.Checked = _editingInput.AutoGraphRange;
+            rangeMinInput.Value = (decimal)_editingInput.GraphMin;
+            rangeMaxInput.Value = (decimal)_editingInput.GraphMax;
+
             InitTransformChartMenu();
+        }
+
+        private void InitXAxisInput()
+        {
+            foreach (var axisType in Enum.GetValues(typeof (InputXAxis)).Cast<InputXAxis>())
+            {
+                xAxisInput.Items.Add(axisType.ToString());
+            }
         }
 
         private void InitTransformChartMenu()
@@ -181,7 +201,17 @@ namespace OpenLogAnalyzer
             {
                 var value = _editingInput.GetValue(entry, selectedTransform);
 
-                TransformChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                switch (_editingInput.XAxisType)
+                {
+                    case InputXAxis.Time:
+                        TransformChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                        break;
+                    case InputXAxis.Distance:
+                        TransformChart.Series[0].Points.AddXY(entry.GetDistance(_segment), value);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
 
@@ -199,7 +229,17 @@ namespace OpenLogAnalyzer
             {
                 var value = _editingInput.GetSmoothedValue(entry);
 
-                RawChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                switch (_editingInput.XAxisType)
+                {
+                    case InputXAxis.Time:
+                        RawChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                        break;
+                    case InputXAxis.Distance:
+                        RawChart.Series[1].Points.AddXY(entry.GetDistance(_segment), value);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
 
@@ -210,8 +250,17 @@ namespace OpenLogAnalyzer
             foreach (var entry in _segment.Entries)
             {
                 var value = _editingInput.GetRawValue(entry);
-
-                RawChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                switch (_editingInput.XAxisType)
+                {
+                    case InputXAxis.Time:
+                        RawChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
+                        break;
+                    case InputXAxis.Distance:
+                        RawChart.Series[0].Points.AddXY(entry.GetDistance(_segment), value);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
 
@@ -225,7 +274,7 @@ namespace OpenLogAnalyzer
             else
             {
                 _editingInput.Source = InputSource.Analog;
-                _editingInput.AnalogSource = int.Parse(SourceInput.Text.Split(' ').Last());
+                _editingInput.AnalogSource = int.Parse(SourceInput.Text.Split(' ').Last()) - 1;
             }
 
             UpdateCharts();
@@ -233,7 +282,7 @@ namespace OpenLogAnalyzer
 
         private void SmoothingInput_ValueChanged(object sender, EventArgs e)
         {
-            _editingInput.Smoothing = (int)SmoothingInput.Value;
+            _editingInput.Smoothing = (int) SmoothingInput.Value;
             UpdateSmoothedChart();
             UpdateTransformChart();
         }
@@ -245,8 +294,7 @@ namespace OpenLogAnalyzer
 
         private void chart1_CursorPositionChanged(object sender, CursorEventArgs e)
         {
-            CursorLabel.Text =
-                $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
+            CursorLabel.Text = $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
         }
 
         private void SegmentPosition_Scroll(object sender, EventArgs e)
@@ -260,22 +308,19 @@ namespace OpenLogAnalyzer
             RawChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
             RawChart.ChartAreas[0].CursorX.Position = cursorPosition;
 
-            CursorLabel.Text =
-                $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
+            CursorLabel.Text = $"{RawChart.ChartAreas[0].CursorX.Position:0.00} / {RawChart.ChartAreas[0].CursorY.Position:0.00}";
 
             TransformChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
             TransformChart.ChartAreas[0].CursorX.Position = cursorPosition;
 
-            TransformCursorLabel.Text =
-                $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
+            TransformCursorLabel.Text = $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
 
             _marker.Position = entry.GetLocation();
         }
 
         private void TransformChart_CursorPositionChanged(object sender, CursorEventArgs e)
         {
-            TransformCursorLabel.Text =
-                $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
+            TransformCursorLabel.Text = $"{TransformChart.ChartAreas[0].CursorX.Position:0.00} / {TransformChart.ChartAreas[0].CursorY.Position:0.00}";
         }
 
         private void TransformChart_SelectionRangeChanged(object sender, CursorEventArgs e)
@@ -302,8 +347,7 @@ namespace OpenLogAnalyzer
 
         private void InputConfigurator_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Saved && MessageBox.Show("Do you want to save your changes?", "Save changes?", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
+            if (!Saved && MessageBox.Show("Do you want to save your changes?", "Save changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 Save();
             }
@@ -322,22 +366,58 @@ namespace OpenLogAnalyzer
             }
             else
             {
+                chartArea.AxisY.Maximum = double.NaN;
+                chartArea.AxisY.Minimum = double.NaN;
                 chartArea.RecalculateAxesScale();
             }
         }
 
         private void rangeMaxInput_ValueChanged(object sender, EventArgs e)
         {
+            if (rangeMaxInput.Value <= rangeMinInput.Value)
+            {
+                rangeMaxInput.Value = rangeMinInput.Value + 1;
+                MessageBox.Show("Max must be larger than Min", "Invalid value", MessageBoxButtons.OK);
+                return;
+            }
+
+            if (autoRangeInput.Checked)
+                return;
+
             var chartArea = TransformChart.ChartAreas.FirstOrDefault();
-            _editingInput.GraphMax = (double)rangeMaxInput.Value;
-            chartArea.AxisY.Maximum = (double)rangeMaxInput.Value;
+            _editingInput.GraphMax = (double) rangeMaxInput.Value;
+            chartArea.AxisY.Maximum = (double) rangeMaxInput.Value;
+            _editingInput.AutoGraphRange = false;
+            autoRangeInput.Checked = false;
         }
 
         private void rangeMinInput_ValueChanged(object sender, EventArgs e)
         {
+            if (rangeMinInput.Value >= rangeMaxInput.Value)
+            {
+                rangeMinInput.Value = rangeMaxInput.Value - 1;
+                MessageBox.Show("Min must be smaller than Max", "Invalid value", MessageBoxButtons.OK);
+                return;
+            }
+
+            if (autoRangeInput.Checked)
+                return;
+
             var chartArea = TransformChart.ChartAreas.FirstOrDefault();
-            _editingInput.GraphMin = (double)rangeMinInput.Value;
-            chartArea.AxisY.Minimum = (double)rangeMinInput.Value;
+            _editingInput.GraphMin = (double) rangeMinInput.Value;
+            chartArea.AxisY.Minimum = (double) rangeMinInput.Value;
+            _editingInput.AutoGraphRange = false;
+            autoRangeInput.Checked = false;
+        }
+
+        private void xAxisInput_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InputXAxis newAxis = InputXAxis.Distance;
+            if (Enum.TryParse(xAxisInput.Text, out newAxis))
+            {
+                _editingInput.XAxisType = newAxis;
+                UpdateCharts();
+            }
         }
     }
 }

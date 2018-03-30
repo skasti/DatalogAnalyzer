@@ -14,36 +14,6 @@ namespace OpenLogger.Analysis.Vehicle
 
         public Vehicle()
         {
-            Inputs = new List<Input>
-            {
-                new Input
-                {
-                    Name = "Speed",
-                    Source = InputSource.Speed
-                },
-
-                new Input
-                {
-                    Name = "Altitude",
-                    Source = InputSource.Altitude
-                },
-
-                new Input
-                {
-                    Name = "TPS",
-                    Source = InputSource.Analog,
-                    AnalogSource = 0,
-                    Smoothing = 10
-                },
-
-                new Input
-                {
-                    Name = "Fork Position",
-                    Source = InputSource.Analog,
-                    AnalogSource = 1,
-                    Smoothing = 10
-                }
-            };
         }
     }
 }

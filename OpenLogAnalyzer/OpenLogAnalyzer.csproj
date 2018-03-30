@@ -127,7 +127,19 @@
     </Compile>
     <Compile Include="Transforms\IEditInputTransforms.cs" />
     <Compile Include="Transforms\TransformEditors.cs" />
+    <Compile Include="VehicleEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VehicleEditor.Designer.cs">
+      <DependentUpon>VehicleEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="VehicleRepository.cs" />
+    <Compile Include="VehicleSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VehicleSelector.Designer.cs">
+      <DependentUpon>VehicleSelector.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -164,6 +176,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Transforms\LinearMapEditor.resx">
       <DependentUpon>LinearMapEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VehicleEditor.resx">
+      <DependentUpon>VehicleEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VehicleSelector.resx">
+      <DependentUpon>VehicleSelector.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
