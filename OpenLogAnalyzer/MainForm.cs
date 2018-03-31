@@ -342,8 +342,8 @@ namespace OpenLogAnalyzer
 
                 if (input.Name == "Fork Position")
                 {
-                    series.ChartType = SeriesChartType.Bar;
                     series.XAxisType = AxisType.Primary;
+                    series.ChartType = SeriesChartType.Column;
                     //_inputChart[input].ChartAreas[0].AxisY.Maximum = 200;
                     //_inputChart[input].ChartAreas[0].AxisY.Minimum = -200;
                 }
