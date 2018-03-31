@@ -1,8 +1,8 @@
 ﻿namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
 {
-    public interface InputTransform
+    public interface IInputTransform
     {
         double Transform(double input);
-        InputTransform Copy();
+        IInputTransform Copy();
     }
 }

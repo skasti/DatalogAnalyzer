@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
 {
-    public class AngleBasedForkPositionTransform: InputTransform
+    public class AngleBasedForkPositionTransform: IInputTransform
     {
         /// <summary>
         /// Distance from center of fork leg to center of sensor
@@ -41,7 +41,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
             return arm2Pos.Item2 - UpperForkLegOffset + BottomOutToSensorOffset;
         }
 
-        public InputTransform Copy()
+        public IInputTransform Copy()
         {
             return new AngleBasedForkPositionTransform
             {

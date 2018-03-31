@@ -10,9 +10,9 @@ namespace OpenLogAnalyzer.Transforms
 {
     interface IEditInputTransforms
     {
-        event EventHandler<InputTransform> Saved;
+        event EventHandler<IInputTransform> Saved;
 
-        void LoadTransform(InputTransform transform);
+        void LoadTransform(IInputTransform transform);
         void CreateTransform(double selectionMin, double selectionMax, double cursorX, double cursorY);
 
         DialogResult ShowDialog(IWin32Window owner);

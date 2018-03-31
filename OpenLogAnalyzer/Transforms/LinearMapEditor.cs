@@ -10,14 +10,14 @@ namespace OpenLogAnalyzer.Transforms
     {
         private LinearMapTransform _transform;
 
-        public event EventHandler<InputTransform> Saved;
+        public event EventHandler<IInputTransform> Saved;
 
         public LinearMapEditor()
         {
             InitializeComponent();
         }
 
-        public void LoadTransform(InputTransform transform)
+        public void LoadTransform(IInputTransform transform)
         {
             _transform = transform as LinearMapTransform;
         }

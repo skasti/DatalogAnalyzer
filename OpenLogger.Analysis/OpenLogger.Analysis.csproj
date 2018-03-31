@@ -54,10 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPoint.cs" />
     <Compile Include="Extensions\LogEntryExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\LogSegmentExtensions.cs" />
     <Compile Include="RandomColors.cs" />
+    <Compile Include="Analyses\IDataAnalysis.cs" />
+    <Compile Include="Analyses\YDeltaXAnalysis.cs" />
+    <Compile Include="Analyses\YDistributionAnalysis.cs" />
     <Compile Include="Vehicle\Inputs\Input.cs" />
     <Compile Include="Vehicle\Inputs\InputGraphType.cs" />
     <Compile Include="Vehicle\Inputs\InputSource.cs" />
@@ -70,7 +74,7 @@
     <Compile Include="JsonConverter\PolygonConverter.cs" />
     <Compile Include="Vehicle\Inputs\InputXAxis.cs" />
     <Compile Include="Vehicle\Inputs\Transforms\AngleBasedForkPositionTransform.cs" />
-    <Compile Include="Vehicle\Inputs\Transforms\InputTransform.cs" />
+    <Compile Include="Vehicle\Inputs\Transforms\IInputTransform.cs" />
     <Compile Include="Vehicle\Inputs\Transforms\LinearMapTransform.cs" />
     <Compile Include="Vehicle\Vehicle.cs" />
   </ItemGroup>

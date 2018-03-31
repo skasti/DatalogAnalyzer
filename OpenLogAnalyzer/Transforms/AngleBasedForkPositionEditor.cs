@@ -31,8 +31,8 @@ namespace OpenLogAnalyzer.Transforms
             InitializeComponent();
         }
 
-        public event EventHandler<InputTransform> Saved;
-        public void LoadTransform(InputTransform transform)
+        public event EventHandler<IInputTransform> Saved;
+        public void LoadTransform(IInputTransform transform)
         {
             _transform = transform as AngleBasedForkPositionTransform;
             _editingTransform = _transform.Copy() as AngleBasedForkPositionTransform;

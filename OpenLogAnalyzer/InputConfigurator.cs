@@ -17,6 +17,7 @@ using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle.Inputs;
 using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
 using OpenLogger.Core;
+using DataPoint = OpenLogger.Analysis.DataPoint;
 
 namespace OpenLogAnalyzer
 {
@@ -28,6 +29,9 @@ namespace OpenLogAnalyzer
         private LogSegment _segment;
         private GMapOverlay _segmentOverlay = new GMapOverlay("Segment");
         private GMapMarker _marker;
+        private IEnumerable<DataPoint> _rawData;
+        private IEnumerable<DataPoint> _smoothedData;
+        private bool _loaded = false;
         public event EventHandler<Input> OnSave; 
 
         public InputConfigurator()
@@ -112,7 +116,6 @@ namespace OpenLogAnalyzer
 
             NameInput.Text = _editingInput.Name;
             SmoothingInput.Value = _editingInput.Smoothing;
-            UpdateCharts();
 
             autoRangeInput.Checked = _editingInput.AutoGraphRange;
             rangeMinInput.Value = (decimal)_editingInput.GraphMin;
@@ -195,23 +198,13 @@ namespace OpenLogAnalyzer
         private void UpdateTransformChart()
         {
             TransformChart.Series[0].Points.Clear();
-            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as InputTransform : null;
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
 
-            foreach (var entry in _segment.Entries)
+            var data = _editingInput.Transform(_smoothedData, selectedTransform);
+
+            foreach (var point in data)
             {
-                var value = _editingInput.GetValue(entry, selectedTransform);
-
-                switch (_editingInput.XAxisType)
-                {
-                    case InputXAxis.Time:
-                        TransformChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
-                        break;
-                    case InputXAxis.Distance:
-                        TransformChart.Series[0].Points.AddXY(entry.GetDistance(_segment), value);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                TransformChart.Series[0].Points.AddXY(point.X, point.Y);
             }
         }
 
@@ -225,21 +218,11 @@ namespace OpenLogAnalyzer
         {
             RawChart.Series[1].Points.Clear();
 
-            foreach (var entry in _segment.Entries)
-            {
-                var value = _editingInput.GetSmoothedValue(entry);
+            _smoothedData = _editingInput.Smooth(_rawData);
 
-                switch (_editingInput.XAxisType)
-                {
-                    case InputXAxis.Time:
-                        RawChart.Series[1].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
-                        break;
-                    case InputXAxis.Distance:
-                        RawChart.Series[1].Points.AddXY(entry.GetDistance(_segment), value);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            foreach (var point in _smoothedData)
+            {
+                RawChart.Series[1].Points.AddXY(point.X, point.Y);
             }
         }
 
@@ -247,25 +230,19 @@ namespace OpenLogAnalyzer
         {
             RawChart.Series[0].Points.Clear();
 
-            foreach (var entry in _segment.Entries)
+            _rawData = _editingInput.ExtractRaw(_segment);
+
+            foreach (var point in _rawData)
             {
-                var value = _editingInput.GetRawValue(entry);
-                switch (_editingInput.XAxisType)
-                {
-                    case InputXAxis.Time:
-                        RawChart.Series[0].Points.AddXY(entry.GetTimeSpan(_segment.LogStart).TotalSeconds, value);
-                        break;
-                    case InputXAxis.Distance:
-                        RawChart.Series[0].Points.AddXY(entry.GetDistance(_segment), value);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                RawChart.Series[0].Points.AddXY(point.X, point.Y);
             }
         }
 
         private void SourceInput_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             InputSource newSource = InputSource.Analog;
             if (Enum.TryParse(SourceInput.Text, out newSource))
             {
@@ -282,6 +259,9 @@ namespace OpenLogAnalyzer
 
         private void SmoothingInput_ValueChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             _editingInput.Smoothing = (int) SmoothingInput.Value;
             UpdateSmoothedChart();
             UpdateTransformChart();
@@ -330,6 +310,9 @@ namespace OpenLogAnalyzer
 
         private void TransformList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             UpdateTransformChart();
         }
 
@@ -355,6 +338,9 @@ namespace OpenLogAnalyzer
 
         private void autoRangeInput_CheckedChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             _editingInput.AutoGraphRange = autoRangeInput.Checked;
 
             var chartArea = TransformChart.ChartAreas.FirstOrDefault();
@@ -374,6 +360,9 @@ namespace OpenLogAnalyzer
 
         private void rangeMaxInput_ValueChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             if (rangeMaxInput.Value <= rangeMinInput.Value)
             {
                 rangeMaxInput.Value = rangeMinInput.Value + 1;
@@ -393,6 +382,9 @@ namespace OpenLogAnalyzer
 
         private void rangeMinInput_ValueChanged(object sender, EventArgs e)
         {
+            if (!_loaded)
+                return;
+
             if (rangeMinInput.Value >= rangeMaxInput.Value)
             {
                 rangeMinInput.Value = rangeMaxInput.Value - 1;
@@ -418,6 +410,12 @@ namespace OpenLogAnalyzer
                 _editingInput.XAxisType = newAxis;
                 UpdateCharts();
             }
+        }
+
+        private void InputConfigurator_Shown(object sender, EventArgs e)
+        {
+            UpdateCharts();
+            _loaded = true;
         }
     }
 }

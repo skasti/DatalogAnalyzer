@@ -452,6 +452,7 @@
             this.Text = "InputConfigurator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InputConfigurator_FormClosing);
             this.Load += new System.EventHandler(this.InputConfigurator_Load);
+            this.Shown += new System.EventHandler(this.InputConfigurator_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.RawChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SegmentPosition)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SmoothingInput)).EndInit();

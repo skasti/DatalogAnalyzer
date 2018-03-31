@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
 {
-    public class LinearMapTransform: InputTransform
+    public class LinearMapTransform: IInputTransform
     {
         public double SourceMin { get; set; }
         public double SourceMax { get; set; }
@@ -21,7 +21,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs.Transforms
             return (input - SourceMin) / SourceRange * TargetRange + TargetMin;
         }
 
-        public InputTransform Copy()
+        public IInputTransform Copy()
         {
             return new LinearMapTransform
             {

@@ -17,6 +17,7 @@ using OpenLogAnalyzer.Extensions;
 using OpenLogAnalyzer.Transforms;
 using OpenLogger;
 using OpenLogger.Analysis;
+using OpenLogger.Analysis.Analyses;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle;
 using OpenLogger.Analysis.Vehicle.Inputs;
@@ -310,35 +311,41 @@ namespace OpenLogAnalyzer
 
         private void RenderSegmentCharts(SegmentAnalysis analysis, Input singleInput)
         {
-
-            foreach (var entry in analysis.Segment.Entries)
+            foreach (var input in _currentVehicle.Inputs)
             {
-                foreach (var input in _currentVehicle.Inputs)
+                if (singleInput != null && input != singleInput)
+                    continue;
+
+                var series = _inputChart[input].Series.FindByName(analysis.Name);
+
+                if (series == null)
                 {
-                    if (singleInput != null && input != singleInput)
-                        continue;
+                    series = input.CreateSeries(analysis);
+                    _inputChart[input].Series.Add(series);
+                }
 
-                    var series = _inputChart[input].Series.FindByName(analysis.Name);
+                var data = input.Extract(analysis.Segment);
 
-                    if (series == null)
-                    {
-                        series = input.CreateSeries(analysis);
-                        _inputChart[input].Series.Add(series);
-                    }
-                
-                    var value = input.GetValue(entry);
+                if (input.Name == "Fork Position")
+                {
+                    var velocity = new YDeltaXAnalysis();
+                    data = velocity.Analyze(data);
 
-                    switch (input.XAxisType)
-                    {
-                        case InputXAxis.Time:
-                            series.Points.AddXY(entry.GetTimeSpan(analysis.Segment.LogStart).TotalSeconds, value);
-                            break;
-                        case InputXAxis.Distance:
-                            series.Points.AddXY(entry.GetDistance(analysis.Segment), value);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    var distribution = new YDistributionAnalysis();
+                    data = distribution.Analyze(data);
+                }
+
+                foreach (var point in data)
+                {
+                    series.Points.AddXY(point.X, point.Y);
+                }
+
+                if (input.Name == "Fork Position")
+                {
+                    series.ChartType = SeriesChartType.Bar;
+                    series.XAxisType = AxisType.Primary;
+                    //_inputChart[input].ChartAreas[0].AxisY.Maximum = 200;
+                    //_inputChart[input].ChartAreas[0].AxisY.Minimum = -200;
                 }
             }
         }
