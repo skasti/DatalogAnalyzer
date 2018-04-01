@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
+using OpenLogger.Analysis.Analyses;
 
-namespace OpenLogAnalyzer.Transforms
+namespace OpenLogAnalyzer.Analyses
 {
-    public static class TransformEditors
+    public static class AnalysisEditors
     {
-        private static Type _editorType = typeof(IEditInputTransforms);
+        private static Type _editorType = typeof(IEditDataAnalysis);
         private static List<Type> _editorTypes;
 
         public static List<Type> EditorTypes
@@ -20,7 +18,7 @@ namespace OpenLogAnalyzer.Transforms
             {
                 if (_editorTypes == null)
                 {
-                    var allTypes = Assembly.GetAssembly(typeof (TransformEditors)).GetTypes();
+                    var allTypes = Assembly.GetAssembly(typeof (AnalysisEditors)).GetTypes();
                     var classes = allTypes.Where(t => t.IsClass);
 
                     var editorClasses = classes.Where(c => c.GetInterfaces().Contains(_editorType));
@@ -44,13 +42,20 @@ namespace OpenLogAnalyzer.Transforms
             return editorType.Name;
         }
 
-        public static IEditInputTransforms GetTransformEditor<T>(T transform) where T : class, IInputTransform
+        public static string GetEditorDescription(Type editorType)
+        {
+            var description = editorType.GetCustomAttributes<DescriptionAttribute>().FirstOrDefault();
+
+            return description?.Description;
+        }
+
+        public static IEditDataAnalysis GetAnalysisEditor<T>(T transform) where T : class, IDataAnalysis
         {
             var transformType = transform.GetType();
 
             var editorType = _editorTypes.FirstOrDefault(e => e.GetInterfaces().Any(i => i.GenericTypeArguments.Length == 1 && i.GenericTypeArguments[0] == transformType));
 
-            return editorType?.GetConstructors().FirstOrDefault()?.Invoke(new object[0]) as IEditInputTransforms;
+            return editorType?.GetConstructors().FirstOrDefault()?.Invoke(new object[0]) as IEditDataAnalysis;
         }
     }
 }

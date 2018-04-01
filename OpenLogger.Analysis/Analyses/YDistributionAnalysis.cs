@@ -8,8 +8,9 @@ namespace OpenLogger.Analysis.Analyses
     public class YDistributionAnalysis: IDataAnalysis
     {
         public string Name { get; set; }
-        public double MinimumY { get; set; } = -200;
-        public double MaximumY { get; set; } = 200;
+        public GraphType GraphType { get; } = GraphType.Column;
+        public double MinimumY { get; set; } = -205;
+        public double MaximumY { get; set; } = 205;
         public double Interval { get; set; } = 10;
         public bool ClampInput { get; set; } = true;
 
@@ -32,9 +33,36 @@ namespace OpenLogger.Analysis.Analyses
             return result;
         }
 
+        public string GetDetails()
+        {
+            return $"{MinimumY} to {MaximumY} @ {Interval} intervals (clamping: {ClampInput})";
+        }
+
+        public string CustomLabel(DataPoint point)
+        {
+            return $"[{point.X} to {point.X + Interval}]";
+        }
+
+        public IDataAnalysis Copy()
+        {
+            return new YDistributionAnalysis
+            {
+                Name = Name,
+                ClampInput = ClampInput,
+                MinimumY = MinimumY,
+                MaximumY = MaximumY,
+                Interval = Interval
+            };
+        }
+
         private double Clamp(double d)
         {
             return Math.Min(MaximumY, Math.Max(MinimumY, d));
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} {GetDetails()}";
         }
     }
 }

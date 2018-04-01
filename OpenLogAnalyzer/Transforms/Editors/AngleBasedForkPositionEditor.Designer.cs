@@ -1,4 +1,4 @@
-﻿namespace OpenLogAnalyzer.Transforms
+﻿namespace OpenLogAnalyzer.Transforms.Editors
 {
     partial class AngleBasedForkPositionEditor
     {

@@ -60,6 +60,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyses\AnalysisRenderer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Analyses\AnalysisRenderer.Designer.cs">
+      <DependentUpon>AnalysisRenderer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Analyses\Editors\YDeltaXAnalysisEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Analyses\Editors\YDeltaXAnalysisEditor.Designer.cs">
+      <DependentUpon>YDeltaXAnalysisEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Analyses\Editors\YDistributionAnalysisEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Analyses\Editors\YDistributionAnalysisEditor.Designer.cs">
+      <DependentUpon>YDistributionAnalysisEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Analyses\IEditDataAnalysis.cs" />
+    <Compile Include="Analyses\AnalysisEditors.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
@@ -67,6 +87,8 @@
     <Compile Include="ConfigForm.Designer.cs">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\DataPointExtensions.cs" />
+    <Compile Include="Extensions\GraphTypeExtensions.cs" />
     <Compile Include="Extensions\SegmentAnalysisExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\RichTextBoxExtensions.cs" />
@@ -113,16 +135,16 @@
       <DependentUpon>TrackLibrary.cs</DependentUpon>
     </Compile>
     <Compile Include="TrackRepository.cs" />
-    <Compile Include="Transforms\AngleBasedForkPositionEditor.cs">
+    <Compile Include="Transforms\Editors\AngleBasedForkPositionEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Transforms\AngleBasedForkPositionEditor.Designer.cs">
+    <Compile Include="Transforms\Editors\AngleBasedForkPositionEditor.Designer.cs">
       <DependentUpon>AngleBasedForkPositionEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Transforms\LinearMapEditor.cs">
+    <Compile Include="Transforms\Editors\LinearMapEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Transforms\LinearMapEditor.Designer.cs">
+    <Compile Include="Transforms\Editors\LinearMapEditor.Designer.cs">
       <DependentUpon>LinearMapEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Transforms\IEditInputTransforms.cs" />
@@ -140,6 +162,15 @@
     <Compile Include="VehicleSelector.Designer.cs">
       <DependentUpon>VehicleSelector.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Analyses\AnalysisRenderer.resx">
+      <DependentUpon>AnalysisRenderer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Analyses\Editors\YDeltaXAnalysisEditor.resx">
+      <DependentUpon>YDeltaXAnalysisEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Analyses\Editors\YDistributionAnalysisEditor.resx">
+      <DependentUpon>YDistributionAnalysisEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -171,10 +202,10 @@
     <EmbeddedResource Include="TrackLibrary.resx">
       <DependentUpon>TrackLibrary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Transforms\AngleBasedForkPositionEditor.resx">
+    <EmbeddedResource Include="Transforms\Editors\AngleBasedForkPositionEditor.resx">
       <DependentUpon>AngleBasedForkPositionEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Transforms\LinearMapEditor.resx">
+    <EmbeddedResource Include="Transforms\Editors\LinearMapEditor.resx">
       <DependentUpon>LinearMapEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VehicleEditor.resx">

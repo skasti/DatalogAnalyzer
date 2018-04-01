@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
 
-namespace OpenLogAnalyzer.Transforms
+namespace OpenLogAnalyzer.Transforms.Editors
 {
     [DisplayName("Fork Position")]
-    public partial class AngleBasedForkPositionEditor : Form, IEditInputTransforms
+    public partial class AngleBasedForkPositionEditor : Form, IEditInputTransforms<AngleBasedForkPositionTransform>
     {
         private AngleBasedForkPositionTransform _transform;
         private AngleBasedForkPositionTransform _editingTransform;
@@ -38,7 +33,7 @@ namespace OpenLogAnalyzer.Transforms
             _editingTransform = _transform.Copy() as AngleBasedForkPositionTransform;
         }
 
-        public void CreateTransform(double selectionMin, double selectionMax, double cursorX, double cursorY)
+        public void Create(double selectionMin, double selectionMax, double cursorX, double cursorY)
         {
             _transform = new AngleBasedForkPositionTransform();
             _editingTransform = new AngleBasedForkPositionTransform

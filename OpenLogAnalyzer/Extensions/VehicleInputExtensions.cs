@@ -27,11 +27,11 @@ namespace OpenLogAnalyzer.Extensions
         {
             switch (input.GraphType)
             {
-                case InputGraphType.FastLine:
+                case GraphType.FastLine:
                     return SeriesChartType.FastLine;
-                case InputGraphType.Spline:
+                case GraphType.Spline:
                     return SeriesChartType.Spline;
-                case InputGraphType.Bar:
+                case GraphType.Bar:
                     return SeriesChartType.Bar;
                 default:
                     return SeriesChartType.FastLine;

@@ -63,7 +63,7 @@
     <Compile Include="Analyses\YDeltaXAnalysis.cs" />
     <Compile Include="Analyses\YDistributionAnalysis.cs" />
     <Compile Include="Vehicle\Inputs\Input.cs" />
-    <Compile Include="Vehicle\Inputs\InputGraphType.cs" />
+    <Compile Include="GraphType.cs" />
     <Compile Include="Vehicle\Inputs\InputSource.cs" />
     <Compile Include="JsonConverter\LogFileConverter.cs" />
     <Compile Include="LapAnalysis.cs" />

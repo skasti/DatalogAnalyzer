@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
 
-namespace OpenLogAnalyzer.Transforms
+namespace OpenLogAnalyzer.Transforms.Editors
 {
     [DisplayName("Linear Map")]
-    public partial class LinearMapEditor : Form, IEditInputTransforms
+    public partial class LinearMapEditor : Form, IEditInputTransforms<LinearMapTransform>
     {
         private LinearMapTransform _transform;
 
@@ -22,7 +22,7 @@ namespace OpenLogAnalyzer.Transforms
             _transform = transform as LinearMapTransform;
         }
 
-        public void CreateTransform(double selectionMin, double selectionMax, double cursorX, double cursorY)
+        public void Create(double selectionMin, double selectionMax, double cursorX, double cursorY)
         {
             _transform = new LinearMapTransform
             {

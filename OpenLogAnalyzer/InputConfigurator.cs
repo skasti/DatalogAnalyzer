@@ -11,8 +11,10 @@ using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using OpenLogAnalyzer.Analyses;
 using OpenLogAnalyzer.Transforms;
 using OpenLogger.Analysis;
+using OpenLogger.Analysis.Analyses;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle.Inputs;
 using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
@@ -29,10 +31,14 @@ namespace OpenLogAnalyzer
         private LogSegment _segment;
         private GMapOverlay _segmentOverlay = new GMapOverlay("Segment");
         private GMapMarker _marker;
-        private IEnumerable<DataPoint> _rawData;
-        private IEnumerable<DataPoint> _smoothedData;
+        private List<DataPoint> _rawData;
+        private List<DataPoint> _smoothedData;
+        private List<DataPoint> _transformedData;
         private bool _loaded = false;
         public event EventHandler<Input> OnSave; 
+
+        private Dictionary<IDataAnalysis, AnalysisRenderer> _analysisRenderers = new Dictionary<IDataAnalysis, AnalysisRenderer>();
+        private List<ListViewItem> _analysisListItems = new List<ListViewItem>();
 
         public InputConfigurator()
         {
@@ -121,7 +127,11 @@ namespace OpenLogAnalyzer
             rangeMinInput.Value = (decimal)_editingInput.GraphMin;
             rangeMaxInput.Value = (decimal)_editingInput.GraphMax;
 
-            InitTransformChartMenu();
+            UpdateTransformsList();
+            UpdateAnalysesList();
+
+            InitTransformsListMenu();
+            InitAnalysesListMenu();
         }
 
         private void InitXAxisInput()
@@ -132,7 +142,7 @@ namespace OpenLogAnalyzer
             }
         }
 
-        private void InitTransformChartMenu()
+        private void InitTransformsListMenu()
         {
             foreach (var editorType in TransformEditors.EditorTypes)
             {
@@ -141,7 +151,7 @@ namespace OpenLogAnalyzer
                 button.Click += (sender, args) =>
                 {
                     var editor = editorType.GetConstructor(new Type[0])?.Invoke(new object[0]) as IEditInputTransforms;
-                    editor.CreateTransform(
+                    editor.Create(
                         TransformedSelectionMin, 
                         TransformedSelectionMax, 
                         TransformedCursorX, 
@@ -158,7 +168,40 @@ namespace OpenLogAnalyzer
                 };
 
 
-                CreateTransformMenu.DropDownItems.Add(button);
+                AddTransformMenu.DropDownItems.Add(button);
+            }
+        }
+
+        private void InitAnalysesListMenu()
+        {
+            foreach (var editorType in AnalysisEditors.EditorTypes)
+            {
+                var name = AnalysisEditors.GetEditorName(editorType);
+                var description = AnalysisEditors.GetEditorDescription(editorType);
+
+                var button = new ToolStripMenuItem(name);
+
+                if (!string.IsNullOrWhiteSpace(description))
+                    button.ToolTipText = description;
+
+                button.Click += (sender, args) =>
+                {
+                    var editor = editorType.GetConstructor(new Type[0])?.Invoke(new object[0]) as IEditDataAnalysis;
+                    editor.Create();
+
+                    editor.Saved += (o, analysis) =>
+                    {
+                        _editingInput.Analyses.Add(analysis);
+
+                        UpdateAnalysesList();
+                        UpdateAnalysesRenders();
+                    };
+
+                    editor.ShowDialog(this);
+                };
+
+
+                AddAnalysisMenu.DropDownItems.Add(button);
             }
         }
 
@@ -200,9 +243,9 @@ namespace OpenLogAnalyzer
             TransformChart.Series[0].Points.Clear();
             var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
 
-            var data = _editingInput.Transform(_smoothedData, selectedTransform);
+            _transformedData = _editingInput.Transform(_smoothedData, selectedTransform);
 
-            foreach (var point in data)
+            foreach (var point in _transformedData)
             {
                 TransformChart.Series[0].Points.AddXY(point.X, point.Y);
             }
@@ -415,7 +458,277 @@ namespace OpenLogAnalyzer
         private void InputConfigurator_Shown(object sender, EventArgs e)
         {
             UpdateCharts();
+            UpdateAnalysesRenders();
             _loaded = true;
+        }
+
+        private void AnalysesListMenu_Opening(object sender, CancelEventArgs e)
+        {
+            var selectedAnalysis = AnalysesList.SelectedItems.Count >= 1 ? AnalysesList.SelectedItems[0].Tag as IDataAnalysis : null;
+
+            if (selectedAnalysis != null)
+            {
+                var index = _editingInput.Analyses.IndexOf(selectedAnalysis);
+
+                MoveAnalysisDownButton.Enabled = (index < _editingInput.Analyses.Count - 1);
+                MoveAnalysisUpButton.Enabled = (index > 0);
+                EditAnalysisButton.Enabled = true;
+                DeleteAnalysisButton.Enabled = true;
+            }
+            else
+            {
+                MoveAnalysisDownButton.Enabled = false;
+                MoveAnalysisUpButton.Enabled = false;
+                EditAnalysisButton.Enabled = false;
+                DeleteAnalysisButton.Enabled = false;
+            }
+        }
+
+        private void TransformListMenu_Opening(object sender, CancelEventArgs e)
+        {
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
+
+            if (selectedTransform != null)
+            {
+                var index = _editingInput.Transforms.IndexOf(selectedTransform);
+
+                MoveTransformDownButton.Enabled = (index < _editingInput.Transforms.Count - 1);
+                MoveTransformUpButton.Enabled = (index > 0);
+                EditTransformButton.Enabled = true;
+                DeleteTransformButton.Enabled = true;
+            }
+            else
+            {
+                MoveTransformDownButton.Enabled = false;
+                MoveTransformUpButton.Enabled = false;
+                EditTransformButton.Enabled = false;
+                DeleteTransformButton.Enabled = false;
+            }
+        }
+
+        private void EditTransformButton_Click(object sender, EventArgs e)
+        {
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
+
+            if (selectedTransform == null)
+                return;
+            
+            var editor = TransformEditors.GetTransformEditor(selectedTransform);
+
+            if (editor == null)
+            {
+                MessageBox.Show("Couldn't find editor for this transform type", "No editor", 
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            editor.LoadTransform(selectedTransform);
+            editor.Saved += (o, transform) =>
+            {
+                UpdateTransformsList();
+                UpdateTransformChart();
+            };
+            editor.ShowDialog(this);
+        }
+
+        private void DeleteTransformButton_Click(object sender, EventArgs e)
+        {
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
+
+            if (selectedTransform == null)
+                return;
+
+            if (MessageBox.Show(
+                    "Are you sure you want to delete this transform?", "Delete transform",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            _editingInput.Transforms.Remove(selectedTransform);
+
+            UpdateTransformsList();
+            UpdateTransformChart();
+        }
+        private void MoveTransformUpButton_Click(object sender, EventArgs e)
+        {
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
+
+            if (selectedTransform == null)
+                return;
+
+            var currentIndex = _editingInput.Transforms.IndexOf(selectedTransform);
+
+            if (currentIndex == 0)
+                return;
+
+            _editingInput.Transforms.Remove(selectedTransform);
+            _editingInput.Transforms.Insert(currentIndex-1, selectedTransform);
+
+            UpdateTransformsList();
+            UpdateTransformChart();
+        }
+
+        private void MoveTransformDownButton_Click(object sender, EventArgs e)
+        {
+            var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
+
+            if (selectedTransform == null)
+                return;
+
+            var currentIndex = _editingInput.Transforms.IndexOf(selectedTransform);
+
+            if (currentIndex >= _editingInput.Transforms.Count - 1)
+                return;
+
+            _editingInput.Transforms.Remove(selectedTransform);
+            _editingInput.Transforms.Insert(currentIndex + 1, selectedTransform);
+
+            UpdateTransformsList();
+            UpdateTransformChart();
+        }
+
+        private void UpdateAnalysesRenders()
+        {
+            var currentData = _transformedData;
+
+            foreach (var analysis in _editingInput.Analyses)
+            {
+                var index = _editingInput.Analyses.IndexOf(analysis);
+
+                currentData = analysis.Analyze(currentData);
+
+                if (!_analysisRenderers.ContainsKey(analysis))
+                {
+                    var renderer = new AnalysisRenderer(analysis);
+                    AnalysisRenderPanel.Controls.Add(renderer);
+                    renderer.Location = new Point(0, index * 250);
+                    renderer.Size = new Size(AnalysisRenderPanel.Width, renderer.MinimumSize.Height);
+                    renderer.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
+
+                    _analysisRenderers.Add(analysis, renderer);
+                }
+
+                _analysisRenderers[analysis].Render(currentData);
+                _analysisRenderers[analysis].Location = new Point(0, index * _analysisRenderers[analysis].MinimumSize.Height);
+            }
+        }
+
+        private void UpdateAnalysesList()
+        {
+            foreach (var analysis in _editingInput.Analyses)
+            {
+                var item = _analysisListItems.FirstOrDefault(li => li.Tag == analysis);
+
+                if (item == null)
+                {
+                    item = new ListViewItem(analysis.Name);
+                    item.SubItems.Add(analysis.GetDetails());
+                    item.Tag = analysis;
+
+                    _analysisListItems.Add(item);
+                    AnalysesList.Items.Add(item);
+                }
+                else
+                {
+                    item.Text = analysis.Name;
+                    item.SubItems[1].Text = analysis.GetDetails();
+                }
+            }
+
+            var deleteItems = _analysisListItems.Where(li => !_editingInput.Analyses.Contains(li.Tag as IDataAnalysis)).ToList();
+
+            foreach (var item in deleteItems)
+            {
+                _analysisListItems.Remove(item);
+                AnalysesList.Items.Remove(item);
+            }
+        }
+
+        private void EditAnalysisButton_Click(object sender, EventArgs e)
+        {
+            var selectedAnalysis = AnalysesList.SelectedItems.Count >= 1 ? AnalysesList.SelectedItems[0].Tag as IDataAnalysis : null;
+
+            if (selectedAnalysis == null)
+                return;
+
+            var editor = AnalysisEditors.GetAnalysisEditor(selectedAnalysis);
+
+            if (editor == null)
+            {
+                MessageBox.Show("Couldn't find editor for this analysis type", "No editor",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            editor.LoadAnalysis(selectedAnalysis);
+            editor.Saved += (o, analysis) =>
+            {
+                UpdateAnalysesList();
+                UpdateAnalysesRenders();
+            };
+
+            editor.ShowDialog(this);
+        }
+
+        private void DeleteAnalysisButton_Click(object sender, EventArgs e)
+        {
+            var selectedAnalysis = AnalysesList.SelectedItems.Count >= 1 ? AnalysesList.SelectedItems[0].Tag as IDataAnalysis : null;
+
+            if (selectedAnalysis == null)
+                return;
+
+            if (MessageBox.Show(
+                    "Are you sure you want to delete this analysis?", "Delete Analysis",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            _editingInput.Analyses.Remove(selectedAnalysis);
+
+            UpdateAnalysesList();
+            UpdateAnalysesRenders();
+        }
+
+        private void MoveAnalysisUpButton_Click(object sender, EventArgs e)
+        {
+            var selectedAnalysis = AnalysesList.SelectedItems.Count >= 1 ? AnalysesList.SelectedItems[0].Tag as IDataAnalysis : null;
+
+            if (selectedAnalysis == null)
+                return;
+
+            var currentIndex = _editingInput.Analyses.IndexOf(selectedAnalysis);
+
+            if (currentIndex >= _editingInput.Analyses.Count - 1)
+                return;
+
+            _editingInput.Analyses.Remove(selectedAnalysis);
+            _editingInput.Analyses.Insert(currentIndex + 1, selectedAnalysis);
+
+            UpdateAnalysesList();
+            UpdateAnalysesRenders();
+        }
+
+        private void MoveAnalysisDownButton_Click(object sender, EventArgs e)
+        {
+            var selectedAnalysis = AnalysesList.SelectedItems.Count >= 1 ? AnalysesList.SelectedItems[0].Tag as IDataAnalysis : null;
+
+            if (selectedAnalysis == null)
+                return;
+
+            var currentIndex = _editingInput.Analyses.IndexOf(selectedAnalysis);
+
+            if (currentIndex >= _editingInput.Analyses.Count - 1)
+                return;
+
+            _editingInput.Analyses.Remove(selectedAnalysis);
+            _editingInput.Analyses.Insert(currentIndex + 1, selectedAnalysis);
+
+            UpdateAnalysesList();
+            UpdateAnalysesRenders();
         }
     }
 }

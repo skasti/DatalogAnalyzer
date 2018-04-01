@@ -15,6 +15,7 @@ using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json;
 using OpenLogAnalyzer.Extensions;
 using OpenLogAnalyzer.Transforms;
+using OpenLogAnalyzer.Transforms.Editors;
 using OpenLogger;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Analyses;
@@ -326,26 +327,9 @@ namespace OpenLogAnalyzer
 
                 var data = input.Extract(analysis.Segment);
 
-                if (input.Name == "Fork Position")
-                {
-                    var velocity = new YDeltaXAnalysis();
-                    data = velocity.Analyze(data);
-
-                    var distribution = new YDistributionAnalysis();
-                    data = distribution.Analyze(data);
-                }
-
                 foreach (var point in data)
                 {
                     series.Points.AddXY(point.X, point.Y);
-                }
-
-                if (input.Name == "Fork Position")
-                {
-                    series.XAxisType = AxisType.Primary;
-                    series.ChartType = SeriesChartType.Column;
-                    //_inputChart[input].ChartAreas[0].AxisY.Maximum = 200;
-                    //_inputChart[input].ChartAreas[0].AxisY.Minimum = -200;
                 }
             }
         }
@@ -592,7 +576,7 @@ namespace OpenLogAnalyzer
         private void forkSensorEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = new AngleBasedForkPositionEditor();
-            editor.CreateTransform(0, 0, 0, 0);
+            editor.Create(0, 0, 0, 0);
             editor.ShowDialog(this);
         }
 

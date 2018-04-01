@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenLogger.Analysis.Analyses;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
 using OpenLogger.Core;
@@ -11,13 +12,14 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
     {
         public string Name { get; set; }
         public InputSource Source { get; set; }
-        public InputGraphType GraphType { get; set; }
+        public GraphType GraphType { get; set; }
         public InputXAxis XAxisType { get; set; } = InputXAxis.Distance;
         public double GraphMin { get; set; }
         public double GraphMax { get; set; }
         public bool AutoGraphRange { get; set; }
         public int AnalogSource { get; set; }
         public List<IInputTransform> Transforms { get; set; } = new List<IInputTransform>();
+        public List<IDataAnalysis> Analyses { get; set; } = new List<IDataAnalysis>();
 
         private int _smoothing = 0;
 
@@ -36,19 +38,6 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
 
         private int _bufferPosition = 0;
         private double[] _ringBuffer;
-
-        public double GetValue(LogEntry entry, IInputTransform LastTransform = null)
-        {
-            var smoothed = GetSmoothedValue(entry);
-            return Transform(smoothed, LastTransform);
-        }
-
-        public double GetSmoothedValue(LogEntry entry)
-        {
-            var rawValue = GetRawValue(entry);
-            var smoothed = Smooth(rawValue);
-            return smoothed;
-        }
 
         public double GetRawValue(LogEntry entry)
         {
@@ -116,11 +105,11 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             return _ringBuffer.Average();
         }
 
-        public IEnumerable<DataPoint> Smooth(IEnumerable<DataPoint> rawData)
+        public List<DataPoint> Smooth(IEnumerable<DataPoint> rawData)
         {
             ResetSmoothing();
 
-            return rawData.Select(r => new DataPoint(r.X, Smooth(r.Y)));
+            return rawData.Select(r => new DataPoint(r.X, Smooth(r.Y))).ToList();
         }
 
         public List<DataPoint> Transform(IEnumerable<DataPoint> rawData, IInputTransform lastTransform)
@@ -145,9 +134,9 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             return Transform(smooth, lastTransform);
         }
 
-        public IEnumerable<DataPoint> ExtractRaw(LogSegment segment)
+        public List<DataPoint> ExtractRaw(LogSegment segment)
         {
-            return segment.Entries.Select(entry => new DataPoint(GetXValue(entry, segment),GetRawValue(entry)));
+            return segment.Entries.Select(entry => new DataPoint(GetXValue(entry, segment),GetRawValue(entry))).ToList();
         }
 
         private double GetXValue(LogEntry entry, LogSegment segment)
@@ -183,6 +172,11 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
                 copy.Transforms.Add(transform.Copy());
             }
 
+            foreach (var analysis in Analyses)
+            {
+                copy.Analyses.Add(analysis.Copy());
+            }
+
             return copy;
         }
 
@@ -194,6 +188,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             input.Name = Name;
             input.Smoothing = Smoothing;
             input.Transforms = Transforms;
+            input.Analyses = Analyses;
             input.AutoGraphRange = AutoGraphRange;
             input.GraphMin = GraphMin;
             input.GraphMax = GraphMax;

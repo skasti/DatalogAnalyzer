@@ -8,13 +8,14 @@ using OpenLogger.Analysis.Vehicle.Inputs.Transforms;
 
 namespace OpenLogAnalyzer.Transforms
 {
-    interface IEditInputTransforms
+    public interface IEditInputTransforms
     {
         event EventHandler<IInputTransform> Saved;
-
+        void Create(double selectionMin, double selectionMax, double cursorX, double cursorY);
         void LoadTransform(IInputTransform transform);
-        void CreateTransform(double selectionMin, double selectionMax, double cursorX, double cursorY);
-
         DialogResult ShowDialog(IWin32Window owner);
+    }
+    public interface IEditInputTransforms<T>: IEditInputTransforms where T: IInputTransform
+    {
     }
 }

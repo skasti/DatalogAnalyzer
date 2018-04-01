@@ -1,4 +1,4 @@
-﻿namespace OpenLogAnalyzer.Transforms
+﻿namespace OpenLogAnalyzer.Transforms.Editors
 {
     partial class LinearMapEditor
     {
@@ -149,6 +149,7 @@
             this.Controls.Add(this.FromMaxInput);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FromMinInput);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "LinearMapEditor";
             this.Text = "LinearMapEditor";
