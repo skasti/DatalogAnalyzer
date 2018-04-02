@@ -21,6 +21,7 @@ namespace OpenLogAnalyzer.Extensions
             listItem.SubItems.Add(metadata.Best.ToString("g"));
             listItem.SubItems.Add(metadata.Average.ToString("g"));
             listItem.SubItems.Add(metadata.Rider ?? "");
+            listItem.SubItems.Add(metadata.Bike ?? "");
 
             listItem.Tag = metadata;
 
@@ -37,6 +38,7 @@ namespace OpenLogAnalyzer.Extensions
             listItem.SubItems[5].Text = metadata.Best.ToString("g");
             listItem.SubItems[6].Text = metadata.Average.ToString("g");
             listItem.SubItems[7].Text = metadata.Rider ?? "";
+            listItem.SubItems[8].Text = metadata.Bike ?? "";
 
             listItem.Tag = metadata;
         }

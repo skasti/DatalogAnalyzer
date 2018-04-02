@@ -88,6 +88,7 @@
             this.TrackLibraryList = new System.Windows.Forms.ListView();
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.changedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.BikeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -188,7 +189,8 @@
             this.Laps,
             this.BestHeader,
             this.AverageHeader,
-            this.RiderHeader});
+            this.RiderHeader,
+            this.BikeHeader});
             this.LogLibraryList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LogLibraryList.FullRowSelect = true;
             this.LogLibraryList.Location = new System.Drawing.Point(3, 3);
@@ -261,7 +263,7 @@
             this.LogLibraryTab.Controls.Add(this.LogLibraryList);
             this.LogLibraryTab.Location = new System.Drawing.Point(4, 29);
             this.LogLibraryTab.Name = "LogLibraryTab";
-            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(3);
             this.LogLibraryTab.Size = new System.Drawing.Size(1550, 766);
             this.LogLibraryTab.TabIndex = 0;
             this.LogLibraryTab.Text = "Logs";
@@ -274,7 +276,7 @@
             this.AnalysisTab.Controls.Add(this.AnalysisInputTabs);
             this.AnalysisTab.Location = new System.Drawing.Point(4, 29);
             this.AnalysisTab.Name = "AnalysisTab";
-            this.AnalysisTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.AnalysisTab.Padding = new System.Windows.Forms.Padding(3);
             this.AnalysisTab.Size = new System.Drawing.Size(1550, 766);
             this.AnalysisTab.TabIndex = 1;
             this.AnalysisTab.Text = "Analysis";
@@ -440,8 +442,8 @@
             this.MapTab.Controls.Add(this.Map);
             this.MapTab.Location = new System.Drawing.Point(4, 29);
             this.MapTab.Name = "MapTab";
-            this.MapTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.MapTab.Size = new System.Drawing.Size(1550, 762);
+            this.MapTab.Padding = new System.Windows.Forms.Padding(3);
+            this.MapTab.Size = new System.Drawing.Size(1550, 766);
             this.MapTab.TabIndex = 2;
             this.MapTab.Text = "Map";
             this.MapTab.UseVisualStyleBackColor = true;
@@ -452,7 +454,7 @@
             this.panel1.Controls.Add(this.MapTrackBar);
             this.panel1.Controls.Add(this.MapShowMarkers);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 654);
+            this.panel1.Location = new System.Drawing.Point(3, 658);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1544, 105);
             this.panel1.TabIndex = 4;
@@ -573,7 +575,7 @@
             this.Map.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.Map.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.Map.ShowTileGridLines = false;
-            this.Map.Size = new System.Drawing.Size(1544, 756);
+            this.Map.Size = new System.Drawing.Size(1544, 760);
             this.Map.TabIndex = 0;
             this.Map.Zoom = 0D;
             // 
@@ -583,8 +585,8 @@
             this.TrackLibraryTab.Controls.Add(this.TrackLibraryList);
             this.TrackLibraryTab.Location = new System.Drawing.Point(4, 29);
             this.TrackLibraryTab.Name = "TrackLibraryTab";
-            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.TrackLibraryTab.Size = new System.Drawing.Size(1550, 762);
+            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(3);
+            this.TrackLibraryTab.Size = new System.Drawing.Size(1550, 766);
             this.TrackLibraryTab.TabIndex = 3;
             this.TrackLibraryTab.Text = "Tracks";
             this.TrackLibraryTab.UseVisualStyleBackColor = true;
@@ -627,7 +629,7 @@
             this.TrackLibraryList.Location = new System.Drawing.Point(3, 3);
             this.TrackLibraryList.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.TrackLibraryList.Name = "TrackLibraryList";
-            this.TrackLibraryList.Size = new System.Drawing.Size(656, 756);
+            this.TrackLibraryList.Size = new System.Drawing.Size(656, 760);
             this.TrackLibraryList.TabIndex = 8;
             this.TrackLibraryList.UseCompatibleStateImageBehavior = false;
             this.TrackLibraryList.View = System.Windows.Forms.View.Details;
@@ -643,6 +645,11 @@
             // 
             this.changedHeader.Text = "Changed Date";
             this.changedHeader.Width = 144;
+            // 
+            // BikeHeader
+            // 
+            this.BikeHeader.Text = "Bike";
+            this.BikeHeader.Width = 120;
             // 
             // MainForm
             // 
@@ -738,6 +745,7 @@
         private System.Windows.Forms.ToolStripMenuItem editInputToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newAnalysisToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editAnalysisToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader BikeHeader;
     }
 }
 
