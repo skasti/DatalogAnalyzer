@@ -16,7 +16,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
         public InputXAxis XAxisType { get; set; } = InputXAxis.Distance;
         public double GraphMin { get; set; }
         public double GraphMax { get; set; }
-        public bool AutoGraphRange { get; set; }
+        public bool AutoGraphRange { get; set; } = true;
         public int AnalogSource { get; set; }
         public List<IInputTransform> Transforms { get; set; } = new List<IInputTransform>();
         public List<IDataAnalysis> Analyses { get; set; } = new List<IDataAnalysis>();

@@ -9,20 +9,36 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using OpenLogAnalyzer.Extensions;
+using OpenLogger.Analysis;
 using OpenLogger.Analysis.Analyses;
+using OpenLogger.Core;
 using DataPoint = OpenLogger.Analysis.DataPoint;
 
 namespace OpenLogAnalyzer.Analyses
 {
     public partial class AnalysisRenderer : UserControl
     {
-        private IDataAnalysis _analysis;
-        public AnalysisRenderer(IDataAnalysis analysis)
+        public IDataAnalysis Analysis { get; }
+        public SegmentAnalysis Segment { get; }
+        
+        public AnalysisRenderer(IDataAnalysis analysis, SegmentAnalysis segment = null)
         {
             InitializeComponent();
-            _analysis = analysis;
+            Analysis = analysis;
+            Segment = segment;
 
             ToStringLabel.Text = analysis.ToString();
+
+            if (Segment != null)
+            {
+                ToStringLabel.Text = $"{analysis.Name} ({Segment.Name})";
+                var series = AnalysisChart.Series.FirstOrDefault();
+
+                if (series == null)
+                    return;
+
+                series.Color = Segment.SegmentColor;
+            }
         }
 
         public void Render(List<DataPoint> data)
@@ -36,21 +52,18 @@ namespace OpenLogAnalyzer.Analyses
 
             foreach (var point in data)
             {
-                var customLabel = _analysis.CustomLabel(point);
+                var customLabel = Analysis.CustomLabel(point);
                 var dataPoint = point.ToDataPoint();
 
                 if (!string.IsNullOrWhiteSpace(customLabel))
                 {
-                    //dataPoint.Label = customLabel;
-                    //dataPoint.LabelAngle = -90;
                     dataPoint.ToolTip = customLabel;
                 }
 
                 series.Points.Add(dataPoint);
             }
 
-            //series.SmartLabelStyle.Enabled = false;
-            series.ChartType = _analysis.GraphType.ToSeriesChartType();
+            series.ChartType = Analysis.GraphType.ToSeriesChartType();
         }
     }
 }

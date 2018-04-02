@@ -100,6 +100,12 @@
     <Compile Include="InputConfigurator.Designer.cs">
       <DependentUpon>InputConfigurator.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InputPage.Designer.cs">
+      <DependentUpon>InputPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="LogImportForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,6 +182,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InputConfigurator.resx">
       <DependentUpon>InputConfigurator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputPage.resx">
+      <DependentUpon>InputPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LogImportForm.resx">
       <DependentUpon>LogImportForm.cs</DependentUpon>

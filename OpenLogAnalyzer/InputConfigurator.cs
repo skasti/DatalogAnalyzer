@@ -603,7 +603,7 @@ namespace OpenLogAnalyzer
                 {
                     var renderer = new AnalysisRenderer(analysis);
                     AnalysisRenderPanel.Controls.Add(renderer);
-                    renderer.Location = new Point(0, index * 250);
+                    renderer.Location = new Point(0, index * renderer.MinimumSize.Height);
                     renderer.Size = new Size(AnalysisRenderPanel.Width, renderer.MinimumSize.Height);
                     renderer.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
 

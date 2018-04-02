@@ -31,8 +31,8 @@ namespace OpenLogAnalyzer
     {
         List<DriveInfo> _knownDrives = new List<DriveInfo>();
         private readonly TrackRepository _trackRepository = new TrackRepository();
-        private Dictionary<Input, Chart> _inputChart;
         private Dictionary<Input, TabPage> _inputTab;
+        private List<InputPage> _inputPages;
         private RenderingController _renderingController;
         private double _analysisResolution = 1.0;
 
@@ -297,63 +297,26 @@ namespace OpenLogAnalyzer
         private void CreateInputCharts()
         {
             AnalysisInputTabs.TabPages.Clear();
-            _inputChart = new Dictionary<Input, Chart>();
             _inputTab = new Dictionary<Input, TabPage>();
+            _inputPages = new List<InputPage>();
 
             foreach (var input in _currentVehicle.Inputs)
             {
-                var tabPage = AddInputTab(input);
-                var chart = AddInputChart(tabPage, input);
-
-                _inputTab.Add(input, tabPage);
-                _inputChart.Add(input, chart);
+                AddInputTab(input);
             }
         }
 
-        private void RenderSegmentCharts(SegmentAnalysis analysis, Input singleInput)
-        {
-            foreach (var input in _currentVehicle.Inputs)
-            {
-                if (singleInput != null && input != singleInput)
-                    continue;
-
-                var series = _inputChart[input].Series.FindByName(analysis.Name);
-
-                if (series == null)
-                {
-                    series = input.CreateSeries(analysis);
-                    _inputChart[input].Series.Add(series);
-                }
-
-                var data = input.Extract(analysis.Segment);
-
-                foreach (var point in data)
-                {
-                    series.Points.AddXY(point.X, point.Y);
-                }
-            }
-        }
-
-        private Chart AddInputChart(TabPage tabPage, Input input)
-        {
-            var chart = new Chart();
-
-            var chartArea = new ChartArea("ChartArea1");
-
-            chart.ChartAreas.Add(chartArea);
-            chart.Legends.Add("Legend1");
-
-            tabPage.Controls.Add(chart);
-            chart.Dock = DockStyle.Fill;
-
-            return chart;
-        }
-
-        private TabPage AddInputTab(Input input)
+        private void AddInputTab(Input input)
         {
             var tabPage = new TabPage(input.Name);
+            var inputPage = new InputPage(input);
             AnalysisInputTabs.TabPages.Add(tabPage);
-            return tabPage;
+            tabPage.Controls.Add(inputPage);
+            inputPage.Location = new Point(0, 0);
+            inputPage.Dock = DockStyle.Fill;
+
+            _inputTab.Add(input, tabPage);
+            _inputPages.Add(inputPage);
         }
 
         private void LoadMapOverlayLaps(SessionAnalysis analysis)
@@ -486,27 +449,18 @@ namespace OpenLogAnalyzer
 
         private void AnalyzeSegments(SegmentAnalysis[] segments = null, Input singleInput = null)
         {
-            if (singleInput == null)
-            {
-                foreach (var input in _currentVehicle.Inputs)
-                {
-                    _inputChart[input].Series.Clear();
-                }
-            }
-            else
-            {
-                _inputChart[singleInput].Series.Clear();
-            }
-
             if (segments != null)
             {
                 _currentSegments = new List<SegmentAnalysis>(segments.Length);
                 _currentSegments.AddRange(segments);
             }
 
-            foreach (var segment in _currentSegments)
+            foreach (var inputPage in _inputPages)
             {
-                RenderSegmentCharts(segment, singleInput);
+                if (singleInput != null && inputPage.Input != singleInput)
+                    continue;
+
+                inputPage.Render(_currentSegments);
             }
         }
 
@@ -545,16 +499,9 @@ namespace OpenLogAnalyzer
             var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;
             var time = AnalysisTrackBar.Value*timeMultiplier;
 
-            foreach (var input in _inputChart.Keys)
+            foreach (var inputPage in _inputPages)
             {
-                var chart = _inputChart[input];
-
-                if (input.XAxisType == InputXAxis.Distance)
-                    chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
-                else
-                    chart.ChartAreas[0].CursorX.Position = time;
-
-                chart.UpdateCursor();
+                inputPage.SetCursor(AnalysisTrackBar.Value, time);
             }
         }
 
@@ -565,11 +512,15 @@ namespace OpenLogAnalyzer
 
             var segments = AnalysisLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
             _renderingController.RenderSegments(segments);
+            AnalyzeSegments(segments);
 
-            foreach (var chart in _inputChart.Values)
+            var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
+            var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;
+            var time = AnalysisTrackBar.Value * timeMultiplier;
+
+            foreach (var inputPage in _inputPages)
             {
-                chart.ChartAreas[0].CursorX.Position = AnalysisTrackBar.Value;
-                chart.UpdateCursor();
+                inputPage.SetCursor(AnalysisTrackBar.Value, time);
             }
         }
 
@@ -596,19 +547,6 @@ namespace OpenLogAnalyzer
                 VehicleRepository.Save(_currentVehicle);
 
                 AnalyzeSegments(singleInput: selectedInput);
-
-                var chartArea = _inputChart[selectedInput].ChartAreas.FirstOrDefault();
-                if (selectedInput.AutoGraphRange)
-                {
-                    chartArea.AxisY.Minimum = double.NaN;
-                    chartArea.AxisY.Maximum = double.NaN;
-                    chartArea.RecalculateAxesScale();
-                }
-                else
-                {
-                    chartArea.AxisY.Minimum = selectedInput.GraphMin;
-                    chartArea.AxisY.Maximum = selectedInput.GraphMax;
-                }
 
                 _inputTab[selectedInput].Text = selectedInput.Name;
             };
