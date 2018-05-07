@@ -24,6 +24,7 @@ using OpenLogger.Analysis.Vehicle;
 using OpenLogger.Analysis.Vehicle.Inputs;
 using OpenLogger.Core;
 using OpenLogger.Core.Debugging;
+using OpenLogger.Core.Extensions;
 
 namespace OpenLogAnalyzer
 {
@@ -133,10 +134,32 @@ namespace OpenLogAnalyzer
         private void UpdateLogLibraryList()
         {
             var libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
-            LogLibraryList.Items.Clear();
+            var metadatas = libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime);
 
-            foreach (var metadata in libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime))
+            if (metadatas.Any(m => m.StartTime > DateTime.Now))
             {
+                foreach (var metadata in metadatas)
+                {
+                    if (metadata.StartTime > DateTime.Now)
+                    {
+                        var file = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
+                        file.Save();
+                    }
+                }
+
+                libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
+                metadatas = libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime);
+            }
+
+            LogLibraryList.Items.Clear();
+            foreach (var metadata in metadatas)
+            {
+                if (metadata.StartTime > DateTime.Now)
+                {
+                    var file = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
+                    file.Save();
+                }
+
                 LogLibraryList.Items.Add(metadata.ToListViewItem());
             }
         }
@@ -226,6 +249,11 @@ namespace OpenLogAnalyzer
                 return;
 
             var logFile = LogFile.Load(selectedMetadata.LogFilename, TimeSpan.Zero);
+
+            if (logFile.LogStart.Timestamp != selectedMetadata.StartTime)
+            {
+                logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds, (uint)selectedMetadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
+            }
 
             var trackMatches = _trackRepository.FindTracks(logFile);
 

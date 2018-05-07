@@ -8,5 +8,10 @@ namespace OpenLogger.Core.Extensions
         {
             return dateTime.AddMilliseconds(microseconds/1000.0);
         }
+
+        public static long ToUnixTimestamp(this DateTime dateTime)
+        {
+            return new DateTimeOffset(dateTime).ToUnixTimeSeconds();
+        }
     }
 }

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenLogger.Core.Debugging;
+using OpenLogger.Core.Extensions;
 
 namespace OpenLogger.Core
 {
     public class LogSegment
     {
-        public LogStart LogStart { get; }
+        public LogStart LogStart { get; private set; }
         public List<LogEntry> Entries { get; }
         public int ValueCount { get; }
         public TimeSpan Length => Entries?.LastOrDefault()?.GetTimeSpan(LogStart) ?? TimeSpan.Zero;
@@ -90,9 +91,13 @@ namespace OpenLogger.Core
             var entries = Entries.GetRange(startIndex, count);
             var firstEntry = entries.FirstOrDefault();
 
-            var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).Ticks, TimeSpan.Zero);
+            var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).ToUnixTimestamp(), TimeSpan.Zero);
 
             return new LogSegment(logStart, entries.Skip(1).ToList());
+        }
+        public void LogStartCorrection(LogStart correction)
+        {
+            LogStart = correction;
         }
     }
 }
