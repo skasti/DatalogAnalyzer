@@ -85,9 +85,13 @@ namespace OpenLogAnalyzer
                 }
 
                 var logFile = LogFile.Load(newFile, TimeSpan.FromHours(2));
-                logFile.Metadata.Rider = $"#{config.RiderNumber} - {config.RiderName}";
-                logFile.Metadata.Bike = config.BikeName;
-                logFile.Save(libraryFile);
+
+                if (logFile != null)
+                {
+                    logFile.Metadata.Rider = $"#{config.RiderNumber} - {config.RiderName}";
+                    logFile.Metadata.Bike = config.BikeName;
+                    logFile.Save(libraryFile);
+                }
 
                 importedFiles.Add(libraryFile);
 

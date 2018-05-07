@@ -101,7 +101,13 @@ namespace OpenLogger.Core
                     Log.Error("Failed to read LogEntry: {0}", ex);
                 }
             }
-            
+
+            if (entries.Count == 0)
+            {
+                Log.Error("File contains no entries: {0}", fileName);
+                return null;
+            }
+
             Log.Info(
                 "LogFile - Loaded {0} samples ({7} seconds)\navg delta: {1} micros\nsmallest delta: {2}\nlargest delta: {3}\ndeltas over {4} micros: {5} ({6}%)",
                 entries.Count(),
