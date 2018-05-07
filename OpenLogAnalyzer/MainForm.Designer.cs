@@ -47,6 +47,7 @@
             this.BestHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AverageHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.RiderHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.BikeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ImportTimer = new System.Windows.Forms.Timer(this.components);
             this.MainTabs = new System.Windows.Forms.TabControl();
             this.LogLibraryTab = new System.Windows.Forms.TabPage();
@@ -64,7 +65,7 @@
             this.AnalysisListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CompareAnalysis = new System.Windows.Forms.ToolStripMenuItem();
             this.AnalysisInputTabs = new System.Windows.Forms.TabControl();
-            this.InputTapContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.InputTabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newInputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editInputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,7 +89,6 @@
             this.TrackLibraryList = new System.Windows.Forms.ListView();
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.changedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.BikeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -96,7 +96,7 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackBar)).BeginInit();
             this.AnalysisListMenu.SuspendLayout();
-            this.InputTapContextMenu.SuspendLayout();
+            this.InputTabContextMenu.SuspendLayout();
             this.MapTab.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).BeginInit();
@@ -238,6 +238,11 @@
             // 
             this.RiderHeader.Text = "Rider";
             this.RiderHeader.Width = 150;
+            // 
+            // BikeHeader
+            // 
+            this.BikeHeader.Text = "Bike";
+            this.BikeHeader.Width = 120;
             // 
             // ImportTimer
             // 
@@ -392,47 +397,47 @@
             this.AnalysisInputTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AnalysisInputTabs.ContextMenuStrip = this.InputTapContextMenu;
             this.AnalysisInputTabs.Location = new System.Drawing.Point(3, 6);
             this.AnalysisInputTabs.Name = "AnalysisInputTabs";
             this.AnalysisInputTabs.SelectedIndex = 0;
             this.AnalysisInputTabs.Size = new System.Drawing.Size(1090, 642);
             this.AnalysisInputTabs.TabIndex = 1;
+            this.AnalysisInputTabs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnalysisInputTabs_MouseClick);
             // 
-            // InputTapContextMenu
+            // InputTabContextMenu
             // 
-            this.InputTapContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.InputTapContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InputTabContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.InputTabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newInputToolStripMenuItem,
             this.editInputToolStripMenuItem,
             this.newAnalysisToolStripMenuItem,
             this.editAnalysisToolStripMenuItem});
-            this.InputTapContextMenu.Name = "InputTapContextMenu";
-            this.InputTapContextMenu.Size = new System.Drawing.Size(189, 124);
+            this.InputTabContextMenu.Name = "InputTapContextMenu";
+            this.InputTabContextMenu.Size = new System.Drawing.Size(189, 124);
             // 
             // newInputToolStripMenuItem
             // 
             this.newInputToolStripMenuItem.Name = "newInputToolStripMenuItem";
-            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
             this.newInputToolStripMenuItem.Text = "New Input";
             // 
             // editInputToolStripMenuItem
             // 
             this.editInputToolStripMenuItem.Name = "editInputToolStripMenuItem";
-            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
             this.editInputToolStripMenuItem.Text = "Edit Input";
             this.editInputToolStripMenuItem.Click += new System.EventHandler(this.editInputToolStripMenuItem_Click);
             // 
             // newAnalysisToolStripMenuItem
             // 
             this.newAnalysisToolStripMenuItem.Name = "newAnalysisToolStripMenuItem";
-            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
             this.newAnalysisToolStripMenuItem.Text = "New Analysis";
             // 
             // editAnalysisToolStripMenuItem
             // 
             this.editAnalysisToolStripMenuItem.Name = "editAnalysisToolStripMenuItem";
-            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(198, 30);
             this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
             // 
             // MapTab
@@ -646,11 +651,6 @@
             this.changedHeader.Text = "Changed Date";
             this.changedHeader.Width = 144;
             // 
-            // BikeHeader
-            // 
-            this.BikeHeader.Text = "Bike";
-            this.BikeHeader.Width = 120;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -671,7 +671,7 @@
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisTrackBar)).EndInit();
             this.AnalysisListMenu.ResumeLayout(false);
-            this.InputTapContextMenu.ResumeLayout(false);
+            this.InputTabContextMenu.ResumeLayout(false);
             this.MapTab.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -740,7 +740,7 @@
         private System.Windows.Forms.ToolStripMenuItem compareMapLaps;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forkSensorEditorToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip InputTapContextMenu;
+        private System.Windows.Forms.ContextMenuStrip InputTabContextMenu;
         private System.Windows.Forms.ToolStripMenuItem newInputToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editInputToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newAnalysisToolStripMenuItem;

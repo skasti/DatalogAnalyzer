@@ -18,10 +18,33 @@ namespace OpenLogAnalyzer
     public partial class InputPage : UserControl
     {
         public Input Input { get; }
+
+        public double XSelectionStart
+        {
+            get
+            {
+                var sel = RawChart.ChartAreas.First().AxisX.ScaleView.ViewMinimum;
+                return sel;
+            }
+        }
+
+        public double XSelectionEnd
+        {
+            get
+            {
+                var sel = RawChart.ChartAreas.First().AxisX.ScaleView.ViewMaximum;
+                return sel;
+            }
+        }
+
+        private int _zoomOperations = 0;
+
         private readonly List<SegmentAnalysis> _currentSegments = new List<SegmentAnalysis>();
 
         private readonly Dictionary<IDataAnalysis, TabPage> _analysisTabs = new Dictionary<IDataAnalysis, TabPage>();
         private readonly List<AnalysisRenderer> _analysisRenderers = new List<AnalysisRenderer>();
+
+        private readonly Dictionary<SegmentAnalysis, List<DataPoint>> _segmentData = new Dictionary<SegmentAnalysis, List<DataPoint>>(); 
 
         public InputPage(Input input)
         {
@@ -47,9 +70,13 @@ namespace OpenLogAnalyzer
             PruneSeries();
             PruneAnalysisRenderers();
 
+            UpdateSegmentData();
+
             foreach (var segment in segments)
             {
-                var data = RenderSegmentRawSeries(segment);
+                RenderSegmentRawSeries(segment);
+
+                var data = _segmentData[segment];
 
                 foreach (var analysis in Input.Analyses)
                 {
@@ -60,8 +87,6 @@ namespace OpenLogAnalyzer
             }
 
             var chartArea = RawChart.ChartAreas.First();
-
-
 
             if (Input.AutoGraphRange)
             {
@@ -85,6 +110,24 @@ namespace OpenLogAnalyzer
                     chartArea.AxisY.Maximum = Input.GraphMax;
                 }
             }
+        }
+
+        private void UpdateSegmentData()
+        {
+            var removedSegments = _segmentData.Keys.Where(k => !_currentSegments.Contains(k)).ToList();
+
+            foreach (var segment in removedSegments)
+                _segmentData.Remove(segment);
+
+            Parallel.ForEach(_currentSegments, analysis =>
+            {
+                var data = Input.Extract(analysis.Segment);
+
+                if (!_segmentData.ContainsKey(analysis))
+                    _segmentData.Add(analysis, data);
+                else
+                    _segmentData[analysis] = data;
+            });
         }
 
         private void PruneAnalysisRenderers()
@@ -171,22 +214,21 @@ namespace OpenLogAnalyzer
             return tabPage;
         }
 
-        private List<DataPoint> RenderSegmentRawSeries(SegmentAnalysis segment)
+        private void RenderSegmentRawSeries(SegmentAnalysis segment)
         {
+            var data = _segmentData[segment];
             var series = RawChart.Series.FindByName(segment.Name);
 
             if (series == null)
             {
                 series = Input.CreateSeries(segment);
                 RawChart.Series.Add(series);
+                series.Points.AddRange(data);
             }
-
-            var data = Input.Extract(segment.Segment);
-
-            series.Points.Clear();
-            series.Points.AddRange(data);
-
-            return data;
+            else
+            {
+                series.Points.Update(data);
+            }
         }
 
         public void SetCursor(double distance, double time)
@@ -204,6 +246,32 @@ namespace OpenLogAnalyzer
             }
 
             RawChart.UpdateCursor();
+        }
+
+        private void ToggleZoomEnableButton_Click(object sender, EventArgs e)
+        {
+            var chartArea = RawChart.ChartAreas.First();
+
+            chartArea.AxisX.ScaleView.Zoomable = ToggleZoomEnableButton.Checked;
+            chartArea.AxisY.ScaleView.Zoomable = ToggleZoomEnableButton.Checked;
+
+            if (!ToggleZoomEnableButton.Checked)
+                ResetZoom();
+        }
+
+        private void ResetZoomButton_Click(object sender, EventArgs e)
+        {
+            ResetZoom();
+        }
+
+        private void ResetZoom()
+        {
+            var chartArea = RawChart.ChartAreas.First();
+
+            chartArea.AxisX.ScaleView.ZoomReset(_zoomOperations);
+            chartArea.AxisY.ScaleView.ZoomReset(_zoomOperations);
+
+            _zoomOperations = 0;
         }
     }
 }

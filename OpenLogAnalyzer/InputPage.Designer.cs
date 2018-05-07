@@ -28,14 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.inputTabs = new System.Windows.Forms.TabControl();
             this.plainDataPage = new System.Windows.Forms.TabPage();
             this.RawChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.ChartContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ToggleZoomEnableButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.ResetZoomButton = new System.Windows.Forms.ToolStripMenuItem();
             this.inputTabs.SuspendLayout();
             this.plainDataPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RawChart)).BeginInit();
+            this.ChartContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // inputTabs
@@ -68,6 +73,8 @@
             chartArea1.BackColor = System.Drawing.Color.Black;
             chartArea1.CursorX.Interval = 0.01D;
             chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorX.IsUserSelectionEnabled = true;
+            chartArea1.CursorX.SelectionColor = System.Drawing.Color.Aqua;
             chartArea1.CursorY.Interval = 0.01D;
             chartArea1.CursorY.IsUserEnabled = true;
             chartArea1.CursorY.IsUserSelectionEnabled = true;
@@ -75,6 +82,7 @@
             chartArea1.CursorY.SelectionColor = System.Drawing.Color.LightGreen;
             chartArea1.Name = "ChartArea1";
             this.RawChart.ChartAreas.Add(chartArea1);
+            this.RawChart.ContextMenuStrip = this.ChartContextMenu;
             this.RawChart.Dock = System.Windows.Forms.DockStyle.Fill;
             legend1.Name = "Legend1";
             this.RawChart.Legends.Add(legend1);
@@ -83,6 +91,32 @@
             this.RawChart.Size = new System.Drawing.Size(1264, 624);
             this.RawChart.TabIndex = 6;
             this.RawChart.Text = "chart1";
+            // 
+            // ChartContextMenu
+            // 
+            this.ChartContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.ChartContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToggleZoomEnableButton,
+            this.ResetZoomButton});
+            this.ChartContextMenu.Name = "ChartContextMenu";
+            this.ChartContextMenu.Size = new System.Drawing.Size(201, 97);
+            // 
+            // ToggleZoomEnableButton
+            // 
+            this.ToggleZoomEnableButton.Checked = true;
+            this.ToggleZoomEnableButton.CheckOnClick = true;
+            this.ToggleZoomEnableButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ToggleZoomEnableButton.Name = "ToggleZoomEnableButton";
+            this.ToggleZoomEnableButton.Size = new System.Drawing.Size(200, 30);
+            this.ToggleZoomEnableButton.Text = "Zoom Enabled";
+            this.ToggleZoomEnableButton.Click += new System.EventHandler(this.ToggleZoomEnableButton_Click);
+            // 
+            // ResetZoomButton
+            // 
+            this.ResetZoomButton.Name = "ResetZoomButton";
+            this.ResetZoomButton.Size = new System.Drawing.Size(200, 30);
+            this.ResetZoomButton.Text = "Reset Zoom";
+            this.ResetZoomButton.Click += new System.EventHandler(this.ResetZoomButton_Click);
             // 
             // InputPage
             // 
@@ -94,6 +128,7 @@
             this.inputTabs.ResumeLayout(false);
             this.plainDataPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.RawChart)).EndInit();
+            this.ChartContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -103,5 +138,8 @@
         private System.Windows.Forms.TabControl inputTabs;
         private System.Windows.Forms.TabPage plainDataPage;
         private System.Windows.Forms.DataVisualization.Charting.Chart RawChart;
+        private System.Windows.Forms.ContextMenuStrip ChartContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem ToggleZoomEnableButton;
+        private System.Windows.Forms.ToolStripMenuItem ResetZoomButton;
     }
 }

@@ -166,8 +166,14 @@ namespace OpenLogAnalyzer
             }
 
             var importForm = new LogImportForm();
+            importForm.OnCompleted += ImportFormOnOnCompleted;
             importForm.ShowDialog(this);
             Log.Instance = this;
+        }
+
+        private void ImportFormOnOnCompleted(object sender, List<string> list)
+        {
+            UpdateLogLibraryList();
         }
 
         private void UpdateFormText()
@@ -311,6 +317,7 @@ namespace OpenLogAnalyzer
             var tabPage = new TabPage(input.Name);
             var inputPage = new InputPage(input);
             AnalysisInputTabs.TabPages.Add(tabPage);
+            
             tabPage.Controls.Add(inputPage);
             inputPage.Location = new Point(0, 0);
             inputPage.Dock = DockStyle.Fill;
@@ -541,7 +548,19 @@ namespace OpenLogAnalyzer
             if (_currentSegments == null || _currentSegments.Count == 0)
                 return;
 
-            var editor = new InputConfigurator(_currentSegments.First().Segment, selectedInput);
+            var inputPage = _inputPages.First(ip => ip.Input == selectedInput);
+            var selectionStart = inputPage.XSelectionStart;
+            var selectionEnd = inputPage.XSelectionEnd;
+
+            var segment = _currentSegments.First().Segment;
+
+
+            var startEntry = segment.GetClosestEntry(selectionStart);
+            var endEntry = segment.GetClosestEntry(selectionEnd);
+
+            segment = segment.SubSet(startEntry, endEntry);
+
+            var editor = new InputConfigurator(segment, selectedInput);
             editor.OnSave += (o, input) =>
             {
                 VehicleRepository.Save(_currentVehicle);
@@ -552,6 +571,14 @@ namespace OpenLogAnalyzer
             };
 
             editor.ShowDialog(this);
+        }
+
+        private void AnalysisInputTabs_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                InputTabContextMenu.Show(AnalysisInputTabs, e.Location);
+            }
         }
     }
 }

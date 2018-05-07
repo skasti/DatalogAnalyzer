@@ -12,6 +12,7 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using OpenLogAnalyzer.Analyses;
+using OpenLogAnalyzer.Extensions;
 using OpenLogAnalyzer.Transforms;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Analyses;
@@ -234,21 +235,20 @@ namespace OpenLogAnalyzer
 
         private void UpdateCharts()
         {
+            if (!_loaded)
+                return;
+
             UpdatePreChart();
             UpdateTransformChart();
         }
 
         private void UpdateTransformChart()
         {
-            TransformChart.Series[0].Points.Clear();
             var selectedTransform = TransformList.SelectedItems.Count >= 1 ? TransformList.SelectedItems[0].Tag as IInputTransform : null;
 
             _transformedData = _editingInput.Transform(_smoothedData, selectedTransform);
 
-            foreach (var point in _transformedData)
-            {
-                TransformChart.Series[0].Points.AddXY(point.X, point.Y);
-            }
+            TransformChart.Series[0].Points.Update(_transformedData);
         }
 
         private void UpdatePreChart()
@@ -259,26 +259,16 @@ namespace OpenLogAnalyzer
 
         private void UpdateSmoothedChart()
         {
-            RawChart.Series[1].Points.Clear();
-
             _smoothedData = _editingInput.Smooth(_rawData);
 
-            foreach (var point in _smoothedData)
-            {
-                RawChart.Series[1].Points.AddXY(point.X, point.Y);
-            }
+            RawChart.Series[1].Points.Update(_smoothedData);
         }
 
         private void UpdateRawChart()
         {
-            RawChart.Series[0].Points.Clear();
-
             _rawData = _editingInput.ExtractRaw(_segment);
 
-            foreach (var point in _rawData)
-            {
-                RawChart.Series[0].Points.AddXY(point.X, point.Y);
-            }
+            RawChart.Series[0].Points.Update(_rawData);
         }
 
         private void SourceInput_SelectedIndexChanged(object sender, EventArgs e)
@@ -457,9 +447,9 @@ namespace OpenLogAnalyzer
 
         private void InputConfigurator_Shown(object sender, EventArgs e)
         {
+            _loaded = true;
             UpdateCharts();
             UpdateAnalysesRenders();
-            _loaded = true;
         }
 
         private void AnalysesListMenu_Opening(object sender, CancelEventArgs e)

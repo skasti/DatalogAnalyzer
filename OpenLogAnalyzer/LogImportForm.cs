@@ -24,6 +24,8 @@ namespace OpenLogAnalyzer
             InitializeComponent();
         }
 
+        public event EventHandler<List<string>> OnCompleted;
+
         private void LogImportForm_Load(object sender, EventArgs e)
         {
             Log.Instance = this;
@@ -61,6 +63,8 @@ namespace OpenLogAnalyzer
 
             var config = AnalyzerConfig.Instance;
 
+            var importedFiles = new List<string>();
+
             foreach (var newFile in newFiles)
             {
                 var fileName = Path.GetFileName(newFile);
@@ -85,6 +89,8 @@ namespace OpenLogAnalyzer
                 logFile.Metadata.Bike = config.BikeName;
                 logFile.Save(libraryFile);
 
+                importedFiles.Add(libraryFile);
+
                 Invoke((MethodInvoker) delegate
                 {
                     ProgressBar.Value++;
@@ -93,6 +99,8 @@ namespace OpenLogAnalyzer
 
             Invoke((MethodInvoker) delegate
             {
+                OnCompleted?.Invoke(this, importedFiles);
+
                 AbortButton.Visible = false;
                 FinishedButton.Visible = true;
 

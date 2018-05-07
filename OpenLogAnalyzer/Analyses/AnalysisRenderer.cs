@@ -48,20 +48,15 @@ namespace OpenLogAnalyzer.Analyses
             if (series == null)
                 return;
 
-            series.Points.Clear();
-
-            foreach (var point in data)
+            series.Points.Update(data, (point, dataPoint) =>
             {
                 var customLabel = Analysis.CustomLabel(point);
-                var dataPoint = point.ToDataPoint();
 
                 if (!string.IsNullOrWhiteSpace(customLabel))
                 {
                     dataPoint.ToolTip = customLabel;
                 }
-
-                series.Points.Add(dataPoint);
-            }
+            });
 
             series.ChartType = Analysis.GraphType.ToSeriesChartType();
         }
