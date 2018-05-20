@@ -161,9 +161,10 @@ namespace OpenLogAnalyzer
             {
                 Routes.Add(segment, segment.Route);
                 AccelerationRoutes.Add(segment, segment.AccelerationRoutes);
-                routes.AddRange(segment.AccelerationRoutes);
-                
                 RenderedSegments.Add(segment);
+
+                routes.Add(segment.Route);
+                routes.AddRange(segment.AccelerationRoutes);
             }
 
             OnRoutes?.Invoke(this, routes);

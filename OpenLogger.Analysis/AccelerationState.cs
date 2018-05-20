@@ -8,9 +8,11 @@ namespace OpenLogger.Analysis
 {
     public enum AccelerationState
     {
+        HardBraking,
         Braking,
         Coasting,
         Accelerating,
+        MediumAcceleration,
         HardAcceleration
     }
 }

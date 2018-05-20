@@ -94,13 +94,18 @@ namespace OpenLogger.Analysis
                 GPSData.Add(gpsData);
             }
 
-            Route = GPSData.GetRoute(name, new Pen(SegmentColor));
+            Route = GPSData.GetRoute(name, new Pen(Color.White, 2.0f));
 
             AccelerationRoutes = new List<GMapRoute>();
 
             GMapRoute currentRoute = null;
             var prevAccelerationState = AccelerationState.Coasting;
-            double hardAccelerationThreshold = 4.0, accelerationThreshold = 0.0, brakingThreshold = -4.0;
+            double 
+                hardAccelerationThreshold = 5.0,
+                mediumAccelerationThreshold = 3.0,
+                accelerationThreshold = 1.0, 
+                brakingThreshold = -3.0,
+                hardBrakingThreshold = -8.0;
 
             var smoothingBuffer = new[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             var smoothingIndex = 0;
@@ -118,8 +123,12 @@ namespace OpenLogger.Analysis
 
                 if (acceleration > hardAccelerationThreshold)
                     accelerationState = AccelerationState.HardAcceleration;
+                else if (acceleration > mediumAccelerationThreshold)
+                    accelerationState = AccelerationState.MediumAcceleration;
                 else if (acceleration > accelerationThreshold)
                     accelerationState = AccelerationState.Accelerating;
+                else if (acceleration < hardBrakingThreshold)
+                    accelerationState = AccelerationState.HardBraking;
                 else if (acceleration < brakingThreshold)
                     accelerationState = AccelerationState.Braking;
 
@@ -133,18 +142,23 @@ namespace OpenLogger.Analysis
 
                     switch (accelerationState)
                     {
-
+                        case AccelerationState.HardBraking:
+                            currentRoute.Stroke = new Pen(Color.Red.WithAlpha(230), 8f);
+                            break;
                         case AccelerationState.Braking:
-                            currentRoute.Stroke = new Pen(Color.Red, 2.0f);
+                            currentRoute.Stroke = new Pen(Color.DarkRed.WithAlpha(150), 8f);
                             break;
                         case AccelerationState.Accelerating:
-                            currentRoute.Stroke = new Pen(Color.Green, 2.0f);
+                            currentRoute.Stroke = new Pen(Color.DarkOliveGreen.WithAlpha(150), 8f);
+                            break;
+                        case AccelerationState.MediumAcceleration:
+                            currentRoute.Stroke = new Pen(Color.Green.WithAlpha(180), 8f);
                             break;
                         case AccelerationState.HardAcceleration:
-                            currentRoute.Stroke = new Pen(Color.Lime, 2.0f);
+                            currentRoute.Stroke = new Pen(Color.Lime.WithAlpha(200), 8f);
                             break;
                         case AccelerationState.Coasting:
-                            currentRoute.Stroke = new Pen(Color.Blue, 3.0f);
+                            currentRoute.Stroke = new Pen(Color.Blue.WithAlpha(100), 8f);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
