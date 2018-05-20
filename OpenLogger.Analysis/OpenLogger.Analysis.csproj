@@ -54,10 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccelerationState.cs" />
     <Compile Include="DataPoint.cs" />
+    <Compile Include="Extensions\GPSDataPointExtensions.cs" />
     <Compile Include="Extensions\LogEntryExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\LogSegmentExtensions.cs" />
+    <Compile Include="GPSDataPoint.cs" />
     <Compile Include="RandomColors.cs" />
     <Compile Include="Analyses\IDataAnalysis.cs" />
     <Compile Include="Analyses\YDeltaXAnalysis.cs" />

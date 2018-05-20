@@ -21,6 +21,7 @@ namespace OpenLogAnalyzer
             new Dictionary<SegmentAnalysis, GMapMarker>();
 
         public Dictionary<SegmentAnalysis, GMapRoute> Routes { get; } = new Dictionary<SegmentAnalysis, GMapRoute>();
+        public Dictionary<SegmentAnalysis, List<GMapRoute>> AccelerationRoutes { get; } = new Dictionary<SegmentAnalysis, List<GMapRoute>>();
         public IEnumerable<GMapMarker> Markers => RenderedSegmentMarkers.Values;
         public event EventHandler<IEnumerable<GMapRoute>> OnRoutes;
         public event EventHandler<IEnumerable<GMapMarker>> OnMarkers;
@@ -152,13 +153,22 @@ namespace OpenLogAnalyzer
         {
             RenderedSegments.Clear();
             Routes.Clear();
+            AccelerationRoutes.Clear();
+
+            var routes = new List<GMapRoute>();
+
             foreach (var segment in segments)
             {
                 Routes.Add(segment, segment.Route);
+                AccelerationRoutes.Add(segment, segment.AccelerationRoutes);
+                routes.AddRange(segment.AccelerationRoutes);
+                
                 RenderedSegments.Add(segment);
             }
 
-            OnRoutes?.Invoke(this, Routes.Values);
+            OnRoutes?.Invoke(this, routes);
+
+            //OnRoutes?.Invoke(this, Routes.Values);
 
             RenderMarkers = false;
         }

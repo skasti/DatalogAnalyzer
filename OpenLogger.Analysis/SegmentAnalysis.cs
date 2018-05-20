@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GMap.NET.WindowsForms;
@@ -11,9 +12,10 @@ namespace OpenLogger.Analysis
     {
         public Color SegmentColor { get; } = RandomColors.GetNext();
         public string Name { get; set; }
-        public LogSegment Segment { get; set; }
-
+        public LogSegment Segment { get; }
+        public List<GPSDataPoint> GPSData { get; }
         public GMapRoute Route { get; }
+        public List<GMapRoute> AccelerationRoutes { get; }
         public double Distance => Route.Distance;
         public TimeSpan Time => Segment.Length;
 
@@ -25,18 +27,137 @@ namespace OpenLogger.Analysis
         {
             Name = name;
             Segment = segment;
-            Route = segment.GetRoute(name, new Pen(SegmentColor));
-            var viableSpeedEntries = segment.Entries.Where(e => e.SpeedAccuracy < 5);
+
+            var viableSpeedEntries = segment.Entries.Where(e => e.SpeedAccuracy < 5).ToList();
 
             if (viableSpeedEntries.Any())
             {
-                TopSpeed = segment.Entries.Where(e => e.SpeedAccuracy < 5).Max(e => e.Speed);
-                LowestSpeed = segment.Entries.Where(e => e.SpeedAccuracy < 5).Min(e => e.Speed);
+                TopSpeed = viableSpeedEntries.Max(e => e.Speed);
+                LowestSpeed = viableSpeedEntries.Min(e => e.Speed);
             }
             else
             {
                 TopSpeed = 0;
                 LowestSpeed = 0;
+            }
+
+            double prevLat = 0, prevLong = 0, prevSpeed = -1, prevAcceleration = -1000;
+            uint prevMicroseconds = 0;
+            GPSDataPoint gpsData = null;
+            GPSData = new List<GPSDataPoint>();
+
+            foreach (var entry in Segment.Entries)
+            {
+                if ((gpsData != null) && (entry.Latitude == prevLat) && (entry.Longitude == prevLong))
+                {
+                    gpsData.Entries.Add(entry);
+                    continue;
+                }
+
+                gpsData = new GPSDataPoint(entry);
+
+                if (entry.SpeedAccuracy < 5)
+                {
+                    if (prevSpeed > 0)
+                    {
+                        var speedDelta = ((entry.Speed - prevSpeed) / 3.6); // Change in speed in m/s
+                        var timeDelta = TimeSpan.FromMilliseconds((entry.Microseconds - prevMicroseconds) / 1000.0)
+                            .TotalSeconds; // Time since last measurement in seconds
+                        var acceleration = speedDelta / timeDelta; // Acceleration as m/s^2
+
+                        gpsData.Acceleration = acceleration;
+                        prevAcceleration = acceleration;
+                    }
+                    else if (prevAcceleration != -1000)
+                    {
+                        gpsData.Acceleration = prevAcceleration;
+                    }
+                    else
+                    {
+                        gpsData.Acceleration = 0;
+                    }
+                }
+                else if (prevAcceleration != -1000)
+                {
+                    gpsData.Acceleration = prevAcceleration;
+                }
+                else
+                {
+                    gpsData.Acceleration = 0;
+                }
+
+                prevSpeed = gpsData.Speed;
+                prevLat = entry.Latitude;
+                prevLong = entry.Longitude;
+                prevMicroseconds = entry.Microseconds;
+
+                GPSData.Add(gpsData);
+            }
+
+            Route = GPSData.GetRoute(name, new Pen(SegmentColor));
+
+            AccelerationRoutes = new List<GMapRoute>();
+
+            GMapRoute currentRoute = null;
+            var prevAccelerationState = AccelerationState.Coasting;
+            double hardAccelerationThreshold = 4.0, accelerationThreshold = 0.0, brakingThreshold = -4.0;
+
+            var smoothingBuffer = new[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+            var smoothingIndex = 0;
+
+            foreach (var gpsPoint in GPSData)
+            {
+                smoothingBuffer[smoothingIndex++] = gpsPoint.Acceleration;
+
+                if (smoothingIndex >= smoothingBuffer.Length)
+                    smoothingIndex = 0;
+
+                var acceleration = smoothingBuffer.Average();
+
+                var accelerationState = AccelerationState.Coasting;
+
+                if (acceleration > hardAccelerationThreshold)
+                    accelerationState = AccelerationState.HardAcceleration;
+                else if (acceleration > accelerationThreshold)
+                    accelerationState = AccelerationState.Accelerating;
+                else if (acceleration < brakingThreshold)
+                    accelerationState = AccelerationState.Braking;
+
+                if (currentRoute == null || accelerationState != prevAccelerationState)
+                {
+                    currentRoute?.Points.Add(gpsPoint.GetLocation());
+
+                    currentRoute = new GMapRoute($"Acceleration {AccelerationRoutes.Count}");
+
+                    currentRoute.Points.Add(gpsPoint.GetLocation());
+
+                    switch (accelerationState)
+                    {
+
+                        case AccelerationState.Braking:
+                            currentRoute.Stroke = new Pen(Color.Red, 2.0f);
+                            break;
+                        case AccelerationState.Accelerating:
+                            currentRoute.Stroke = new Pen(Color.Green, 2.0f);
+                            break;
+                        case AccelerationState.HardAcceleration:
+                            currentRoute.Stroke = new Pen(Color.Lime, 2.0f);
+                            break;
+                        case AccelerationState.Coasting:
+                            currentRoute.Stroke = new Pen(Color.Blue, 3.0f);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    prevAccelerationState = accelerationState;
+
+                    AccelerationRoutes.Add(currentRoute);
+                }
+                else
+                {
+                    currentRoute.Points.Add(gpsPoint.GetLocation());
+                }
             }
         }
     }
