@@ -136,30 +136,10 @@ namespace OpenLogAnalyzer
             var libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
             var metadatas = libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime);
 
-            if (metadatas.Any(m => m.StartTime > DateTime.Now))
-            {
-                foreach (var metadata in metadatas)
-                {
-                    if (metadata.StartTime > DateTime.Now)
-                    {
-                        var file = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
-                        file.Save();
-                    }
-                }
-
-                libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
-                metadatas = libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime);
-            }
-
             LogLibraryList.Items.Clear();
+
             foreach (var metadata in metadatas)
             {
-                if (metadata.StartTime > DateTime.Now)
-                {
-                    var file = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
-                    file.Save();
-                }
-
                 LogLibraryList.Items.Add(metadata.ToListViewItem());
             }
         }
@@ -188,7 +168,7 @@ namespace OpenLogAnalyzer
                 return;
             }
 
-            var importForm = new LogImportForm();
+            var importForm = new LogImportForm(Paths.DataLoggerCard);
             importForm.OnCompleted += ImportFormOnOnCompleted;
             importForm.ShowDialog(this);
             Log.Instance = this;
@@ -607,6 +587,26 @@ namespace OpenLogAnalyzer
             {
                 InputTabContextMenu.Show(AnalysisInputTabs, e.Location);
             }
+        }
+
+        private void ManualImportButton_Click(object sender, EventArgs e)
+        {
+            if (FolderSelector.ShowDialog(this) != DialogResult.OK)
+                return;
+
+            if (!Directory.GetFiles(FolderSelector.SelectedPath, "*.LOG").Any())
+            {
+                MessageBox.Show(
+                    "Coulld not find any LOG-files in the selected folder. Make sure you select the folder containing your LOG-files",
+                    "Logs not found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                return;
+            }
+
+            var importForm = new LogImportForm(FolderSelector.SelectedPath);
+            importForm.OnCompleted += ImportFormOnOnCompleted;
+            importForm.ShowDialog(this);
+            Log.Instance = this;
         }
     }
 }

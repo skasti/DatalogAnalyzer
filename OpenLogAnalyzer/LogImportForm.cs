@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using OpenLogAnalyzer.Extensions;
 using OpenLogger;
 using OpenLogger.Core;
@@ -19,8 +20,11 @@ namespace OpenLogAnalyzer
     public partial class LogImportForm : Form, ILogger
     {
         private Thread _importThread;
-        public LogImportForm()
+        private string SourceFolder { get; }
+        private AnalyzerConfig Config { get; set; }
+        public LogImportForm(string source)
         {
+            SourceFolder = source;
             InitializeComponent();
         }
 
@@ -35,18 +39,44 @@ namespace OpenLogAnalyzer
 
         private void ImportJob()
         {
-            if (Paths.DataLoggerCard == null)
+            if (string.IsNullOrWhiteSpace(SourceFolder))
                 return;
 
-            var cardFiles = Directory.GetFiles(Paths.DataLoggerCard, "*.LOG");
+            var sourceConfigPath = Path.Combine(SourceFolder, "Config.json");
+
+            if (File.Exists(sourceConfigPath))
+            {
+                try
+                {
+                    var configJson = File.ReadAllText(sourceConfigPath);
+                    Config = JsonConvert.DeserializeObject<AnalyzerConfig>(configJson);
+                }
+                catch (Exception e)
+                {
+                    Config = AnalyzerConfig.Instance;
+                }
+            }
+            else
+            {
+                Config = AnalyzerConfig.Instance;
+            }
+
+            var importFiles = Directory.GetFiles(SourceFolder, "*.LOG");
             var libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG");
 
-            var newFiles = cardFiles.Where(cF =>
+            var newFiles = importFiles.Where(cF =>
             {
                 var fileName = Path.GetFileName(cF);
                 var libraryFile = Path.Combine(Paths.LogLibrary, fileName);
 
-                return !libraryFiles.Contains(libraryFile);
+                if (libraryFiles.Contains(libraryFile))
+                {
+                    var libraryMetadata = LogFileMetadata.Load(libraryFile + ".meta");
+
+                    return !libraryMetadata.MatchesConfig(Config);
+                }
+
+                return true;
             }).ToList();
 
             if (newFiles.Count < 1)
@@ -61,35 +91,37 @@ namespace OpenLogAnalyzer
                 ProgressBar.Value = 0;
             });
 
-            var config = AnalyzerConfig.Instance;
-
             var importedFiles = new List<string>();
 
             foreach (var newFile in newFiles)
             {
                 var fileName = Path.GetFileName(newFile);
-                var libraryFile = Path.Combine(Paths.LogLibrary, fileName);
+                fileName  = fileName.Substring(0, fileName.IndexOf('.'));
+                var fileNameDate = String.Join("-", fileName.Split('-').Take(2));
+                var fileNameIndex = int.Parse(fileName.Substring(fileName.LastIndexOf('-') + 1));
+
+                var newFileName = $"{fileNameDate}-{fileNameIndex}.LOG";
+
+                var libraryFile = Path.Combine(Paths.LogLibrary, newFileName);
 
                 Invoke((MethodInvoker) delegate
                 {
                     StatusLabel.Text = $"Processing '{fileName}'";
                 });
 
-                if (libraryFiles.Contains(libraryFile))
+                while (File.Exists(libraryFile))
                 {
-                    Invoke((MethodInvoker) delegate
-                    {
-                        ProgressBar.Value++;
-                    });
-                    continue;
+                    fileNameIndex++;
+                    newFileName = $"{fileNameDate}-{fileNameIndex}.LOG";
+                    libraryFile = Path.Combine(Paths.LogLibrary, newFileName);
                 }
 
                 var logFile = LogFile.Load(newFile, TimeSpan.FromHours(2));
 
                 if (logFile != null)
                 {
-                    logFile.Metadata.Rider = $"#{config.RiderNumber} - {config.RiderName}";
-                    logFile.Metadata.Bike = config.BikeName;
+                    logFile.Metadata.Rider = $"#{Config.RiderNumber} - {Config.RiderName}";
+                    logFile.Metadata.Bike = Config.BikeName;
                     logFile.Save(libraryFile);
                 }
 
