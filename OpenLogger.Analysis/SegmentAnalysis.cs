@@ -24,6 +24,8 @@ namespace OpenLogger.Analysis
         public double TopSpeed { get; private set; }
         public double LowestSpeed { get; private set; }
 
+        public event EventHandler<SegmentAnalysis> OnRoutes;
+
         public SegmentAnalysis(LogSegment segment, string name)
         {
             Name = name;
@@ -138,6 +140,8 @@ namespace OpenLogger.Analysis
                     currentRoute.Points.Add(gpsPoint.GetLocation(currentTrack));
                 }
             }
+
+            OnRoutes?.Invoke(this, this);
         }
     }
 }

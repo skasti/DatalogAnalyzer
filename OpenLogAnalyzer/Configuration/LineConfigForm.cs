@@ -41,12 +41,17 @@ namespace OpenLogAnalyzer.Configuration
 
         private void applyButton_Click(object sender, EventArgs e)
         {
-            if (!accelerationStateConfigurator1.ValidateInputs()) return;
-            if (!accelerationStateConfigurator2.ValidateInputs()) return;
-            if (!accelerationStateConfigurator3.ValidateInputs()) return;
-            if (!accelerationStateConfigurator4.ValidateInputs()) return;
-            if (!accelerationStateConfigurator5.ValidateInputs()) return;
-            if (!accelerationStateConfigurator6.ValidateInputs()) return;
+            ApplyToConfig();
+        }
+
+        private bool ApplyToConfig()
+        {
+            if (!accelerationStateConfigurator1.ValidateInputs()) return false;
+            if (!accelerationStateConfigurator2.ValidateInputs()) return false;
+            if (!accelerationStateConfigurator3.ValidateInputs()) return false;
+            if (!accelerationStateConfigurator4.ValidateInputs()) return false;
+            if (!accelerationStateConfigurator5.ValidateInputs()) return false;
+            if (!accelerationStateConfigurator6.ValidateInputs()) return false;
 
             accelerationStateConfigurator1.ApplyToConfig();
             accelerationStateConfigurator2.ApplyToConfig();
@@ -56,6 +61,14 @@ namespace OpenLogAnalyzer.Configuration
             accelerationStateConfigurator6.ApplyToConfig();
 
             AccelerationLineConfig.Instance = Config;
+
+            return true;
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            if (ApplyToConfig())
+                AccelerationLineConfig.Instance.Save(Paths.LineConfigFile);
         }
     }
 }

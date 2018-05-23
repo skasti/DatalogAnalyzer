@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using Newtonsoft.Json;
 using OpenLogger.Analysis.Extensions;
 
 namespace OpenLogger.Analysis.Config
@@ -65,6 +67,26 @@ namespace OpenLogger.Analysis.Config
                 Smoothing = Smoothing,
                 Threshold = new Dictionary<AccelerationState, double>(Threshold)
             };
+        }
+
+        public static AccelerationLineConfig Load(string filename)
+        {
+            var configJson = File.ReadAllText(filename);
+
+            configJson = configJson
+                .Replace("Thresholds", "Threshold")
+                .Replace("Opacities", "Opacity")
+                .Replace("Colors", "Color")
+                .Replace("\"Accelerating\"", "\"LightAcceleration\"")
+                .Replace("\"Braking\"", "\"LightBraking\"");
+
+            return JsonConvert.DeserializeObject<AccelerationLineConfig>(configJson);
+        }
+
+        public void Save(string filename)
+        {
+            var configJson = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(filename, configJson);
         }
     }
 }

@@ -145,21 +145,42 @@ namespace OpenLogAnalyzer
             Routes.Clear();
             AccelerationRoutes.Clear();
 
-            var routes = new List<GMapRoute>();
-
             foreach (var segment in segments)
             {
                 Routes.Add(segment, segment.Route);
                 AccelerationRoutes.Add(segment, segment.AccelerationRoutes);
                 RenderedSegments.Add(segment);
 
+                segment.OnRoutes += OnSegmentRoutes;
+            }
+
+            OnRoutes?.Invoke(this, GetAllRoutes());
+
+            UpdateMarkers();
+        }
+
+        private List<GMapRoute> GetAllRoutes()
+        {
+            var routes = new List<GMapRoute>();
+
+            foreach (var segment in RenderedSegments)
+            {
                 routes.Add(segment.Route);
                 routes.AddRange(segment.AccelerationRoutes);
             }
 
-            OnRoutes?.Invoke(this, routes);
+            return routes;
+        }
 
-            UpdateMarkers();
+        private void OnSegmentRoutes(object sender, SegmentAnalysis segment)
+        {
+            if (!Routes.ContainsKey(segment))
+                return;
+
+            Routes[segment] = segment.Route;
+            AccelerationRoutes[segment] = segment.AccelerationRoutes;
+
+            OnRoutes?.Invoke(sender, GetAllRoutes());
         }
     }
 }

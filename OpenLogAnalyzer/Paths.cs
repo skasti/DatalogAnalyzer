@@ -46,6 +46,8 @@ namespace OpenLogAnalyzer
             }
         }
 
+        public static string LineConfigFile => Path.Combine(DataRoot, "AccelerationLine.json");
+
         private static string EnsureDirectory(string path)
         {
             if (!Directory.Exists(path))

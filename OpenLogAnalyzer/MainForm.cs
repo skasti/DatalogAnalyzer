@@ -123,32 +123,14 @@ namespace OpenLogAnalyzer
 
         private void LoadConfig()
         {
-            var lineConfigFile = Path.Combine(Paths.DataRoot, "AccelerationLine.json");
-
-            if (!File.Exists(lineConfigFile))
-                CreateLineConfig(lineConfigFile);
+            if (!File.Exists(Paths.LineConfigFile))
+                CreateLineConfig();
             else
-                LoadLineConfig(lineConfigFile);
-
+                AccelerationLineConfig.Instance = AccelerationLineConfig.Load(Paths.LineConfigFile);
 
         }
 
-        private void LoadLineConfig(string lineConfigFile)
-        {
-            var configJson = File.ReadAllText(lineConfigFile);
-
-            configJson = configJson
-                .Replace("Thresholds", "Threshold")
-                .Replace("Opacities", "Opacity")
-                .Replace("Colors", "Color")
-                .Replace("\"Accelerating\"", "\"LightAcceleration\"")
-                .Replace("\"Braking\"", "\"LightBraking\"");
-
-            AccelerationLineConfig.Instance =
-                JsonConvert.DeserializeObject<AccelerationLineConfig>(configJson);
-        }
-
-        private void CreateLineConfig(string lineConfigFile)
+        private void CreateLineConfig()
         {
             AccelerationLineConfig.Instance = new AccelerationLineConfig
             {
@@ -194,8 +176,7 @@ namespace OpenLogAnalyzer
                 Smoothing = 10
             };
 
-            var configJson = JsonConvert.SerializeObject(AccelerationLineConfig.Instance, Formatting.Indented);
-            File.WriteAllText(lineConfigFile, configJson);
+            AccelerationLineConfig.Instance.Save(Paths.LineConfigFile);
         }
 
         private void LoadTracks()
