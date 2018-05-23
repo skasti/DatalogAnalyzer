@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenLogger.Analysis.Config;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.JsonConverter;
 using OpenLogger.Core;
@@ -27,7 +28,8 @@ namespace OpenLogger.Analysis
             Track = track;
             Laps = GetLaps();
             Full = new SegmentAnalysis(LogFile, "Full");
-            Full.CalculateRoutes(Track);
+            
+            CalculateRoutes();
 
             LogFile.Metadata.UpdateAnalysisData(this);
         }
@@ -52,7 +54,6 @@ namespace OpenLogger.Analysis
                     if (previousEntry == null)
                     {
                         LeadIn = new SegmentAnalysis(LogFile.SubSet(LogFile.Entries.First(), entry), "Lead in");
-                        LeadIn.CalculateRoutes(Track);
                         previousEntry = entry;
                         latestInside = null;
                     }
@@ -60,7 +61,6 @@ namespace OpenLogger.Analysis
                     {
                         var lapSegment = LogFile.SubSet(previousEntry, entry);
                         var lapAnalysis = new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}");
-                        lapAnalysis.CalculateRoutes(Track);
                         laps.Add(lapAnalysis);
                         previousEntry = entry;
                         latestInside = null;
@@ -71,10 +71,20 @@ namespace OpenLogger.Analysis
             if (previousEntry != null)
             {
                 LeadOut = new SegmentAnalysis(LogFile.SubSet(previousEntry, LogFile.Entries.Last()), "Lead out");
-                LeadOut.CalculateRoutes(Track);
             }
 
             return laps.ToList();
+        }
+
+        public void CalculateRoutes()
+        {
+            Full.CalculateRoutes(Track);
+            LeadIn?.CalculateRoutes(Track);
+
+            foreach (var lap in Laps)
+                lap.CalculateRoutes(Track);
+
+            LeadOut?.CalculateRoutes(Track);
         }
     }
 }

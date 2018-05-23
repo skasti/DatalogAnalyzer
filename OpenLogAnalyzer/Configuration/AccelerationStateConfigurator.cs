@@ -65,10 +65,10 @@ namespace OpenLogAnalyzer.Configuration
             if (_configuration == null)
                 return;
 
-            Threshold = _configuration.Thresholds[AccelerationState];
+            Threshold = _configuration.Threshold[AccelerationState];
             LineWidth = _configuration.LineWidth[AccelerationState];
-            LineOpacity = _configuration.LineOpacities[AccelerationState];
-            LineColor = _configuration.LineColors[AccelerationState];
+            LineOpacity = _configuration.LineOpacity[AccelerationState];
+            LineColor = _configuration.LineColor[AccelerationState];
 
             thresholdInput.Text = Threshold.ToString("N");
             lineWidthInput.Text = LineWidth.ToString("N");
@@ -92,26 +92,38 @@ namespace OpenLogAnalyzer.Configuration
 
         public bool ApplyToConfig()
         {
+            if (!ValidateInputs()) return false;
+
+            Configuration.Threshold[AccelerationState] = Threshold;
+            Configuration.LineWidth[AccelerationState] = LineWidth;
+            Configuration.LineOpacity[AccelerationState] = LineOpacity;
+            Configuration.LineColor[AccelerationState] = LineColor;
+
+            return true;
+        }
+
+        public bool ValidateInputs()
+        {
             double threshold;
-            if (!double.TryParse(thresholdInput.Text, out threshold))
+            if (!double.TryParse(thresholdInput.Text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out threshold))
             {
-                MessageBox.Show("Threshold must be a valid decimal number", "Invalid number format",
+                MessageBox.Show($"{EnumHelper<AccelerationState>.GetDisplayValue(AccelerationState)}: Threshold must be a valid decimal number", "Invalid number format",
                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return false;
             }
 
             float lineWidth;
-            if (!float.TryParse(lineWidthInput.Text, out lineWidth))
+            if (!float.TryParse(lineWidthInput.Text, NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out lineWidth))
             {
-                MessageBox.Show("Line width must be a valid decimal number", "Invalid number format",
+                MessageBox.Show($"{EnumHelper<AccelerationState>.GetDisplayValue(AccelerationState)}: Line width must be a valid decimal number", "Invalid number format",
                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return false;
             }
 
             float lineOpacity;
-            if (!float.TryParse(lineWidthInput.Text, out lineOpacity))
+            if (!float.TryParse(lineOpacityInput.Text, NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out lineOpacity))
             {
-                MessageBox.Show("Line opacity must be a valid decimal number", "Invalid number format",
+                MessageBox.Show($"{EnumHelper<AccelerationState>.GetDisplayValue(AccelerationState)}: Line opacity must be a valid decimal number", "Invalid number format",
                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return false;
             }
@@ -119,12 +131,6 @@ namespace OpenLogAnalyzer.Configuration
             Threshold = threshold;
             LineWidth = lineWidth;
             LineOpacity = lineOpacity;
-
-            Configuration.Thresholds[AccelerationState] = Threshold;
-            Configuration.LineWidth[AccelerationState] = LineWidth;
-            Configuration.LineOpacities[AccelerationState] = LineOpacity;
-            Configuration.LineColors[AccelerationState] = LineColor;
-
             return true;
         }
     }

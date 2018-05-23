@@ -135,15 +135,24 @@ namespace OpenLogAnalyzer
 
         private void LoadLineConfig(string lineConfigFile)
         {
+            var configJson = File.ReadAllText(lineConfigFile);
+
+            configJson = configJson
+                .Replace("Thresholds", "Threshold")
+                .Replace("Opacities", "Opacity")
+                .Replace("Colors", "Color")
+                .Replace("\"Accelerating\"", "\"LightAcceleration\"")
+                .Replace("\"Braking\"", "\"LightBraking\"");
+
             AccelerationLineConfig.Instance =
-                JsonConvert.DeserializeObject<AccelerationLineConfig>(File.ReadAllText(lineConfigFile));
+                JsonConvert.DeserializeObject<AccelerationLineConfig>(configJson);
         }
 
         private void CreateLineConfig(string lineConfigFile)
         {
             AccelerationLineConfig.Instance = new AccelerationLineConfig
             {
-                LineColors = new Dictionary<AccelerationState, Color>
+                LineColor = new Dictionary<AccelerationState, Color>
                 {
                     {AccelerationState.HardAcceleration, Color.Lime},
                     {AccelerationState.MediumAcceleration, Color.LimeGreen},
@@ -163,7 +172,7 @@ namespace OpenLogAnalyzer
                     {AccelerationState.LightBraking, 5.0f},
                     {AccelerationState.Coasting, 5.0f}
                 },
-                LineOpacities = new Dictionary<AccelerationState, float>
+                LineOpacity = new Dictionary<AccelerationState, float>
                 {
                     {AccelerationState.HardAcceleration, 0.9f},
                     {AccelerationState.MediumAcceleration, 0.7f},
@@ -173,7 +182,7 @@ namespace OpenLogAnalyzer
                     {AccelerationState.LightBraking, 0.5f},
                     {AccelerationState.Coasting, 0.5f}
                 },
-                Thresholds = new Dictionary<AccelerationState, double>
+                Threshold = new Dictionary<AccelerationState, double>
                 {
                     {AccelerationState.HardAcceleration, 5.0},
                     {AccelerationState.MediumAcceleration, 2.5},
@@ -329,6 +338,7 @@ namespace OpenLogAnalyzer
 
             var analysis = new SessionAnalysis(logFile, track);
 
+
             analysis.LogFile.SaveMetadata();
             analysis.LogFile.Metadata.UpdateListViewItem(selectedItem);
 
@@ -362,6 +372,8 @@ namespace OpenLogAnalyzer
             LoadMapOverlayLaps(_currentAnalysis);
             LoadAnalysisLaps(_currentAnalysis);
             CreateInputCharts();
+
+            AccelerationLineConfig.OnInstance += (sender, config) => analysis.CalculateRoutes();
         }
 
         private void LoadAnalysisLaps(SessionAnalysis analysis)
