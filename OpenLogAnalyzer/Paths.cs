@@ -47,6 +47,7 @@ namespace OpenLogAnalyzer
         }
 
         public static string LineConfigFile => Path.Combine(DataRoot, "AccelerationLine.json");
+        public static string CardRiderConfig => Path.Combine(DataLoggerCard, "RiderConfig.json");
 
         private static string EnsureDirectory(string path)
         {

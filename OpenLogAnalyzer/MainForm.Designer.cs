@@ -33,11 +33,12 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ImportFromCardButton = new System.Windows.Forms.ToolStripMenuItem();
             this.ManualImportButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.preferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewTrackButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.NewInputButton = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forkSensorEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.preferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lineCOnfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LogLibraryList = new System.Windows.Forms.ListView();
             this.DateHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TimeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -90,7 +91,7 @@
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderSelector = new System.Windows.Forms.FolderBrowserDialog();
-            this.lineCOnfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resizeBar = new System.Windows.Forms.PictureBox();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -105,6 +106,7 @@
             this.MapLapListMenu.SuspendLayout();
             this.TrackLibraryTab.SuspendLayout();
             this.InputTabContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).BeginInit();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -112,7 +114,8 @@
             this.MainMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.testToolStripMenuItem});
+            this.testToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Size = new System.Drawing.Size(1558, 33);
@@ -124,9 +127,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ImportFromCardButton,
             this.ManualImportButton,
-            this.preferencesMenuItem,
-            this.NewTrackButton,
-            this.NewInputButton});
+            this.NewTrackButton});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
             this.fileToolStripMenuItem.Text = "File";
@@ -134,54 +135,61 @@
             // ImportFromCardButton
             // 
             this.ImportFromCardButton.Name = "ImportFromCardButton";
-            this.ImportFromCardButton.Size = new System.Drawing.Size(247, 30);
+            this.ImportFromCardButton.Size = new System.Drawing.Size(252, 30);
             this.ImportFromCardButton.Text = "Import from card";
             this.ImportFromCardButton.Click += new System.EventHandler(this.ImportFromCardButton_Click);
             // 
             // ManualImportButton
             // 
             this.ManualImportButton.Name = "ManualImportButton";
-            this.ManualImportButton.Size = new System.Drawing.Size(247, 30);
+            this.ManualImportButton.Size = new System.Drawing.Size(252, 30);
             this.ManualImportButton.Text = "Import from folder";
             this.ManualImportButton.Click += new System.EventHandler(this.ManualImportButton_Click);
-            // 
-            // preferencesMenuItem
-            // 
-            this.preferencesMenuItem.Name = "preferencesMenuItem";
-            this.preferencesMenuItem.Size = new System.Drawing.Size(247, 30);
-            this.preferencesMenuItem.Text = "Preferences";
-            this.preferencesMenuItem.Click += new System.EventHandler(this.preferencesMenuItem_Click);
             // 
             // NewTrackButton
             // 
             this.NewTrackButton.Name = "NewTrackButton";
-            this.NewTrackButton.Size = new System.Drawing.Size(247, 30);
+            this.NewTrackButton.Size = new System.Drawing.Size(252, 30);
             this.NewTrackButton.Text = "New track";
             this.NewTrackButton.Click += new System.EventHandler(this.NewTrackButton_Click);
-            // 
-            // NewInputButton
-            // 
-            this.NewInputButton.Name = "NewInputButton";
-            this.NewInputButton.Size = new System.Drawing.Size(247, 30);
-            this.NewInputButton.Text = "New input";
-            this.NewInputButton.Visible = false;
-            this.NewInputButton.Click += new System.EventHandler(this.NewInputButton_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.forkSensorEditorToolStripMenuItem,
-            this.lineCOnfigToolStripMenuItem});
+            this.forkSensorEditorToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
-            this.testToolStripMenuItem.Text = "Test";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
+            this.testToolStripMenuItem.Text = "Tools";
             // 
             // forkSensorEditorToolStripMenuItem
             // 
             this.forkSensorEditorToolStripMenuItem.Name = "forkSensorEditorToolStripMenuItem";
-            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
-            this.forkSensorEditorToolStripMenuItem.Text = "ForkSensorEditor";
+            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(272, 30);
+            this.forkSensorEditorToolStripMenuItem.Text = "Fork Sensor Calibrator";
             this.forkSensorEditorToolStripMenuItem.Click += new System.EventHandler(this.forkSensorEditorToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.preferencesMenuItem,
+            this.lineCOnfigToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(88, 29);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // preferencesMenuItem
+            // 
+            this.preferencesMenuItem.Name = "preferencesMenuItem";
+            this.preferencesMenuItem.Size = new System.Drawing.Size(228, 30);
+            this.preferencesMenuItem.Text = "Rider and Bike";
+            this.preferencesMenuItem.Click += new System.EventHandler(this.preferencesMenuItem_Click);
+            // 
+            // lineCOnfigToolStripMenuItem
+            // 
+            this.lineCOnfigToolStripMenuItem.Name = "lineCOnfigToolStripMenuItem";
+            this.lineCOnfigToolStripMenuItem.Size = new System.Drawing.Size(228, 30);
+            this.lineCOnfigToolStripMenuItem.Text = "Acceleration Line";
+            this.lineCOnfigToolStripMenuItem.Click += new System.EventHandler(this.lineConfigToolStripMenuItem_Click);
             // 
             // LogLibraryList
             // 
@@ -459,14 +467,18 @@
             // MapOverlayPanel
             // 
             this.MapOverlayPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.MapOverlayPanel.Controls.Add(this.resizeBar);
             this.MapOverlayPanel.Controls.Add(this.MapOverlayLapList);
             this.MapOverlayPanel.Location = new System.Drawing.Point(6, 6);
             this.MapOverlayPanel.Name = "MapOverlayPanel";
-            this.MapOverlayPanel.Size = new System.Drawing.Size(620, 299);
+            this.MapOverlayPanel.Size = new System.Drawing.Size(620, 476);
             this.MapOverlayPanel.TabIndex = 1;
             // 
             // MapOverlayLapList
             // 
+            this.MapOverlayLapList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapOverlayLapList.BackColor = System.Drawing.SystemColors.Window;
             this.MapOverlayLapList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.OverlayLapHeader,
@@ -475,15 +487,13 @@
             this.OverlayMinSpeedHeader,
             this.OverlayAvgSpeedHeader});
             this.MapOverlayLapList.ContextMenuStrip = this.MapLapListMenu;
-            this.MapOverlayLapList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MapOverlayLapList.FullRowSelect = true;
             this.MapOverlayLapList.Location = new System.Drawing.Point(0, 0);
             this.MapOverlayLapList.Name = "MapOverlayLapList";
-            this.MapOverlayLapList.Size = new System.Drawing.Size(616, 295);
+            this.MapOverlayLapList.Size = new System.Drawing.Size(616, 468);
             this.MapOverlayLapList.TabIndex = 0;
             this.MapOverlayLapList.UseCompatibleStateImageBehavior = false;
             this.MapOverlayLapList.View = System.Windows.Forms.View.Details;
-            this.MapOverlayLapList.SelectedIndexChanged += new System.EventHandler(this.MapOverlayLapList_SelectedIndexChanged);
             this.MapOverlayLapList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MapOverlayLapList_MouseDoubleClick);
             // 
             // OverlayLapHeader
@@ -655,12 +665,18 @@
             this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
             this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
             // 
-            // lineCOnfigToolStripMenuItem
+            // resizeBar
             // 
-            this.lineCOnfigToolStripMenuItem.Name = "lineCOnfigToolStripMenuItem";
-            this.lineCOnfigToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
-            this.lineCOnfigToolStripMenuItem.Text = "LineCOnfig";
-            this.lineCOnfigToolStripMenuItem.Click += new System.EventHandler(this.lineCOnfigToolStripMenuItem_Click);
+            this.resizeBar.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.resizeBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.resizeBar.Location = new System.Drawing.Point(0, 467);
+            this.resizeBar.Name = "resizeBar";
+            this.resizeBar.Size = new System.Drawing.Size(616, 5);
+            this.resizeBar.TabIndex = 1;
+            this.resizeBar.TabStop = false;
+            this.resizeBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseDown);
+            this.resizeBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseMove);
+            this.resizeBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseUp);
             // 
             // MainForm
             // 
@@ -690,6 +706,7 @@
             this.MapLapListMenu.ResumeLayout(false);
             this.TrackLibraryTab.ResumeLayout(false);
             this.InputTabContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -707,7 +724,6 @@
         private System.Windows.Forms.ColumnHeader BestHeader;
         private System.Windows.Forms.ColumnHeader AverageHeader;
         private System.Windows.Forms.ColumnHeader RiderHeader;
-        private System.Windows.Forms.ToolStripMenuItem preferencesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ManualImportButton;
         private System.Windows.Forms.Timer ImportTimer;
         private System.Windows.Forms.TabControl MainTabs;
@@ -733,7 +749,6 @@
         private System.Windows.Forms.CheckBox MapShowMarkers;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem NewTrackButton;
-        private System.Windows.Forms.ToolStripMenuItem NewInputButton;
         private System.Windows.Forms.TabControl AnalysisInputTabs;
         private System.Windows.Forms.ListView AnalysisLapList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -758,7 +773,10 @@
         private System.Windows.Forms.ToolStripMenuItem editAnalysisToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader BikeHeader;
         private System.Windows.Forms.FolderBrowserDialog FolderSelector;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem preferencesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lineCOnfigToolStripMenuItem;
+        private System.Windows.Forms.PictureBox resizeBar;
     }
 }
 

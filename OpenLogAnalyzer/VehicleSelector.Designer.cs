@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.vehicleList = new System.Windows.Forms.ListView();
+            this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.selectButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
-            this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // vehicleList
@@ -49,14 +49,19 @@
             this.vehicleList.UseCompatibleStateImageBehavior = false;
             this.vehicleList.View = System.Windows.Forms.View.Details;
             // 
+            // nameColumn
+            // 
+            this.nameColumn.Text = "Name";
+            this.nameColumn.Width = 285;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(313, 20);
+            this.label1.Size = new System.Drawing.Size(216, 20);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Choose  which vehicle to use for this logfile,";
+            this.label1.Text = "Choose  which vehicle to use,";
             // 
             // label2
             // 
@@ -86,10 +91,6 @@
             this.newButton.Text = "New";
             this.newButton.UseVisualStyleBackColor = true;
             this.newButton.Click += new System.EventHandler(this.newButton_Click);
-            // 
-            // nameColumn
-            // 
-            this.nameColumn.Text = "Name";
             // 
             // VehicleSelector
             // 

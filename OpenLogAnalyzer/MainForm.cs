@@ -41,7 +41,9 @@ namespace OpenLogAnalyzer
 
         private Vehicle _currentVehicle = null;
         private SessionAnalysis _currentAnalysis = null;
-        private List<SegmentAnalysis> _currentSegments = null; 
+        private List<SegmentAnalysis> _currentSegments = null;
+
+        private bool _allowMapOverlayResize;
         //private readonly List<SegmentAnalysis> RenderedSegments = new List<SegmentAnalysis>(); 
         //private readonly Dictionary<SegmentAnalysis, GMapMarker> RenderedSegmentMarkers = new Dictionary<SegmentAnalysis, GMapMarker>();
 
@@ -243,13 +245,6 @@ namespace OpenLogAnalyzer
         private void UpdateFormText()
         {
             Text = $"OpenLog Analyzer - {RiderConfig.Instance.RiderName} (#{RiderConfig.Instance.RiderNumber})";
-        }
-
-        private void preferencesMenuItem_Click(object sender, EventArgs e)
-        {
-            var configForm = new RiderConfigForm();
-            configForm.ShowDialog(this);
-            UpdateFormText();
         }
 
         public void Info(string format, params object[] parameters)
@@ -478,11 +473,6 @@ namespace OpenLogAnalyzer
             UpdateTrackLibraryList();
         }
 
-        private void MapOverlayLapList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            NewInputButton.Visible = MapOverlayLapList.SelectedItems.Count > 0;
-        }
-
         private void NewInputButton_Click(object sender, EventArgs e)
         {
             if (MapOverlayLapList.SelectedItems.Count == 0)
@@ -661,7 +651,7 @@ namespace OpenLogAnalyzer
             if (!Directory.GetFiles(FolderSelector.SelectedPath, "*.LOG").Any())
             {
                 MessageBox.Show(
-                    "Coulld not find any LOG-files in the selected folder. Make sure you select the folder containing your LOG-files",
+                    "Couldn't find any LOG-files in the selected folder. Make sure you select the folder containing your LOG-files",
                     "Logs not found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 return;
@@ -673,10 +663,35 @@ namespace OpenLogAnalyzer
             Log.Instance = this;
         }
 
-        private void lineCOnfigToolStripMenuItem_Click(object sender, EventArgs e)
+        private void lineConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = new LineConfigForm();
             form.ShowDialog(this);
+        }
+
+        private void preferencesMenuItem_Click(object sender, EventArgs e)
+        {
+            var configForm = new RiderConfigForm();
+            configForm.ShowDialog(this);
+            UpdateFormText();
+        }
+
+        private void resizeBar_MouseUp(object sender, MouseEventArgs e)
+        {
+            _allowMapOverlayResize = false;
+        }
+
+        private void resizeBar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_allowMapOverlayResize)
+                return;
+
+            MapOverlayPanel.Height = resizeBar.Top + e.Y;
+        }
+
+        private void resizeBar_MouseDown(object sender, MouseEventArgs e)
+        {
+            _allowMapOverlayResize = true;
         }
     }
 }

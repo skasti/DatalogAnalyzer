@@ -51,10 +51,10 @@ namespace OpenLogAnalyzer
             config.Save();
         }
 
-        public void Save()
+        public void Save(string filename = null)
         {
             var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(Paths.RiderConfigFile, json);
+            File.WriteAllText(filename ?? Paths.RiderConfigFile, json);
         }
     }
 }

@@ -82,7 +82,7 @@ namespace OpenLogAnalyzer
 
             while (VehicleRepository.Exists(newVehicle.Name))
             {
-                MessageBox.Show("Vehicle name must be unique. Consider using license plate or frame number.",
+                MessageBox.Show("Vehicle name must be unique. Consider using a a combination of rider number and year, i.e; #32-2018",
                     "Vehicle not unique!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 editor.ShowDialog(this);
             }

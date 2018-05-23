@@ -36,6 +36,8 @@
             this.CancelButton = new System.Windows.Forms.Button();
             this.BikeNameLabel = new System.Windows.Forms.Label();
             this.BikeNameInput = new System.Windows.Forms.TextBox();
+            this.saveToCardButton = new System.Windows.Forms.Button();
+            this.selectBikeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // StartNumberLabel
@@ -69,7 +71,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NameInput.Location = new System.Drawing.Point(85, 32);
             this.NameInput.Name = "NameInput";
-            this.NameInput.Size = new System.Drawing.Size(232, 26);
+            this.NameInput.Size = new System.Drawing.Size(235, 26);
             this.NameInput.TabIndex = 3;
             // 
             // SaveButton
@@ -86,7 +88,7 @@
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(236, 142);
+            this.CancelButton.Location = new System.Drawing.Point(236, 141);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(84, 35);
             this.CancelButton.TabIndex = 5;
@@ -109,14 +111,39 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BikeNameInput.Location = new System.Drawing.Point(12, 93);
             this.BikeNameInput.Name = "BikeNameInput";
-            this.BikeNameInput.Size = new System.Drawing.Size(305, 26);
+            this.BikeNameInput.ReadOnly = true;
+            this.BikeNameInput.Size = new System.Drawing.Size(221, 26);
             this.BikeNameInput.TabIndex = 7;
+            // 
+            // saveToCardButton
+            // 
+            this.saveToCardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.saveToCardButton.Location = new System.Drawing.Point(85, 141);
+            this.saveToCardButton.Name = "saveToCardButton";
+            this.saveToCardButton.Size = new System.Drawing.Size(122, 35);
+            this.saveToCardButton.TabIndex = 8;
+            this.saveToCardButton.Text = "Save to card";
+            this.saveToCardButton.UseVisualStyleBackColor = true;
+            this.saveToCardButton.Click += new System.EventHandler(this.saveToCardButton_Click);
+            // 
+            // selectBikeButton
+            // 
+            this.selectBikeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.selectBikeButton.Location = new System.Drawing.Point(239, 89);
+            this.selectBikeButton.Name = "selectBikeButton";
+            this.selectBikeButton.Size = new System.Drawing.Size(81, 35);
+            this.selectBikeButton.TabIndex = 9;
+            this.selectBikeButton.Text = "Select";
+            this.selectBikeButton.UseVisualStyleBackColor = true;
+            this.selectBikeButton.Click += new System.EventHandler(this.selectBikeButton_Click);
             // 
             // RiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(332, 184);
+            this.Controls.Add(this.selectBikeButton);
+            this.Controls.Add(this.saveToCardButton);
             this.Controls.Add(this.BikeNameInput);
             this.Controls.Add(this.BikeNameLabel);
             this.Controls.Add(this.CancelButton);
@@ -144,5 +171,7 @@
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Label BikeNameLabel;
         private System.Windows.Forms.TextBox BikeNameInput;
+        private System.Windows.Forms.Button saveToCardButton;
+        private System.Windows.Forms.Button selectBikeButton;
     }
 }
