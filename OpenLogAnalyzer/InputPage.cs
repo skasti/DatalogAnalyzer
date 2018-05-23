@@ -119,7 +119,7 @@ namespace OpenLogAnalyzer
             foreach (var segment in removedSegments)
                 _segmentData.Remove(segment);
 
-            Parallel.ForEach(_currentSegments, analysis =>
+            foreach (var analysis in _currentSegments)
             {
                 var data = Input.Extract(analysis.Segment);
 
@@ -127,7 +127,7 @@ namespace OpenLogAnalyzer
                     _segmentData.Add(analysis, data);
                 else
                     _segmentData[analysis] = data;
-            });
+            }
         }
 
         private void PruneAnalysisRenderers()

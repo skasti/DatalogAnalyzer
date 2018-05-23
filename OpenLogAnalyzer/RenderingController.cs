@@ -9,6 +9,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Extensions;
+using OpenLogger.Core;
 
 namespace OpenLogAnalyzer
 {
@@ -79,24 +80,13 @@ namespace OpenLogAnalyzer
                     RenderedSegmentMarkers[segment].Position = segment.Segment.Entries.Last().GetLocation(Track);
                 else
                 {
-                    var route = new GMapRoute("DistanceRoute");
-                    var prevPos = new PointLatLng(0,0);
-
-                    for (int i = 1; i < segment.Segment.Entries.Count; i++)
+                    foreach (var entry in segment.Segment.Entries)
                     {
-                        var entry = segment.Segment.Entries[i];
-                        var location = entry.GetLocation();
-
-                        if (location == prevPos)
-                            continue;
-
-                        prevPos = location;
-                        route.Points.Add(location);
-                        var distance = route.Distance * 1000;
+                        var distance = entry.GetDistance(segment.Segment);
 
                         if (distance >= _markerDistance)
                         {
-                            RenderedSegmentMarkers[segment].Position = segment.Segment.Entries[i].GetLocation(Track);
+                            RenderedSegmentMarkers[segment].Position = entry.GetLocation(Track);
                             break;
                         }
                     }
@@ -169,9 +159,7 @@ namespace OpenLogAnalyzer
 
             OnRoutes?.Invoke(this, routes);
 
-            //OnRoutes?.Invoke(this, Routes.Values);
-
-            RenderMarkers = false;
+            UpdateMarkers();
         }
     }
 }

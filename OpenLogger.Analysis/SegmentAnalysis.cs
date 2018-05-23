@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GMap.NET.WindowsForms;
+using OpenLogger.Analysis.Config;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Core;
 
@@ -14,8 +15,8 @@ namespace OpenLogger.Analysis
         public string Name { get; set; }
         public LogSegment Segment { get; }
         public List<GPSDataPoint> GPSData { get; }
-        public GMapRoute Route { get; }
-        public List<GMapRoute> AccelerationRoutes { get; }
+        public GMapRoute Route { get; private set; }
+        public List<GMapRoute> AccelerationRoutes { get; private set; }
         public double Distance => Route.Distance;
         public TimeSpan Time => Segment.Length;
 
@@ -93,22 +94,21 @@ namespace OpenLogger.Analysis
 
                 GPSData.Add(gpsData);
             }
+        }
 
-            Route = GPSData.GetRoute(name, new Pen(Color.White, 2.0f));
+        public void CalculateRoutes(Track currentTrack)
+        {
+            Route = GPSData.GetRoute(Name, new Pen(Color.White, 2.0f), currentTrack);
 
             AccelerationRoutes = new List<GMapRoute>();
 
             GMapRoute currentRoute = null;
             var prevAccelerationState = AccelerationState.Coasting;
-            double 
-                hardAccelerationThreshold = 5.0,
-                mediumAccelerationThreshold = 3.0,
-                accelerationThreshold = 1.0, 
-                brakingThreshold = -3.0,
-                hardBrakingThreshold = -8.0;
 
-            var smoothingBuffer = new[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+            var smoothingBuffer = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
             var smoothingIndex = 0;
+
+            var lineConfig = AccelerationLineConfig.Instance;
 
             foreach (var gpsPoint in GPSData)
             {
@@ -119,50 +119,15 @@ namespace OpenLogger.Analysis
 
                 var acceleration = smoothingBuffer.Average();
 
-                var accelerationState = AccelerationState.Coasting;
-
-                if (acceleration > hardAccelerationThreshold)
-                    accelerationState = AccelerationState.HardAcceleration;
-                else if (acceleration > mediumAccelerationThreshold)
-                    accelerationState = AccelerationState.MediumAcceleration;
-                else if (acceleration > accelerationThreshold)
-                    accelerationState = AccelerationState.Accelerating;
-                else if (acceleration < hardBrakingThreshold)
-                    accelerationState = AccelerationState.HardBraking;
-                else if (acceleration < brakingThreshold)
-                    accelerationState = AccelerationState.Braking;
+                var accelerationState = lineConfig.GetState(acceleration);
 
                 if (currentRoute == null || accelerationState != prevAccelerationState)
                 {
-                    currentRoute?.Points.Add(gpsPoint.GetLocation());
+                    currentRoute?.Points.Add(gpsPoint.GetLocation(currentTrack));
 
                     currentRoute = new GMapRoute($"Acceleration {AccelerationRoutes.Count}");
-
-                    currentRoute.Points.Add(gpsPoint.GetLocation());
-
-                    switch (accelerationState)
-                    {
-                        case AccelerationState.HardBraking:
-                            currentRoute.Stroke = new Pen(Color.Red.WithAlpha(230), 8f);
-                            break;
-                        case AccelerationState.Braking:
-                            currentRoute.Stroke = new Pen(Color.DarkRed.WithAlpha(150), 8f);
-                            break;
-                        case AccelerationState.Accelerating:
-                            currentRoute.Stroke = new Pen(Color.DarkOliveGreen.WithAlpha(150), 8f);
-                            break;
-                        case AccelerationState.MediumAcceleration:
-                            currentRoute.Stroke = new Pen(Color.Green.WithAlpha(180), 8f);
-                            break;
-                        case AccelerationState.HardAcceleration:
-                            currentRoute.Stroke = new Pen(Color.Lime.WithAlpha(200), 8f);
-                            break;
-                        case AccelerationState.Coasting:
-                            currentRoute.Stroke = new Pen(Color.Blue.WithAlpha(100), 8f);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    currentRoute.Stroke = lineConfig.GetPen(accelerationState);
+                    currentRoute.Points.Add(gpsPoint.GetLocation(currentTrack));
 
                     prevAccelerationState = accelerationState;
 
@@ -170,7 +135,7 @@ namespace OpenLogger.Analysis
                 }
                 else
                 {
-                    currentRoute.Points.Add(gpsPoint.GetLocation());
+                    currentRoute.Points.Add(gpsPoint.GetLocation(currentTrack));
                 }
             }
         }

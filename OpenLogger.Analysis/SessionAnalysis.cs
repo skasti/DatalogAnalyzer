@@ -27,6 +27,7 @@ namespace OpenLogger.Analysis
             Track = track;
             Laps = GetLaps();
             Full = new SegmentAnalysis(LogFile, "Full");
+            Full.CalculateRoutes(Track);
 
             LogFile.Metadata.UpdateAnalysisData(this);
         }
@@ -51,14 +52,16 @@ namespace OpenLogger.Analysis
                     if (previousEntry == null)
                     {
                         LeadIn = new SegmentAnalysis(LogFile.SubSet(LogFile.Entries.First(), entry), "Lead in");
+                        LeadIn.CalculateRoutes(Track);
                         previousEntry = entry;
                         latestInside = null;
                     }
                     else
                     {
                         var lapSegment = LogFile.SubSet(previousEntry, entry);
-
-                        laps.Add(new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}"));
+                        var lapAnalysis = new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}");
+                        lapAnalysis.CalculateRoutes(Track);
+                        laps.Add(lapAnalysis);
                         previousEntry = entry;
                         latestInside = null;
                     }
@@ -66,7 +69,10 @@ namespace OpenLogger.Analysis
             }
 
             if (previousEntry != null)
+            {
                 LeadOut = new SegmentAnalysis(LogFile.SubSet(previousEntry, LogFile.Entries.Last()), "Lead out");
+                LeadOut.CalculateRoutes(Track);
+            }
 
             return laps.ToList();
         }

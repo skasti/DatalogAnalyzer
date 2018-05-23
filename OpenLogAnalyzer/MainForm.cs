@@ -13,12 +13,14 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json;
+using OpenLogAnalyzer.Configuration;
 using OpenLogAnalyzer.Extensions;
 using OpenLogAnalyzer.Transforms;
 using OpenLogAnalyzer.Transforms.Editors;
 using OpenLogger;
 using OpenLogger.Analysis;
 using OpenLogger.Analysis.Analyses;
+using OpenLogger.Analysis.Config;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle;
 using OpenLogger.Analysis.Vehicle.Inputs;
@@ -111,11 +113,80 @@ namespace OpenLogAnalyzer
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            LoadConfig();
             LoadTracks();
             _knownDrives = DriveInfo.GetDrives().Where(d => d.IsReady).ToList();
             UpdateFormText();
             AutoImport();
             UpdateLogLibraryList();
+        }
+
+        private void LoadConfig()
+        {
+            var lineConfigFile = Path.Combine(Paths.DataRoot, "AccelerationLine.json");
+
+            if (!File.Exists(lineConfigFile))
+                CreateLineConfig(lineConfigFile);
+            else
+                LoadLineConfig(lineConfigFile);
+
+
+        }
+
+        private void LoadLineConfig(string lineConfigFile)
+        {
+            AccelerationLineConfig.Instance =
+                JsonConvert.DeserializeObject<AccelerationLineConfig>(File.ReadAllText(lineConfigFile));
+        }
+
+        private void CreateLineConfig(string lineConfigFile)
+        {
+            AccelerationLineConfig.Instance = new AccelerationLineConfig
+            {
+                LineColors = new Dictionary<AccelerationState, Color>
+                {
+                    {AccelerationState.HardAcceleration, Color.Lime},
+                    {AccelerationState.MediumAcceleration, Color.LimeGreen},
+                    {AccelerationState.LightAcceleration, Color.Green},
+                    {AccelerationState.HardBraking, Color.Red},
+                    {AccelerationState.MediumBraking, Color.OrangeRed},
+                    {AccelerationState.LightBraking, Color.Orange},
+                    {AccelerationState.Coasting, Color.DodgerBlue}
+                },
+                LineWidth = new Dictionary<AccelerationState, float>
+                {
+                    {AccelerationState.HardAcceleration, 5.0f},
+                    {AccelerationState.MediumAcceleration, 5.0f},
+                    {AccelerationState.LightAcceleration, 5.0f},
+                    {AccelerationState.HardBraking, 5.0f},
+                    {AccelerationState.MediumBraking, 5.0f},
+                    {AccelerationState.LightBraking, 5.0f},
+                    {AccelerationState.Coasting, 5.0f}
+                },
+                LineOpacities = new Dictionary<AccelerationState, float>
+                {
+                    {AccelerationState.HardAcceleration, 0.9f},
+                    {AccelerationState.MediumAcceleration, 0.7f},
+                    {AccelerationState.LightAcceleration, 0.5f},
+                    {AccelerationState.HardBraking, 0.9f},
+                    {AccelerationState.MediumBraking, 0.7f},
+                    {AccelerationState.LightBraking, 0.5f},
+                    {AccelerationState.Coasting, 0.5f}
+                },
+                Thresholds = new Dictionary<AccelerationState, double>
+                {
+                    {AccelerationState.HardAcceleration, 5.0},
+                    {AccelerationState.MediumAcceleration, 2.5},
+                    {AccelerationState.LightAcceleration, 0.5},
+                    {AccelerationState.HardBraking, -8.0},
+                    {AccelerationState.MediumBraking, -4.0},
+                    {AccelerationState.LightBraking, -2.5}
+                },
+                Smoothing = 10
+            };
+
+            var configJson = JsonConvert.SerializeObject(AccelerationLineConfig.Instance, Formatting.Indented);
+            File.WriteAllText(lineConfigFile, configJson);
         }
 
         private void LoadTracks()
@@ -181,12 +252,12 @@ namespace OpenLogAnalyzer
 
         private void UpdateFormText()
         {
-            Text = $"OpenLog Analyzer - {AnalyzerConfig.Instance.RiderName} (#{AnalyzerConfig.Instance.RiderNumber})";
+            Text = $"OpenLog Analyzer - {RiderConfig.Instance.RiderName} (#{RiderConfig.Instance.RiderNumber})";
         }
 
         private void preferencesMenuItem_Click(object sender, EventArgs e)
         {
-            var configForm = new ConfigForm();
+            var configForm = new RiderConfigForm();
             configForm.ShowDialog(this);
             UpdateFormText();
         }
@@ -525,7 +596,7 @@ namespace OpenLogAnalyzer
             if (MapOverlayLapList.SelectedItems.Count == 0)
                 return;
 
-            var segments = AnalysisLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
+            var segments = MapOverlayLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
             _renderingController.RenderSegments(segments);
             AnalyzeSegments(segments);
 
@@ -607,6 +678,12 @@ namespace OpenLogAnalyzer
             importForm.OnCompleted += ImportFormOnOnCompleted;
             importForm.ShowDialog(this);
             Log.Instance = this;
+        }
+
+        private void lineCOnfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new LineConfigForm();
+            form.ShowDialog(this);
         }
     }
 }

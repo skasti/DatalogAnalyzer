@@ -1,6 +1,6 @@
 ﻿namespace OpenLogAnalyzer
 {
-    partial class ConfigForm
+    partial class RiderConfigForm
     {
         /// <summary>
         /// Required designer variable.
@@ -112,7 +112,7 @@
             this.BikeNameInput.Size = new System.Drawing.Size(305, 26);
             this.BikeNameInput.TabIndex = 7;
             // 
-            // ConfigForm
+            // RiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -126,9 +126,9 @@
             this.Controls.Add(this.NameLabel);
             this.Controls.Add(this.StartNumberLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "ConfigForm";
+            this.Name = "RiderConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Preferences";
+            this.Text = "Rider Configuration";
             this.ResumeLayout(false);
             this.PerformLayout();
 

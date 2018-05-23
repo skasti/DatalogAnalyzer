@@ -29,7 +29,7 @@ namespace OpenLogAnalyzer
         public static string TrackLibrary => EnsureDirectory(Path.Combine(DataRoot, TrackLibraryFolder));
         public static string BikeLibrary => EnsureDirectory(Path.Combine(DataRoot, BikeLibraryFolder));
 
-        public static string ConfigFile => Path.Combine(DataRoot, "Config.json");
+        public static string RiderConfigFile => Path.Combine(DataRoot, "RiderConfig.json");
 
         public static string DataLoggerCard
         {

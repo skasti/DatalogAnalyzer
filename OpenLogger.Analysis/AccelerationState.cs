@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace OpenLogger.Analysis
 {
     public enum AccelerationState
     {
+        [Display(Name="Hard braking")]
         HardBraking,
-        Braking,
+        [Display(Name = "Medium braking")]
+        MediumBraking,
+        [Display(Name = "Light braking")]
+        LightBraking,
+        [Display(Name = "Coasting")]
         Coasting,
-        Accelerating,
+        [Display(Name = "Light acceleration")]
+        LightAcceleration,
+        [Display(Name = "Medium acceleration")]
         MediumAcceleration,
+        [Display(Name = "Hard acceleration")]
         HardAcceleration
     }
 }

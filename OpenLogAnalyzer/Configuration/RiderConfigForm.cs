@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace OpenLogAnalyzer
 {
-    public partial class ConfigForm : Form
+    public partial class RiderConfigForm : Form
     {
-        public ConfigForm()
+        public RiderConfigForm()
         {
             InitializeComponent();
-            var config = AnalyzerConfig.Instance;
+            var config = RiderConfig.Instance;
             StartNumberInput.Text = config.RiderNumber;
             NameInput.Text = config.RiderName;
             BikeNameInput.Text = config.BikeName;
@@ -23,7 +23,7 @@ namespace OpenLogAnalyzer
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            var config = AnalyzerConfig.Instance;
+            var config = RiderConfig.Instance;
             config.RiderNumber = StartNumberInput.Text;
             config.RiderName = NameInput.Text;
             config.BikeName = BikeNameInput.Text;

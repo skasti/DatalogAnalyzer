@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace OpenLogger.Analysis.Extensions
 {
-    static class ColorExtensions
+    public static class ColorExtensions
     {
-        public static Color WithAlpha(this Color color, int alpha)
+        public static Color WithOpacity(this Color color, int opacity)
         {
-            return Color.FromArgb(alpha, color);
+            return Color.FromArgb(opacity, color);
+        }
+
+        public static Color WithOpacity(this Color color, float opacity)
+        {
+            return Color.FromArgb((int)(opacity*255), color);
         }
     }
 }

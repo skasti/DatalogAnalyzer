@@ -90,6 +90,7 @@
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderSelector = new System.Windows.Forms.FolderBrowserDialog();
+            this.lineCOnfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -133,35 +134,35 @@
             // ImportFromCardButton
             // 
             this.ImportFromCardButton.Name = "ImportFromCardButton";
-            this.ImportFromCardButton.Size = new System.Drawing.Size(252, 30);
+            this.ImportFromCardButton.Size = new System.Drawing.Size(247, 30);
             this.ImportFromCardButton.Text = "Import from card";
             this.ImportFromCardButton.Click += new System.EventHandler(this.ImportFromCardButton_Click);
             // 
             // ManualImportButton
             // 
             this.ManualImportButton.Name = "ManualImportButton";
-            this.ManualImportButton.Size = new System.Drawing.Size(252, 30);
+            this.ManualImportButton.Size = new System.Drawing.Size(247, 30);
             this.ManualImportButton.Text = "Import from folder";
             this.ManualImportButton.Click += new System.EventHandler(this.ManualImportButton_Click);
             // 
             // preferencesMenuItem
             // 
             this.preferencesMenuItem.Name = "preferencesMenuItem";
-            this.preferencesMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.preferencesMenuItem.Size = new System.Drawing.Size(247, 30);
             this.preferencesMenuItem.Text = "Preferences";
             this.preferencesMenuItem.Click += new System.EventHandler(this.preferencesMenuItem_Click);
             // 
             // NewTrackButton
             // 
             this.NewTrackButton.Name = "NewTrackButton";
-            this.NewTrackButton.Size = new System.Drawing.Size(252, 30);
+            this.NewTrackButton.Size = new System.Drawing.Size(247, 30);
             this.NewTrackButton.Text = "New track";
             this.NewTrackButton.Click += new System.EventHandler(this.NewTrackButton_Click);
             // 
             // NewInputButton
             // 
             this.NewInputButton.Name = "NewInputButton";
-            this.NewInputButton.Size = new System.Drawing.Size(252, 30);
+            this.NewInputButton.Size = new System.Drawing.Size(247, 30);
             this.NewInputButton.Text = "New input";
             this.NewInputButton.Visible = false;
             this.NewInputButton.Click += new System.EventHandler(this.NewInputButton_Click);
@@ -169,7 +170,8 @@
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.forkSensorEditorToolStripMenuItem});
+            this.forkSensorEditorToolStripMenuItem,
+            this.lineCOnfigToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.testToolStripMenuItem.Text = "Test";
@@ -177,7 +179,7 @@
             // forkSensorEditorToolStripMenuItem
             // 
             this.forkSensorEditorToolStripMenuItem.Name = "forkSensorEditorToolStripMenuItem";
-            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(232, 30);
+            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.forkSensorEditorToolStripMenuItem.Text = "ForkSensorEditor";
             this.forkSensorEditorToolStripMenuItem.Click += new System.EventHandler(this.forkSensorEditorToolStripMenuItem_Click);
             // 
@@ -653,6 +655,13 @@
             this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
             this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
             // 
+            // lineCOnfigToolStripMenuItem
+            // 
+            this.lineCOnfigToolStripMenuItem.Name = "lineCOnfigToolStripMenuItem";
+            this.lineCOnfigToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.lineCOnfigToolStripMenuItem.Text = "LineCOnfig";
+            this.lineCOnfigToolStripMenuItem.Click += new System.EventHandler(this.lineCOnfigToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -749,6 +758,7 @@
         private System.Windows.Forms.ToolStripMenuItem editAnalysisToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader BikeHeader;
         private System.Windows.Forms.FolderBrowserDialog FolderSelector;
+        private System.Windows.Forms.ToolStripMenuItem lineCOnfigToolStripMenuItem;
     }
 }
 

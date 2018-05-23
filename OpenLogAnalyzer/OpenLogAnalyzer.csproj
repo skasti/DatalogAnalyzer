@@ -48,6 +48,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
@@ -81,12 +82,24 @@
     </Compile>
     <Compile Include="Analyses\IEditDataAnalysis.cs" />
     <Compile Include="Analyses\AnalysisEditors.cs" />
-    <Compile Include="Config.cs" />
-    <Compile Include="ConfigForm.cs">
+    <Compile Include="Configuration\AccelerationStateConfigurator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\AccelerationStateConfigurator.Designer.cs">
+      <DependentUpon>AccelerationStateConfigurator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\LineConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConfigForm.Designer.cs">
-      <DependentUpon>ConfigForm.cs</DependentUpon>
+    <Compile Include="Configuration\LineConfigForm.Designer.cs">
+      <DependentUpon>LineConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\RiderConfig.cs" />
+    <Compile Include="Configuration\RiderConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\RiderConfigForm.Designer.cs">
+      <DependentUpon>RiderConfigForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions\DataPointExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -96,6 +109,7 @@
     <Compile Include="Extensions\RichTextBoxExtensions.cs" />
     <Compile Include="Extensions\TrackExtensions.cs" />
     <Compile Include="Extensions\VehicleInputExtensions.cs" />
+    <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="InputConfigurator.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -179,8 +193,14 @@
     <EmbeddedResource Include="Analyses\Editors\YDistributionAnalysisEditor.resx">
       <DependentUpon>YDistributionAnalysisEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConfigForm.resx">
-      <DependentUpon>ConfigForm.cs</DependentUpon>
+    <EmbeddedResource Include="Configuration\AccelerationStateConfigurator.resx">
+      <DependentUpon>AccelerationStateConfigurator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\LineConfigForm.resx">
+      <DependentUpon>LineConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\RiderConfigForm.resx">
+      <DependentUpon>RiderConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InputConfigurator.resx">
       <DependentUpon>InputConfigurator.cs</DependentUpon>

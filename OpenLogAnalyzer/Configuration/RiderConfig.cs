@@ -8,15 +8,15 @@ using Newtonsoft.Json;
 
 namespace OpenLogAnalyzer
 {
-    public class AnalyzerConfig
+    public class RiderConfig
     {
         public string RiderName { get; set; }
         public string RiderNumber { get; set; }
         public string BikeName { get; set; }
 
-        private static AnalyzerConfig _instance;
+        private static RiderConfig _instance;
 
-        public static AnalyzerConfig Instance
+        public static RiderConfig Instance
         {
             get
             {
@@ -29,20 +29,20 @@ namespace OpenLogAnalyzer
             set { _instance = value; }
         }
 
-        public static AnalyzerConfig Load()
+        public static RiderConfig Load()
         {
-            if (!File.Exists(Paths.ConfigFile))
+            if (!File.Exists(Paths.RiderConfigFile))
                 InitializeConfig();
 
-            var json = File.ReadAllText(Paths.ConfigFile);
-            Instance = JsonConvert.DeserializeObject<AnalyzerConfig>(json);
+            var json = File.ReadAllText(Paths.RiderConfigFile);
+            Instance = JsonConvert.DeserializeObject<RiderConfig>(json);
 
             return Instance;
         }
 
         private static void InitializeConfig()
         {
-            var config = new AnalyzerConfig
+            var config = new RiderConfig
             {
                 RiderName = Environment.UserName,
                 RiderNumber = "-"
@@ -54,7 +54,7 @@ namespace OpenLogAnalyzer
         public void Save()
         {
             var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(Paths.ConfigFile, json);
+            File.WriteAllText(Paths.RiderConfigFile, json);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace OpenLogAnalyzer.Extensions
             listItem.Tag = metadata;
         }
 
-        public static bool MatchesConfig(this LogFileMetadata metadata, AnalyzerConfig config)
+        public static bool MatchesConfig(this LogFileMetadata metadata, RiderConfig config)
         {
             return metadata.Rider == $"#{config.RiderNumber} - {config.RiderName}" && metadata.Bike == config.BikeName;
         }

@@ -21,7 +21,7 @@ namespace OpenLogAnalyzer
     {
         private Thread _importThread;
         private string SourceFolder { get; }
-        private AnalyzerConfig Config { get; set; }
+        private RiderConfig Config { get; set; }
         public LogImportForm(string source)
         {
             SourceFolder = source;
@@ -42,23 +42,23 @@ namespace OpenLogAnalyzer
             if (string.IsNullOrWhiteSpace(SourceFolder))
                 return;
 
-            var sourceConfigPath = Path.Combine(SourceFolder, "Config.json");
+            var sourceConfigPath = Path.Combine(SourceFolder, "RiderConfig.json");
 
             if (File.Exists(sourceConfigPath))
             {
                 try
                 {
                     var configJson = File.ReadAllText(sourceConfigPath);
-                    Config = JsonConvert.DeserializeObject<AnalyzerConfig>(configJson);
+                    Config = JsonConvert.DeserializeObject<RiderConfig>(configJson);
                 }
                 catch (Exception e)
                 {
-                    Config = AnalyzerConfig.Instance;
+                    Config = RiderConfig.Instance;
                 }
             }
             else
             {
-                Config = AnalyzerConfig.Instance;
+                Config = RiderConfig.Instance;
             }
 
             var importFiles = Directory.GetFiles(SourceFolder, "*.LOG");
