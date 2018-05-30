@@ -108,8 +108,8 @@ namespace OpenLogAnalyzer
             }
 
             AnalysisTrackBar.Maximum = (int) (maxDistance*1000);
-            MapTrackBar.Maximum = (int)(maxDistance * 1000);
-            _renderingController.MarkerDistance = MapTrackBar.Value;
+            MapTrackBar.Maximum = _renderingController.RenderedSegments.Max(s => s.Segment.Entries.Count);
+            _renderingController.MarkerIndex = MapTrackBar.Value;
             Map.ZoomAndCenterRoutes("RenderedSegments");
         }
 
@@ -440,8 +440,8 @@ namespace OpenLogAnalyzer
 
         private void MapTrackbar_Scroll(object sender, EventArgs e)
         {
-            AnalysisTrackBar.Value = MapTrackBar.Value;
-            _renderingController.MarkerDistance = MapTrackBar.Value;
+            //AnalysisTrackBar.Value = MapTrackBar.Value;
+            _renderingController.MarkerIndex = MapTrackBar.Value;
         }
 
         private void MapOverlayLapList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -561,8 +561,8 @@ namespace OpenLogAnalyzer
 
         private void AnalysisTrackBar_Scroll_1(object sender, EventArgs e)
         {
-            MapTrackBar.Value = AnalysisTrackBar.Value;
-            _renderingController.MarkerDistance = MapTrackBar.Value;
+            //MapTrackBar.Value = AnalysisTrackBar.Value;
+            //_renderingController.MarkerDistance = MapTrackBar.Value;
 
             var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
             var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;

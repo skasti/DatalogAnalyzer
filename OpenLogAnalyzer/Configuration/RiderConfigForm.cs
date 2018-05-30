@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +53,30 @@ namespace OpenLogAnalyzer
             config.RiderName = NameInput.Text;
             config.BikeName = BikeNameInput.Text;
             config.Save(Paths.CardRiderConfig);
+
+            var cardBikeFile = Path.Combine(Paths.CardBikeLibrary, $"{config.BikeName}.json");
+            var localBikeFile = Path.Combine(Paths.BikeLibrary, $"{config.BikeName}.json");
+
+            if (File.Exists(cardBikeFile))
+            {
+                var cardBikeModified = File.GetLastWriteTime(cardBikeFile);
+                var localBikeModified = File.GetLastWriteTime(localBikeFile);
+
+                if (localBikeModified > cardBikeModified)
+                {
+                    if (MessageBox.Show(
+                            "Local version of bike seems more recent than version on card. Update?",
+                            "Update card?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                        DialogResult.Yes)
+                    {
+                        File.Copy(localBikeFile, cardBikeFile, true);
+                    }
+                }
+            }
+            else
+            {
+                File.Copy(localBikeFile, cardBikeFile, true);
+            }
         }
 
         private void selectBikeButton_Click(object sender, EventArgs e)
@@ -59,6 +84,12 @@ namespace OpenLogAnalyzer
             var form = new VehicleSelector();
             form.OnSelected += (o, vehicleName) => BikeNameInput.Text = vehicleName;
             form.ShowDialog(this);
+        }
+
+        private void RiderConfigForm_Load(object sender, EventArgs e)
+        {
+            if (Paths.DataLoggerCard == null)
+                saveToCardButton.Enabled = false;
         }
     }
 }

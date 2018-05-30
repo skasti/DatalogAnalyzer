@@ -156,6 +156,7 @@
             this.Name = "RiderConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Rider Configuration";
+            this.Load += new System.EventHandler(this.RiderConfigForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
