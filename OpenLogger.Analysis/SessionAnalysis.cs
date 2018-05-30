@@ -19,6 +19,7 @@ namespace OpenLogger.Analysis
         public SegmentAnalysis Full { get; private set; }
         public SegmentAnalysis LeadIn { get; private set; }
         public SegmentAnalysis LeadOut { get; private set; }
+        public SegmentAnalysis CombinedLaps { get; private set; }
         public List<LapAnalysis> Laps { get; private set; }
         public string VehicleName => LogFile.Metadata.Bike;
 
@@ -72,6 +73,9 @@ namespace OpenLogger.Analysis
             {
                 LeadOut = new SegmentAnalysis(LogFile.SubSet(previousEntry, LogFile.Entries.Last()), "Lead out");
             }
+
+            if (laps.Any())
+                CombinedLaps = new SegmentAnalysis(LogFile.SubSet(laps.First().Segment.Entries.First(), laps.Last().Segment.Entries.Last()), "Combined laps");
 
             return laps.ToList();
         }

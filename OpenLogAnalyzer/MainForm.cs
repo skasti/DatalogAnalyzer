@@ -357,6 +357,9 @@ namespace OpenLogAnalyzer
             AnalysisLapList.Items.Clear();
             AnalysisLapList.Items.Add(analysis.Full.ToMapOverlayListViewItem(TimeSpan.Zero));
 
+            if (analysis.CombinedLaps != null)
+                AnalysisLapList.Items.Add(analysis.CombinedLaps.ToMapOverlayListViewItem(TimeSpan.Zero));
+
             if (analysis.LeadIn != null)
                 AnalysisLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
 
@@ -397,6 +400,9 @@ namespace OpenLogAnalyzer
         {
             MapOverlayLapList.Items.Clear();
             MapOverlayLapList.Items.Add(analysis.Full.ToMapOverlayListViewItem(TimeSpan.Zero));
+
+            if (analysis.CombinedLaps != null)
+                MapOverlayLapList.Items.Add(analysis.CombinedLaps.ToMapOverlayListViewItem(TimeSpan.Zero));
 
             if (analysis.LeadIn != null)
                 MapOverlayLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
