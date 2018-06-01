@@ -568,7 +568,7 @@ namespace OpenLogAnalyzer
         private void AnalysisTrackBar_Scroll_1(object sender, EventArgs e)
         {
             //MapTrackBar.Value = AnalysisTrackBar.Value;
-            //_renderingController.MarkerDistance = MapTrackBar.Value;
+            _renderingController.MarkerDistance = AnalysisTrackBar.Value;
 
             var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
             var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;

@@ -71,6 +71,7 @@
             this.MapTrackBar = new System.Windows.Forms.TrackBar();
             this.MapShowMarkers = new System.Windows.Forms.CheckBox();
             this.MapOverlayPanel = new System.Windows.Forms.Panel();
+            this.resizeBar = new System.Windows.Forms.PictureBox();
             this.MapOverlayLapList = new System.Windows.Forms.ListView();
             this.OverlayLapHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.OverlayTimeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -91,7 +92,6 @@
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderSelector = new System.Windows.Forms.FolderBrowserDialog();
-            this.resizeBar = new System.Windows.Forms.PictureBox();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -103,10 +103,10 @@
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).BeginInit();
             this.MapOverlayPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).BeginInit();
             this.MapLapListMenu.SuspendLayout();
             this.TrackLibraryTab.SuspendLayout();
             this.InputTabContextMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).BeginInit();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -118,7 +118,8 @@
             this.settingsToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
-            this.MainMenu.Size = new System.Drawing.Size(1558, 33);
+            this.MainMenu.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
+            this.MainMenu.Size = new System.Drawing.Size(1039, 24);
             this.MainMenu.TabIndex = 0;
             this.MainMenu.Text = "menuStrip1";
             // 
@@ -129,27 +130,27 @@
             this.ManualImportButton,
             this.NewTrackButton});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // ImportFromCardButton
             // 
             this.ImportFromCardButton.Name = "ImportFromCardButton";
-            this.ImportFromCardButton.Size = new System.Drawing.Size(252, 30);
+            this.ImportFromCardButton.Size = new System.Drawing.Size(173, 22);
             this.ImportFromCardButton.Text = "Import from card";
             this.ImportFromCardButton.Click += new System.EventHandler(this.ImportFromCardButton_Click);
             // 
             // ManualImportButton
             // 
             this.ManualImportButton.Name = "ManualImportButton";
-            this.ManualImportButton.Size = new System.Drawing.Size(252, 30);
+            this.ManualImportButton.Size = new System.Drawing.Size(173, 22);
             this.ManualImportButton.Text = "Import from folder";
             this.ManualImportButton.Click += new System.EventHandler(this.ManualImportButton_Click);
             // 
             // NewTrackButton
             // 
             this.NewTrackButton.Name = "NewTrackButton";
-            this.NewTrackButton.Size = new System.Drawing.Size(252, 30);
+            this.NewTrackButton.Size = new System.Drawing.Size(173, 22);
             this.NewTrackButton.Text = "New track";
             this.NewTrackButton.Click += new System.EventHandler(this.NewTrackButton_Click);
             // 
@@ -158,13 +159,13 @@
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.forkSensorEditorToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
             this.testToolStripMenuItem.Text = "Tools";
             // 
             // forkSensorEditorToolStripMenuItem
             // 
             this.forkSensorEditorToolStripMenuItem.Name = "forkSensorEditorToolStripMenuItem";
-            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(272, 30);
+            this.forkSensorEditorToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.forkSensorEditorToolStripMenuItem.Text = "Fork Sensor Calibrator";
             this.forkSensorEditorToolStripMenuItem.Click += new System.EventHandler(this.forkSensorEditorToolStripMenuItem_Click);
             // 
@@ -174,20 +175,20 @@
             this.preferencesMenuItem,
             this.lineCOnfigToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(88, 29);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // preferencesMenuItem
             // 
             this.preferencesMenuItem.Name = "preferencesMenuItem";
-            this.preferencesMenuItem.Size = new System.Drawing.Size(228, 30);
+            this.preferencesMenuItem.Size = new System.Drawing.Size(165, 22);
             this.preferencesMenuItem.Text = "Rider and Bike";
             this.preferencesMenuItem.Click += new System.EventHandler(this.preferencesMenuItem_Click);
             // 
             // lineCOnfigToolStripMenuItem
             // 
             this.lineCOnfigToolStripMenuItem.Name = "lineCOnfigToolStripMenuItem";
-            this.lineCOnfigToolStripMenuItem.Size = new System.Drawing.Size(228, 30);
+            this.lineCOnfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.lineCOnfigToolStripMenuItem.Text = "Acceleration Line";
             this.lineCOnfigToolStripMenuItem.Click += new System.EventHandler(this.lineConfigToolStripMenuItem_Click);
             // 
@@ -205,9 +206,10 @@
             this.BikeHeader});
             this.LogLibraryList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LogLibraryList.FullRowSelect = true;
-            this.LogLibraryList.Location = new System.Drawing.Point(3, 3);
+            this.LogLibraryList.Location = new System.Drawing.Point(2, 2);
+            this.LogLibraryList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LogLibraryList.Name = "LogLibraryList";
-            this.LogLibraryList.Size = new System.Drawing.Size(1544, 760);
+            this.LogLibraryList.Size = new System.Drawing.Size(1027, 487);
             this.LogLibraryList.TabIndex = 1;
             this.LogLibraryList.UseCompatibleStateImageBehavior = false;
             this.LogLibraryList.View = System.Windows.Forms.View.Details;
@@ -269,19 +271,21 @@
             this.MainTabs.Controls.Add(this.MapTab);
             this.MainTabs.Controls.Add(this.TrackLibraryTab);
             this.MainTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTabs.Location = new System.Drawing.Point(0, 33);
+            this.MainTabs.Location = new System.Drawing.Point(0, 24);
+            this.MainTabs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MainTabs.Name = "MainTabs";
             this.MainTabs.SelectedIndex = 0;
-            this.MainTabs.Size = new System.Drawing.Size(1558, 799);
+            this.MainTabs.Size = new System.Drawing.Size(1039, 517);
             this.MainTabs.TabIndex = 2;
             // 
             // LogLibraryTab
             // 
             this.LogLibraryTab.Controls.Add(this.LogLibraryList);
-            this.LogLibraryTab.Location = new System.Drawing.Point(4, 29);
+            this.LogLibraryTab.Location = new System.Drawing.Point(4, 22);
+            this.LogLibraryTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LogLibraryTab.Name = "LogLibraryTab";
-            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.LogLibraryTab.Size = new System.Drawing.Size(1550, 766);
+            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LogLibraryTab.Size = new System.Drawing.Size(1031, 491);
             this.LogLibraryTab.TabIndex = 0;
             this.LogLibraryTab.Text = "Logs";
             this.LogLibraryTab.UseVisualStyleBackColor = true;
@@ -291,10 +295,11 @@
             this.AnalysisTab.Controls.Add(this.panel2);
             this.AnalysisTab.Controls.Add(this.AnalysisLapList);
             this.AnalysisTab.Controls.Add(this.AnalysisInputTabs);
-            this.AnalysisTab.Location = new System.Drawing.Point(4, 29);
+            this.AnalysisTab.Location = new System.Drawing.Point(4, 22);
+            this.AnalysisTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisTab.Name = "AnalysisTab";
-            this.AnalysisTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AnalysisTab.Size = new System.Drawing.Size(1550, 766);
+            this.AnalysisTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisTab.Size = new System.Drawing.Size(1031, 491);
             this.AnalysisTab.TabIndex = 1;
             this.AnalysisTab.Text = "Analysis";
             this.AnalysisTab.UseVisualStyleBackColor = true;
@@ -306,16 +311,18 @@
             this.panel2.Controls.Add(this.AnalysisTrackBar);
             this.panel2.Controls.Add(this.AnalysisShowMarkers);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 654);
+            this.panel2.Location = new System.Drawing.Point(2, 418);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1544, 109);
+            this.panel2.Size = new System.Drawing.Size(1027, 71);
             this.panel2.TabIndex = 5;
             // 
             // AnalysisViewMapButton
             // 
-            this.AnalysisViewMapButton.Location = new System.Drawing.Point(147, 6);
+            this.AnalysisViewMapButton.Location = new System.Drawing.Point(98, 4);
+            this.AnalysisViewMapButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisViewMapButton.Name = "AnalysisViewMapButton";
-            this.AnalysisViewMapButton.Size = new System.Drawing.Size(108, 29);
+            this.AnalysisViewMapButton.Size = new System.Drawing.Size(72, 19);
             this.AnalysisViewMapButton.TabIndex = 4;
             this.AnalysisViewMapButton.Text = "View Map";
             this.AnalysisViewMapButton.UseVisualStyleBackColor = true;
@@ -323,10 +330,11 @@
             // AnalysisTrackBar
             // 
             this.AnalysisTrackBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.AnalysisTrackBar.Location = new System.Drawing.Point(0, 40);
+            this.AnalysisTrackBar.Location = new System.Drawing.Point(0, 26);
+            this.AnalysisTrackBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisTrackBar.Maximum = 1;
             this.AnalysisTrackBar.Name = "AnalysisTrackBar";
-            this.AnalysisTrackBar.Size = new System.Drawing.Size(1544, 69);
+            this.AnalysisTrackBar.Size = new System.Drawing.Size(1027, 45);
             this.AnalysisTrackBar.TabIndex = 2;
             this.AnalysisTrackBar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.AnalysisTrackBar.Scroll += new System.EventHandler(this.AnalysisTrackBar_Scroll_1);
@@ -336,9 +344,10 @@
             this.AnalysisShowMarkers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AnalysisShowMarkers.AutoSize = true;
             this.AnalysisShowMarkers.BackColor = System.Drawing.SystemColors.Control;
-            this.AnalysisShowMarkers.Location = new System.Drawing.Point(4, 10);
+            this.AnalysisShowMarkers.Location = new System.Drawing.Point(3, 5);
+            this.AnalysisShowMarkers.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisShowMarkers.Name = "AnalysisShowMarkers";
-            this.AnalysisShowMarkers.Size = new System.Drawing.Size(136, 24);
+            this.AnalysisShowMarkers.Size = new System.Drawing.Size(94, 17);
             this.AnalysisShowMarkers.TabIndex = 3;
             this.AnalysisShowMarkers.Text = "Show Markers";
             this.AnalysisShowMarkers.UseVisualStyleBackColor = false;
@@ -357,9 +366,10 @@
             this.columnHeader5});
             this.AnalysisLapList.ContextMenuStrip = this.AnalysisListMenu;
             this.AnalysisLapList.FullRowSelect = true;
-            this.AnalysisLapList.Location = new System.Drawing.Point(1100, 6);
+            this.AnalysisLapList.Location = new System.Drawing.Point(733, 4);
+            this.AnalysisLapList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisLapList.Name = "AnalysisLapList";
-            this.AnalysisLapList.Size = new System.Drawing.Size(439, 370);
+            this.AnalysisLapList.Size = new System.Drawing.Size(294, 240);
             this.AnalysisLapList.TabIndex = 2;
             this.AnalysisLapList.UseCompatibleStateImageBehavior = false;
             this.AnalysisLapList.View = System.Windows.Forms.View.Details;
@@ -395,12 +405,12 @@
             this.AnalysisListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CompareAnalysis});
             this.AnalysisListMenu.Name = "AnalysisListMenu";
-            this.AnalysisListMenu.Size = new System.Drawing.Size(158, 34);
+            this.AnalysisListMenu.Size = new System.Drawing.Size(124, 26);
             // 
             // CompareAnalysis
             // 
             this.CompareAnalysis.Name = "CompareAnalysis";
-            this.CompareAnalysis.Size = new System.Drawing.Size(157, 30);
+            this.CompareAnalysis.Size = new System.Drawing.Size(123, 22);
             this.CompareAnalysis.Text = "Compare";
             this.CompareAnalysis.Click += new System.EventHandler(this.CompareAnalysis_Click);
             // 
@@ -409,10 +419,11 @@
             this.AnalysisInputTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AnalysisInputTabs.Location = new System.Drawing.Point(3, 6);
+            this.AnalysisInputTabs.Location = new System.Drawing.Point(2, 4);
+            this.AnalysisInputTabs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AnalysisInputTabs.Name = "AnalysisInputTabs";
             this.AnalysisInputTabs.SelectedIndex = 0;
-            this.AnalysisInputTabs.Size = new System.Drawing.Size(1090, 642);
+            this.AnalysisInputTabs.Size = new System.Drawing.Size(727, 415);
             this.AnalysisInputTabs.TabIndex = 1;
             this.AnalysisInputTabs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnalysisInputTabs_MouseClick);
             // 
@@ -421,10 +432,11 @@
             this.MapTab.Controls.Add(this.panel1);
             this.MapTab.Controls.Add(this.MapOverlayPanel);
             this.MapTab.Controls.Add(this.Map);
-            this.MapTab.Location = new System.Drawing.Point(4, 29);
+            this.MapTab.Location = new System.Drawing.Point(4, 22);
+            this.MapTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MapTab.Name = "MapTab";
-            this.MapTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MapTab.Size = new System.Drawing.Size(1550, 766);
+            this.MapTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapTab.Size = new System.Drawing.Size(1031, 493);
             this.MapTab.TabIndex = 2;
             this.MapTab.Text = "Map";
             this.MapTab.UseVisualStyleBackColor = true;
@@ -435,18 +447,20 @@
             this.panel1.Controls.Add(this.MapTrackBar);
             this.panel1.Controls.Add(this.MapShowMarkers);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 658);
+            this.panel1.Location = new System.Drawing.Point(2, 423);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1544, 105);
+            this.panel1.Size = new System.Drawing.Size(1027, 68);
             this.panel1.TabIndex = 4;
             // 
             // MapTrackBar
             // 
             this.MapTrackBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.MapTrackBar.Location = new System.Drawing.Point(0, 36);
+            this.MapTrackBar.Location = new System.Drawing.Point(0, 23);
+            this.MapTrackBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MapTrackBar.Maximum = 1;
             this.MapTrackBar.Name = "MapTrackBar";
-            this.MapTrackBar.Size = new System.Drawing.Size(1544, 69);
+            this.MapTrackBar.Size = new System.Drawing.Size(1027, 45);
             this.MapTrackBar.TabIndex = 2;
             this.MapTrackBar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.MapTrackBar.Scroll += new System.EventHandler(this.MapTrackbar_Scroll);
@@ -456,9 +470,10 @@
             this.MapShowMarkers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MapShowMarkers.AutoSize = true;
             this.MapShowMarkers.BackColor = System.Drawing.SystemColors.Control;
-            this.MapShowMarkers.Location = new System.Drawing.Point(4, 5);
+            this.MapShowMarkers.Location = new System.Drawing.Point(3, 2);
+            this.MapShowMarkers.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MapShowMarkers.Name = "MapShowMarkers";
-            this.MapShowMarkers.Size = new System.Drawing.Size(136, 24);
+            this.MapShowMarkers.Size = new System.Drawing.Size(94, 17);
             this.MapShowMarkers.TabIndex = 3;
             this.MapShowMarkers.Text = "Show Markers";
             this.MapShowMarkers.UseVisualStyleBackColor = false;
@@ -469,10 +484,25 @@
             this.MapOverlayPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.MapOverlayPanel.Controls.Add(this.resizeBar);
             this.MapOverlayPanel.Controls.Add(this.MapOverlayLapList);
-            this.MapOverlayPanel.Location = new System.Drawing.Point(6, 6);
+            this.MapOverlayPanel.Location = new System.Drawing.Point(4, 4);
+            this.MapOverlayPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MapOverlayPanel.Name = "MapOverlayPanel";
-            this.MapOverlayPanel.Size = new System.Drawing.Size(620, 476);
+            this.MapOverlayPanel.Size = new System.Drawing.Size(415, 311);
             this.MapOverlayPanel.TabIndex = 1;
+            // 
+            // resizeBar
+            // 
+            this.resizeBar.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.resizeBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.resizeBar.Location = new System.Drawing.Point(0, 304);
+            this.resizeBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.resizeBar.Name = "resizeBar";
+            this.resizeBar.Size = new System.Drawing.Size(411, 3);
+            this.resizeBar.TabIndex = 1;
+            this.resizeBar.TabStop = false;
+            this.resizeBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseDown);
+            this.resizeBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseMove);
+            this.resizeBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseUp);
             // 
             // MapOverlayLapList
             // 
@@ -489,8 +519,9 @@
             this.MapOverlayLapList.ContextMenuStrip = this.MapLapListMenu;
             this.MapOverlayLapList.FullRowSelect = true;
             this.MapOverlayLapList.Location = new System.Drawing.Point(0, 0);
+            this.MapOverlayLapList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MapOverlayLapList.Name = "MapOverlayLapList";
-            this.MapOverlayLapList.Size = new System.Drawing.Size(616, 468);
+            this.MapOverlayLapList.Size = new System.Drawing.Size(412, 306);
             this.MapOverlayLapList.TabIndex = 0;
             this.MapOverlayLapList.UseCompatibleStateImageBehavior = false;
             this.MapOverlayLapList.View = System.Windows.Forms.View.Details;
@@ -526,12 +557,12 @@
             this.MapLapListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.compareMapLaps});
             this.MapLapListMenu.Name = "MapLapListMenu";
-            this.MapLapListMenu.Size = new System.Drawing.Size(158, 34);
+            this.MapLapListMenu.Size = new System.Drawing.Size(124, 26);
             // 
             // compareMapLaps
             // 
             this.compareMapLaps.Name = "compareMapLaps";
-            this.compareMapLaps.Size = new System.Drawing.Size(157, 30);
+            this.compareMapLaps.Size = new System.Drawing.Size(123, 22);
             this.compareMapLaps.Text = "Compare";
             this.compareMapLaps.Click += new System.EventHandler(this.compareMapLaps_Click);
             // 
@@ -544,7 +575,8 @@
             this.Map.GrayScaleMode = false;
             this.Map.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.Map.LevelsKeepInMemmory = 5;
-            this.Map.Location = new System.Drawing.Point(3, 3);
+            this.Map.Location = new System.Drawing.Point(2, 2);
+            this.Map.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Map.MarkersEnabled = true;
             this.Map.MaxZoom = 20;
             this.Map.MinZoom = 5;
@@ -558,7 +590,7 @@
             this.Map.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.Map.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.Map.ShowTileGridLines = false;
-            this.Map.Size = new System.Drawing.Size(1544, 760);
+            this.Map.Size = new System.Drawing.Size(1027, 489);
             this.Map.TabIndex = 0;
             this.Map.Zoom = 0D;
             // 
@@ -566,10 +598,11 @@
             // 
             this.TrackLibraryTab.Controls.Add(this.TrackLibraryMap);
             this.TrackLibraryTab.Controls.Add(this.TrackLibraryList);
-            this.TrackLibraryTab.Location = new System.Drawing.Point(4, 29);
+            this.TrackLibraryTab.Location = new System.Drawing.Point(4, 22);
+            this.TrackLibraryTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.TrackLibraryTab.Name = "TrackLibraryTab";
-            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(3);
-            this.TrackLibraryTab.Size = new System.Drawing.Size(1550, 766);
+            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TrackLibraryTab.Size = new System.Drawing.Size(1031, 493);
             this.TrackLibraryTab.TabIndex = 3;
             this.TrackLibraryTab.Text = "Tracks";
             this.TrackLibraryTab.UseVisualStyleBackColor = true;
@@ -585,7 +618,8 @@
             this.TrackLibraryMap.GrayScaleMode = false;
             this.TrackLibraryMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.TrackLibraryMap.LevelsKeepInMemmory = 5;
-            this.TrackLibraryMap.Location = new System.Drawing.Point(668, 3);
+            this.TrackLibraryMap.Location = new System.Drawing.Point(445, 2);
+            this.TrackLibraryMap.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.TrackLibraryMap.MarkersEnabled = true;
             this.TrackLibraryMap.MaxZoom = 20;
             this.TrackLibraryMap.MinZoom = 5;
@@ -599,7 +633,7 @@
             this.TrackLibraryMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.TrackLibraryMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.TrackLibraryMap.ShowTileGridLines = false;
-            this.TrackLibraryMap.Size = new System.Drawing.Size(880, 760);
+            this.TrackLibraryMap.Size = new System.Drawing.Size(587, 494);
             this.TrackLibraryMap.TabIndex = 9;
             this.TrackLibraryMap.Zoom = 0D;
             // 
@@ -609,10 +643,9 @@
             this.nameHeader,
             this.changedHeader});
             this.TrackLibraryList.Dock = System.Windows.Forms.DockStyle.Left;
-            this.TrackLibraryList.Location = new System.Drawing.Point(3, 3);
-            this.TrackLibraryList.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.TrackLibraryList.Location = new System.Drawing.Point(2, 2);
             this.TrackLibraryList.Name = "TrackLibraryList";
-            this.TrackLibraryList.Size = new System.Drawing.Size(656, 760);
+            this.TrackLibraryList.Size = new System.Drawing.Size(439, 489);
             this.TrackLibraryList.TabIndex = 8;
             this.TrackLibraryList.UseCompatibleStateImageBehavior = false;
             this.TrackLibraryList.View = System.Windows.Forms.View.Details;
@@ -638,54 +671,42 @@
             this.newAnalysisToolStripMenuItem,
             this.editAnalysisToolStripMenuItem});
             this.InputTabContextMenu.Name = "InputTapContextMenu";
-            this.InputTabContextMenu.Size = new System.Drawing.Size(189, 124);
+            this.InputTabContextMenu.Size = new System.Drawing.Size(145, 92);
             // 
             // newInputToolStripMenuItem
             // 
             this.newInputToolStripMenuItem.Name = "newInputToolStripMenuItem";
-            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.newInputToolStripMenuItem.Text = "New Input";
             // 
             // editInputToolStripMenuItem
             // 
             this.editInputToolStripMenuItem.Name = "editInputToolStripMenuItem";
-            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.editInputToolStripMenuItem.Text = "Edit Input";
             this.editInputToolStripMenuItem.Click += new System.EventHandler(this.editInputToolStripMenuItem_Click);
             // 
             // newAnalysisToolStripMenuItem
             // 
             this.newAnalysisToolStripMenuItem.Name = "newAnalysisToolStripMenuItem";
-            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.newAnalysisToolStripMenuItem.Text = "New Analysis";
             // 
             // editAnalysisToolStripMenuItem
             // 
             this.editAnalysisToolStripMenuItem.Name = "editAnalysisToolStripMenuItem";
-            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
-            // 
-            // resizeBar
-            // 
-            this.resizeBar.Cursor = System.Windows.Forms.Cursors.SizeNS;
-            this.resizeBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.resizeBar.Location = new System.Drawing.Point(0, 467);
-            this.resizeBar.Name = "resizeBar";
-            this.resizeBar.Size = new System.Drawing.Size(616, 5);
-            this.resizeBar.TabIndex = 1;
-            this.resizeBar.TabStop = false;
-            this.resizeBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseDown);
-            this.resizeBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseMove);
-            this.resizeBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resizeBar_MouseUp);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1558, 832);
+            this.ClientSize = new System.Drawing.Size(1039, 541);
             this.Controls.Add(this.MainTabs);
             this.Controls.Add(this.MainMenu);
             this.MainMenuStrip = this.MainMenu;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "OpenLog Analyzer";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -703,10 +724,10 @@
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).EndInit();
             this.MapOverlayPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).EndInit();
             this.MapLapListMenu.ResumeLayout(false);
             this.TrackLibraryTab.ResumeLayout(false);
             this.InputTabContextMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.resizeBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

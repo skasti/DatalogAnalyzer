@@ -88,6 +88,8 @@ namespace OpenLogger.Analysis
             foreach (var lap in Laps)
                 lap.CalculateRoutes(Track);
 
+            CombinedLaps?.CalculateRoutes(Track);
+
             LeadOut?.CalculateRoutes(Track);
         }
     }
