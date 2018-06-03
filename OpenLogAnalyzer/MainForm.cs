@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using GMap.NET;
 using GMap.NET.WindowsForms;
-using GMap.NET.WindowsForms.Markers;
-using Newtonsoft.Json;
 using OpenLogAnalyzer.Configuration;
 using OpenLogAnalyzer.Extensions;
-using OpenLogAnalyzer.Transforms;
 using OpenLogAnalyzer.Transforms.Editors;
-using OpenLogger;
 using OpenLogger.Analysis;
-using OpenLogger.Analysis.Analyses;
 using OpenLogger.Analysis.Config;
 using OpenLogger.Analysis.Extensions;
 using OpenLogger.Analysis.Vehicle;
@@ -36,16 +26,11 @@ namespace OpenLogAnalyzer
         private readonly TrackRepository _trackRepository = new TrackRepository();
         private Dictionary<Input, TabPage> _inputTab;
         private List<InputPage> _inputPages;
-        private RenderingController _renderingController;
-        private double _analysisResolution = 1.0;
+        private readonly RenderingController _renderingController;
 
         private Vehicle _currentVehicle = null;
         private SessionAnalysis _currentAnalysis = null;
         private List<SegmentAnalysis> _currentSegments = null;
-
-        private bool _allowMapOverlayResize;
-        //private readonly List<SegmentAnalysis> RenderedSegments = new List<SegmentAnalysis>(); 
-        //private readonly Dictionary<SegmentAnalysis, GMapMarker> RenderedSegmentMarkers = new Dictionary<SegmentAnalysis, GMapMarker>();
 
         public MainForm()
         {
@@ -67,6 +52,12 @@ namespace OpenLogAnalyzer
             {
                 mapOverlay = new GMapOverlay("RenderedSegments");
                 Map.Overlays.Add(mapOverlay);
+            }
+
+            if (!_renderingController.RenderMarkers)
+            {
+                mapOverlay.Markers.Clear();
+                return;
             }
 
             var markersToRemove = mapOverlay.Markers.Where(r => !gMapMarkers.Contains(r)).ToList();
@@ -107,7 +98,6 @@ namespace OpenLogAnalyzer
                     maxDistance = route.Distance;
             }
 
-            AnalysisTrackBar.Maximum = (int) (maxDistance*1000);
             MapTrackBar.Maximum = _renderingController.RenderedSegments.Max(s => s.Segment.Entries.Count);
             _renderingController.MarkerIndex = MapTrackBar.Value;
             Map.ZoomAndCenterRoutes("RenderedSegments");
@@ -345,34 +335,17 @@ namespace OpenLogAnalyzer
 
             _renderingController.RenderSegments(analysis.Full);
 
-            LoadMapOverlayLaps(_currentAnalysis);
-            LoadAnalysisLaps(_currentAnalysis);
+            LoadLapList(_currentAnalysis);
             CreateInputCharts();
 
             AccelerationLineConfig.OnInstance += (sender, config) => analysis.CalculateRoutes();
         }
 
-        private void LoadAnalysisLaps(SessionAnalysis analysis)
-        {
-            AnalysisLapList.Items.Clear();
-            AnalysisLapList.Items.Add(analysis.Full.ToMapOverlayListViewItem(TimeSpan.Zero));
-
-            if (analysis.CombinedLaps != null)
-                AnalysisLapList.Items.Add(analysis.CombinedLaps.ToMapOverlayListViewItem(TimeSpan.Zero));
-
-            if (analysis.LeadIn != null)
-                AnalysisLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
-
-            AnalysisLapList.Items.AddRange(
-                analysis.Laps.Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
-
-            if (analysis.LeadOut != null)
-                AnalysisLapList.Items.Add(analysis.LeadOut.ToMapOverlayListViewItem(TimeSpan.Zero));
-        }
-
         private void CreateInputCharts()
         {
             AnalysisInputTabs.TabPages.Clear();
+            AnalysisInputTabs.TabPages.Add(AnalysisOverviewTab);
+
             _inputTab = new Dictionary<Input, TabPage>();
             _inputPages = new List<InputPage>();
 
@@ -396,7 +369,7 @@ namespace OpenLogAnalyzer
             _inputPages.Add(inputPage);
         }
 
-        private void LoadMapOverlayLaps(SessionAnalysis analysis)
+        private void LoadLapList(SessionAnalysis analysis)
         {
             MapOverlayLapList.Items.Clear();
             MapOverlayLapList.Items.Add(analysis.Full.ToMapOverlayListViewItem(TimeSpan.Zero));
@@ -428,9 +401,15 @@ namespace OpenLogAnalyzer
 
             if (selectedTrack.StartLinePolygon != null)
             {
-                var startFinishRoute = new GMapRoute(selectedTrack.StartLinePolygon.Points.Take(2), "Start/Finish");
-                startFinishRoute.Stroke.Color = Color.Red;
-                startFinishRoute.Stroke.Width = 1.0f;
+                var startFinishRoute =
+                    new GMapRoute(selectedTrack.StartLinePolygon.Points.Take(2), "Start/Finish")
+                    {
+                        Stroke =
+                        {
+                            Color = Color.Red,
+                            Width = 1.0f
+                        }
+                    };
                 var overlay = TrackLibraryMap.Overlays.FirstOrDefault();
 
                 if (overlay == null)
@@ -448,6 +427,24 @@ namespace OpenLogAnalyzer
         {
             //AnalysisTrackBar.Value = MapTrackBar.Value;
             _renderingController.MarkerIndex = MapTrackBar.Value;
+
+            var markerIndex = _renderingController.MarkerIndex;
+            // Gets the closest entry to the index.
+            var markedEntries = _renderingController.RenderedSegments.ToDictionary(segment => markerIndex < segment.Segment.Entries.Count ? segment.Segment.Entries[markerIndex] : segment.Segment.Entries.Last());
+            var minDistance = markedEntries.Keys.Min(entry => entry.GetDistance(markedEntries[entry].Segment));
+            var maxDistance = markedEntries.Keys.Max(entry => entry.GetDistance(markedEntries[entry].Segment));
+            var midPoint = (minDistance + maxDistance) / 2;
+            var firstEntry = markedEntries.First();
+            var time = firstEntry.Key.GetTimeSpan(firstEntry.Value.Segment.LogStart).TotalSeconds;
+
+            foreach (var inputPage in _inputPages)
+            {
+                inputPage.SetCursor(midPoint, time);
+            }
+
+            AnalysisOverviewChart.ChartAreas.First().CursorX.SelectionStart = minDistance;
+            AnalysisOverviewChart.ChartAreas.First().CursorX.SelectionEnd = maxDistance;
+            AnalysisOverviewChart.ChartAreas.First().CursorX.Position = midPoint;
         }
 
         private void MapOverlayLapList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -457,6 +454,7 @@ namespace OpenLogAnalyzer
 
             var selectedItem = MapOverlayLapList.SelectedItems[0].Tag as SegmentAnalysis;
             _renderingController.RenderSegments(selectedItem);
+            AnalyzeSegment(selectedItem);
         }
 
         private void NewTrackButton_Click(object sender, EventArgs e)
@@ -513,15 +511,6 @@ namespace OpenLogAnalyzer
             }
         }
 
-        private void AnalysisLapList_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (AnalysisLapList.SelectedItems.Count == 0)
-                return;
-
-            var selectedItem = AnalysisLapList.SelectedItems[0].Tag as SegmentAnalysis;
-            AnalyzeSegment(selectedItem);
-        }
-
         private void AnalyzeSegments(SegmentAnalysis[] segments = null, Input singleInput = null)
         {
             if (segments != null)
@@ -537,6 +526,44 @@ namespace OpenLogAnalyzer
 
                 inputPage.Render(_currentSegments);
             }
+
+            var primaryYMax = 200.0;
+
+            foreach (var segment in _currentSegments)
+            {
+                foreach (var input in _currentVehicle.Inputs.Where(i => i.XAxisType == InputXAxis.Distance))
+                {
+                    var data = input.Extract(segment.Segment);
+                    var series = AnalysisOverviewChart.Series.FindByName($"{input.Name} ({segment.Name})");
+
+                    if (series == null)
+                    {
+                        series = new Series($"{input.Name} ({segment.Name})")
+                        {
+                            ChartType = input.GetSeriesChartType(),
+                            BorderWidth = 2,
+                            Legend = "Legend",
+                            ChartArea = "Overview"
+                        };
+
+                        AnalysisOverviewChart.Series.Add(series);
+                    }
+
+                    var dataMax = data.Max(d => d.Y);
+
+                    if (dataMax > primaryYMax * 2)
+                        series.YAxisType = AxisType.Secondary;
+                    else if (dataMax > primaryYMax)
+                        primaryYMax = dataMax;
+
+                    series.Points.Update(data);
+                }
+            }
+
+            foreach (var series in AnalysisOverviewChart.Series.Where(s => !_currentSegments.Any(segment => s.Name.Contains(segment.Name))).ToList())
+            {
+                AnalysisOverviewChart.Series.Remove(series);
+            }
         }
 
         private void AnalyzeSegment(SegmentAnalysis segment = null, Input singleInput = null)
@@ -544,40 +571,9 @@ namespace OpenLogAnalyzer
             AnalyzeSegments(new[] {segment}, singleInput);
         }
 
-        private void AnalysisShowMarkers_CheckedChanged(object sender, EventArgs e)
-        {
-            MapShowMarkers.Checked = AnalysisShowMarkers.Checked;
-            _renderingController.RenderMarkers = MapShowMarkers.Checked;
-        }
-
         private void MapShowMarkers_CheckedChanged(object sender, EventArgs e)
         {
-            AnalysisShowMarkers.Checked = MapShowMarkers.Checked;
             _renderingController.RenderMarkers = MapShowMarkers.Checked;
-        }
-
-        private void CompareAnalysis_Click(object sender, EventArgs e)
-        {
-            if (AnalysisLapList.SelectedItems.Count == 0)
-                return;
-
-            var segments = AnalysisLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
-            AnalyzeSegments(segments);
-        }
-
-        private void AnalysisTrackBar_Scroll_1(object sender, EventArgs e)
-        {
-            //MapTrackBar.Value = AnalysisTrackBar.Value;
-            _renderingController.MarkerDistance = AnalysisTrackBar.Value;
-
-            var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
-            var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;
-            var time = AnalysisTrackBar.Value*timeMultiplier;
-
-            foreach (var inputPage in _inputPages)
-            {
-                inputPage.SetCursor(AnalysisTrackBar.Value, time);
-            }
         }
 
         private void compareMapLaps_Click(object sender, EventArgs e)
@@ -589,13 +585,18 @@ namespace OpenLogAnalyzer
             _renderingController.RenderSegments(segments);
             AnalyzeSegments(segments);
 
-            var maxTime = _currentSegments.Max(s => s.Time).TotalSeconds;
-            var timeMultiplier = maxTime / AnalysisTrackBar.Maximum;
-            var time = AnalysisTrackBar.Value * timeMultiplier;
+            var markerIndex = _renderingController.MarkerIndex;
+            // Gets the closest entry to the index.
+            var markedEntries = segments.ToDictionary(segment => markerIndex < segment.Segment.Entries.Count ? segment.Segment.Entries[markerIndex] : segment.Segment.Entries.Last());
+            var minDistance = markedEntries.Keys.Min(entry => entry.GetDistance(markedEntries[entry].Segment));
+            var maxDistance = markedEntries.Keys.Max(entry => entry.GetDistance(markedEntries[entry].Segment));
+            var midPoint = (minDistance + maxDistance) / 2;
+            var firstEntry = markedEntries.First();
+            var time = firstEntry.Key.GetTimeSpan(firstEntry.Value.Segment.LogStart).TotalSeconds;
 
             foreach (var inputPage in _inputPages)
             {
-                inputPage.SetCursor(AnalysisTrackBar.Value, time);
+                inputPage.SetCursor(midPoint, time);
             }
         }
 
@@ -680,24 +681,6 @@ namespace OpenLogAnalyzer
             var configForm = new RiderConfigForm();
             configForm.ShowDialog(this);
             UpdateFormText();
-        }
-
-        private void resizeBar_MouseUp(object sender, MouseEventArgs e)
-        {
-            _allowMapOverlayResize = false;
-        }
-
-        private void resizeBar_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!_allowMapOverlayResize)
-                return;
-
-            MapOverlayPanel.Height = resizeBar.Top + e.Y;
-        }
-
-        private void resizeBar_MouseDown(object sender, MouseEventArgs e)
-        {
-            _allowMapOverlayResize = true;
         }
     }
 }

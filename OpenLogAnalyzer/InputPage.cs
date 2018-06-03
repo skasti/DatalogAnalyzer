@@ -132,14 +132,26 @@ namespace OpenLogAnalyzer
 
         private void PruneAnalysisRenderers()
         {
+            // We want to remove analysisrenderers that are either for a segment we are not going to render,
+            // or that are no longer in use by the Input (user has editor input).
+
             var deleteRenderers =
-                _analysisRenderers.Where(renderer => !_currentSegments.Contains(renderer.Segment)).ToList();
+                _analysisRenderers.Where(renderer => 
+                    !_currentSegments.Contains(renderer.Segment) 
+                    || !Input.Analyses.Contains(renderer.Analysis)).ToList();
 
             foreach (var renderer in deleteRenderers)
             {
                 var page = GetAnalysisTab(renderer.Analysis);
                 page.Controls.Remove(renderer);
                 _analysisRenderers.Remove(renderer);
+
+                // If the whole analysis is removed, delete the tab as well
+                if (!Input.Analyses.Contains(renderer.Analysis))
+                {
+                    inputTabs.TabPages.Remove(page);
+                    _analysisTabs.Remove(renderer.Analysis);
+                }
             }
         }
 

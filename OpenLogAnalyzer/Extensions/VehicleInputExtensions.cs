@@ -17,7 +17,8 @@ namespace OpenLogAnalyzer.Extensions
             {
                 LegendText = analysis.Name,
                 ChartType = input.GetSeriesChartType(),
-                Color = analysis.SegmentColor
+                Color = analysis.SegmentColor,
+                BorderWidth = 2
             };
 
             return series;

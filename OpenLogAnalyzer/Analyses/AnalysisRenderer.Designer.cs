@@ -51,8 +51,22 @@
             this.AnalysisChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.AnalysisChart.BackColor = System.Drawing.Color.Black;
+            chartArea1.AxisX.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisX.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MajorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MinorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MajorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MinorTickMark.LineColor = System.Drawing.Color.White;
             chartArea1.AxisY.ScaleView.Zoomable = false;
             chartArea1.AxisY2.ScaleView.Zoomable = false;
+            chartArea1.BackColor = System.Drawing.Color.Black;
             chartArea1.CursorX.Interval = 0.01D;
             chartArea1.CursorX.IsUserEnabled = true;
             chartArea1.CursorY.Interval = 0.01D;
@@ -62,11 +76,16 @@
             chartArea1.CursorY.SelectionColor = System.Drawing.Color.LightGreen;
             chartArea1.Name = "ChartArea1";
             this.AnalysisChart.ChartAreas.Add(chartArea1);
+            legend1.BackColor = System.Drawing.Color.Black;
             legend1.Enabled = false;
+            legend1.ForeColor = System.Drawing.Color.White;
+            legend1.HeaderSeparatorColor = System.Drawing.Color.White;
+            legend1.ItemColumnSeparatorColor = System.Drawing.Color.White;
             legend1.Name = "Legend1";
             this.AnalysisChart.Legends.Add(legend1);
             this.AnalysisChart.Location = new System.Drawing.Point(0, 42);
             this.AnalysisChart.Name = "AnalysisChart";
+            series1.BorderWidth = 2;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series1.Legend = "Legend1";
