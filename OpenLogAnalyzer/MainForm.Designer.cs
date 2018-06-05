@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.LegendCellColumn legendCellColumn1 = new System.Windows.Forms.DataVisualization.Charting.LegendCellColumn();
+            System.Windows.Forms.DataVisualization.Charting.LegendCellColumn legendCellColumn2 = new System.Windows.Forms.DataVisualization.Charting.LegendCellColumn();
+            System.Windows.Forms.DataVisualization.Charting.LegendCellColumn legendCellColumn3 = new System.Windows.Forms.DataVisualization.Charting.LegendCellColumn();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -38,9 +44,6 @@
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint3 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(2D, 150D);
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(3D, 125D);
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint5 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 300D);
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ImportFromCardButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +80,8 @@
             this.compareMapLaps = new System.Windows.Forms.ToolStripMenuItem();
             this.Map = new GMap.NET.WindowsForms.GMapControl();
             this.AnalysisInputTabs = new System.Windows.Forms.TabControl();
+            this.AnalysisOverviewTab = new System.Windows.Forms.TabPage();
+            this.AnalysisOverviewChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.TrackBarPanel = new System.Windows.Forms.Panel();
             this.MapTrackBar = new System.Windows.Forms.TrackBar();
             this.MapShowMarkers = new System.Windows.Forms.CheckBox();
@@ -85,16 +90,14 @@
             this.TrackLibraryList = new System.Windows.Forms.ListView();
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.changedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ExperimentTab = new System.Windows.Forms.TabPage();
+            this.ExperimentalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.InputTabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newInputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editInputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderSelector = new System.Windows.Forms.FolderBrowserDialog();
-            this.ExperimentTab = new System.Windows.Forms.TabPage();
-            this.ExperimentalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.AnalysisOverviewTab = new System.Windows.Forms.TabPage();
-            this.AnalysisOverviewChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -109,14 +112,14 @@
             this.MapLapsSplitter.SuspendLayout();
             this.MapLapListMenu.SuspendLayout();
             this.AnalysisInputTabs.SuspendLayout();
+            this.AnalysisOverviewTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisOverviewChart)).BeginInit();
             this.TrackBarPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).BeginInit();
             this.TrackLibraryTab.SuspendLayout();
-            this.InputTabContextMenu.SuspendLayout();
             this.ExperimentTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ExperimentalChart)).BeginInit();
-            this.AnalysisOverviewTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AnalysisOverviewChart)).BeginInit();
+            this.InputTabContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -457,6 +460,77 @@
             this.AnalysisInputTabs.TabIndex = 2;
             this.AnalysisInputTabs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnalysisInputTabs_MouseClick);
             // 
+            // AnalysisOverviewTab
+            // 
+            this.AnalysisOverviewTab.Controls.Add(this.AnalysisOverviewChart);
+            this.AnalysisOverviewTab.Location = new System.Drawing.Point(4, 29);
+            this.AnalysisOverviewTab.Name = "AnalysisOverviewTab";
+            this.AnalysisOverviewTab.Padding = new System.Windows.Forms.Padding(3);
+            this.AnalysisOverviewTab.Size = new System.Drawing.Size(997, 813);
+            this.AnalysisOverviewTab.TabIndex = 0;
+            this.AnalysisOverviewTab.Text = "Overview";
+            this.AnalysisOverviewTab.UseVisualStyleBackColor = true;
+            // 
+            // AnalysisOverviewChart
+            // 
+            this.AnalysisOverviewChart.BackColor = System.Drawing.Color.Black;
+            chartArea1.AxisX.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisX.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MajorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MinorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.ScaleBreakStyle.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.TitleForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MajorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MinorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.TitleForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.MajorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.MinorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.MinorTickMark.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY2.TitleForeColor = System.Drawing.Color.White;
+            chartArea1.BackColor = System.Drawing.Color.Black;
+            chartArea1.BorderColor = System.Drawing.Color.White;
+            chartArea1.Name = "Overview";
+            this.AnalysisOverviewChart.ChartAreas.Add(chartArea1);
+            this.AnalysisOverviewChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend1.BackColor = System.Drawing.Color.Black;
+            legendCellColumn1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            legendCellColumn1.Name = "CheckboxColumn";
+            legendCellColumn1.Text = "#CUSTOMPROPERTY(CHECK)";
+            legendCellColumn2.ColumnType = System.Windows.Forms.DataVisualization.Charting.LegendCellColumnType.SeriesSymbol;
+            legendCellColumn2.Name = "Symbol";
+            legendCellColumn3.Name = "Title";
+            legend1.CellColumns.Add(legendCellColumn1);
+            legend1.CellColumns.Add(legendCellColumn2);
+            legend1.CellColumns.Add(legendCellColumn3);
+            legend1.ForeColor = System.Drawing.Color.White;
+            legend1.HeaderSeparatorColor = System.Drawing.Color.White;
+            legend1.ItemColumnSeparatorColor = System.Drawing.Color.White;
+            legend1.Name = "Legend";
+            legend1.TitleBackColor = System.Drawing.Color.Black;
+            legend1.TitleForeColor = System.Drawing.Color.White;
+            legend1.TitleSeparatorColor = System.Drawing.Color.White;
+            this.AnalysisOverviewChart.Legends.Add(legend1);
+            this.AnalysisOverviewChart.Location = new System.Drawing.Point(3, 3);
+            this.AnalysisOverviewChart.Name = "AnalysisOverviewChart";
+            series1.ChartArea = "Overview";
+            series1.LabelForeColor = System.Drawing.Color.White;
+            series1.Legend = "Legend";
+            series1.Name = "Series1";
+            this.AnalysisOverviewChart.Series.Add(series1);
+            this.AnalysisOverviewChart.Size = new System.Drawing.Size(991, 807);
+            this.AnalysisOverviewChart.TabIndex = 0;
+            this.AnalysisOverviewChart.Text = "Overview";
+            this.AnalysisOverviewChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.AnalysisOverviewChart_MouseDown);
+            // 
             // TrackBarPanel
             // 
             this.TrackBarPanel.BackColor = System.Drawing.SystemColors.Control;
@@ -559,43 +633,6 @@
             this.changedHeader.Text = "Changed Date";
             this.changedHeader.Width = 144;
             // 
-            // InputTabContextMenu
-            // 
-            this.InputTabContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.InputTabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newInputToolStripMenuItem,
-            this.editInputToolStripMenuItem,
-            this.newAnalysisToolStripMenuItem,
-            this.editAnalysisToolStripMenuItem});
-            this.InputTabContextMenu.Name = "InputTapContextMenu";
-            this.InputTabContextMenu.Size = new System.Drawing.Size(189, 124);
-            // 
-            // newInputToolStripMenuItem
-            // 
-            this.newInputToolStripMenuItem.Name = "newInputToolStripMenuItem";
-            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
-            this.newInputToolStripMenuItem.Text = "New Input";
-            this.newInputToolStripMenuItem.Click += new System.EventHandler(this.NewInputButton_Click);
-            // 
-            // editInputToolStripMenuItem
-            // 
-            this.editInputToolStripMenuItem.Name = "editInputToolStripMenuItem";
-            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
-            this.editInputToolStripMenuItem.Text = "Edit Input";
-            this.editInputToolStripMenuItem.Click += new System.EventHandler(this.editInputToolStripMenuItem_Click);
-            // 
-            // newAnalysisToolStripMenuItem
-            // 
-            this.newAnalysisToolStripMenuItem.Name = "newAnalysisToolStripMenuItem";
-            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
-            this.newAnalysisToolStripMenuItem.Text = "New Analysis";
-            // 
-            // editAnalysisToolStripMenuItem
-            // 
-            this.editAnalysisToolStripMenuItem.Name = "editAnalysisToolStripMenuItem";
-            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
-            this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
-            // 
             // ExperimentTab
             // 
             this.ExperimentTab.Controls.Add(this.ExperimentalChart);
@@ -637,66 +674,42 @@
             this.ExperimentalChart.TabIndex = 0;
             this.ExperimentalChart.Text = "chart1";
             // 
-            // AnalysisOverviewTab
+            // InputTabContextMenu
             // 
-            this.AnalysisOverviewTab.Controls.Add(this.AnalysisOverviewChart);
-            this.AnalysisOverviewTab.Location = new System.Drawing.Point(4, 29);
-            this.AnalysisOverviewTab.Name = "AnalysisOverviewTab";
-            this.AnalysisOverviewTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AnalysisOverviewTab.Size = new System.Drawing.Size(997, 813);
-            this.AnalysisOverviewTab.TabIndex = 0;
-            this.AnalysisOverviewTab.Text = "Overview";
-            this.AnalysisOverviewTab.UseVisualStyleBackColor = true;
+            this.InputTabContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.InputTabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newInputToolStripMenuItem,
+            this.editInputToolStripMenuItem,
+            this.newAnalysisToolStripMenuItem,
+            this.editAnalysisToolStripMenuItem});
+            this.InputTabContextMenu.Name = "InputTapContextMenu";
+            this.InputTabContextMenu.Size = new System.Drawing.Size(189, 124);
             // 
-            // AnalysisOverviewChart
+            // newInputToolStripMenuItem
             // 
-            this.AnalysisOverviewChart.BackColor = System.Drawing.Color.Black;
-            chartArea1.AxisX.LabelStyle.ForeColor = System.Drawing.Color.White;
-            chartArea1.AxisX.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.MajorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.MinorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.ScaleBreakStyle.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisX.TitleForeColor = System.Drawing.Color.White;
-            chartArea1.AxisY.LabelStyle.ForeColor = System.Drawing.Color.White;
-            chartArea1.AxisY.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY.MajorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY.MinorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY.TitleForeColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.LabelStyle.ForeColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.MajorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.MajorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.MinorGrid.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.MinorTickMark.LineColor = System.Drawing.Color.White;
-            chartArea1.AxisY2.TitleForeColor = System.Drawing.Color.White;
-            chartArea1.BackColor = System.Drawing.Color.Black;
-            chartArea1.BorderColor = System.Drawing.Color.White;
-            chartArea1.Name = "Overview";
-            this.AnalysisOverviewChart.ChartAreas.Add(chartArea1);
-            this.AnalysisOverviewChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.BackColor = System.Drawing.Color.Black;
-            legend1.ForeColor = System.Drawing.Color.White;
-            legend1.HeaderSeparatorColor = System.Drawing.Color.White;
-            legend1.ItemColumnSeparatorColor = System.Drawing.Color.White;
-            legend1.Name = "Legend";
-            legend1.TitleBackColor = System.Drawing.Color.Black;
-            legend1.TitleForeColor = System.Drawing.Color.White;
-            legend1.TitleSeparatorColor = System.Drawing.Color.White;
-            this.AnalysisOverviewChart.Legends.Add(legend1);
-            this.AnalysisOverviewChart.Location = new System.Drawing.Point(3, 3);
-            this.AnalysisOverviewChart.Name = "AnalysisOverviewChart";
-            series1.ChartArea = "Overview";
-            series1.LabelForeColor = System.Drawing.Color.White;
-            series1.Legend = "Legend";
-            series1.Name = "Series1";
-            this.AnalysisOverviewChart.Series.Add(series1);
-            this.AnalysisOverviewChart.Size = new System.Drawing.Size(991, 807);
-            this.AnalysisOverviewChart.TabIndex = 0;
-            this.AnalysisOverviewChart.Text = "Overview";
+            this.newInputToolStripMenuItem.Name = "newInputToolStripMenuItem";
+            this.newInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newInputToolStripMenuItem.Text = "New Input";
+            this.newInputToolStripMenuItem.Click += new System.EventHandler(this.NewInputButton_Click);
+            // 
+            // editInputToolStripMenuItem
+            // 
+            this.editInputToolStripMenuItem.Name = "editInputToolStripMenuItem";
+            this.editInputToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editInputToolStripMenuItem.Text = "Edit Input";
+            this.editInputToolStripMenuItem.Click += new System.EventHandler(this.editInputToolStripMenuItem_Click);
+            // 
+            // newAnalysisToolStripMenuItem
+            // 
+            this.newAnalysisToolStripMenuItem.Name = "newAnalysisToolStripMenuItem";
+            this.newAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.newAnalysisToolStripMenuItem.Text = "New Analysis";
+            // 
+            // editAnalysisToolStripMenuItem
+            // 
+            this.editAnalysisToolStripMenuItem.Name = "editAnalysisToolStripMenuItem";
+            this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(188, 30);
+            this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
             // 
             // MainForm
             // 
@@ -724,15 +737,15 @@
             this.MapLapsSplitter.ResumeLayout(false);
             this.MapLapListMenu.ResumeLayout(false);
             this.AnalysisInputTabs.ResumeLayout(false);
+            this.AnalysisOverviewTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisOverviewChart)).EndInit();
             this.TrackBarPanel.ResumeLayout(false);
             this.TrackBarPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapTrackBar)).EndInit();
             this.TrackLibraryTab.ResumeLayout(false);
-            this.InputTabContextMenu.ResumeLayout(false);
             this.ExperimentTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ExperimentalChart)).EndInit();
-            this.AnalysisOverviewTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.AnalysisOverviewChart)).EndInit();
+            this.InputTabContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -9,6 +9,7 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
     public enum InputXAxis
     {
         Time,
-        Distance
+        Distance,
+        Default
     }
 }

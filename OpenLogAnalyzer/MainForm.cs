@@ -278,7 +278,8 @@ namespace OpenLogAnalyzer
 
             if (logFile.LogStart.Timestamp != selectedMetadata.StartTime)
             {
-                logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds, (uint)selectedMetadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
+                logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds,
+                    (uint) selectedMetadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
             }
 
             var trackMatches = _trackRepository.FindTracks(logFile);
@@ -288,7 +289,8 @@ namespace OpenLogAnalyzer
             if (track == null)
             {
                 if (
-                    MessageBox.Show("No track found for log. Create new track at this position?", "Track not identified",
+                    MessageBox.Show("No track found for log. Create new track at this position?",
+                        "Track not identified",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     var editor = new TrackEditor(segment: logFile);
@@ -360,7 +362,7 @@ namespace OpenLogAnalyzer
             var tabPage = new TabPage(input.Name);
             var inputPage = new InputPage(input);
             AnalysisInputTabs.TabPages.Add(tabPage);
-            
+
             tabPage.Controls.Add(inputPage);
             inputPage.Location = new Point(0, 0);
             inputPage.Dock = DockStyle.Fill;
@@ -380,7 +382,8 @@ namespace OpenLogAnalyzer
             if (analysis.LeadIn != null)
                 MapOverlayLapList.Items.Add(analysis.LeadIn.ToMapOverlayListViewItem(TimeSpan.Zero));
 
-            MapOverlayLapList.Items.AddRange(analysis.Laps.Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
+            MapOverlayLapList.Items.AddRange(analysis.Laps
+                .Select(l => l.ToMapOverlayListViewItem(analysis.LogFile.Metadata.Best)).ToArray());
 
             if (analysis.LeadOut != null)
                 MapOverlayLapList.Items.Add(analysis.LeadOut.ToMapOverlayListViewItem(TimeSpan.Zero));
@@ -430,7 +433,10 @@ namespace OpenLogAnalyzer
 
             var markerIndex = _renderingController.MarkerIndex;
             // Gets the closest entry to the index.
-            var markedEntries = _renderingController.RenderedSegments.ToDictionary(segment => markerIndex < segment.Segment.Entries.Count ? segment.Segment.Entries[markerIndex] : segment.Segment.Entries.Last());
+            var markedEntries = _renderingController.RenderedSegments.ToDictionary(segment =>
+                markerIndex < segment.Segment.Entries.Count
+                    ? segment.Segment.Entries[markerIndex]
+                    : segment.Segment.Entries.Last());
             var minDistance = markedEntries.Keys.Min(entry => entry.GetDistance(markedEntries[entry].Segment));
             var maxDistance = markedEntries.Keys.Max(entry => entry.GetDistance(markedEntries[entry].Segment));
             var midPoint = (minDistance + maxDistance) / 2;
@@ -481,7 +487,8 @@ namespace OpenLogAnalyzer
         {
             if (MapOverlayLapList.SelectedItems.Count == 0)
             {
-                MessageBox.Show("You must select a segment to use for raw data for new input", "Must select segment", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("You must select a segment to use for raw data for new input", "Must select segment",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
@@ -531,9 +538,9 @@ namespace OpenLogAnalyzer
 
             foreach (var segment in _currentSegments)
             {
-                foreach (var input in _currentVehicle.Inputs.Where(i => i.XAxisType == InputXAxis.Distance))
+                foreach (var input in _currentVehicle.Inputs)
                 {
-                    var data = input.Extract(segment.Segment);
+                    var data = input.Extract(segment.Segment, xAxisOverride: InputXAxis.Distance);
                     var series = AnalysisOverviewChart.Series.FindByName($"{input.Name} ({segment.Name})");
 
                     if (series == null)
@@ -545,6 +552,9 @@ namespace OpenLogAnalyzer
                             Legend = "Legend",
                             ChartArea = "Overview"
                         };
+
+                        series.SetCustomProperty("CHECK", "☑");
+                        series.SetCustomProperty("COLOR", ColorTranslator.ToHtml(series.Color));
 
                         AnalysisOverviewChart.Series.Add(series);
                     }
@@ -560,7 +570,8 @@ namespace OpenLogAnalyzer
                 }
             }
 
-            foreach (var series in AnalysisOverviewChart.Series.Where(s => !_currentSegments.Any(segment => s.Name.Contains(segment.Name))).ToList())
+            foreach (var series in AnalysisOverviewChart.Series
+                .Where(s => !_currentSegments.Any(segment => s.Name.Contains(segment.Name))).ToList())
             {
                 AnalysisOverviewChart.Series.Remove(series);
             }
@@ -581,13 +592,17 @@ namespace OpenLogAnalyzer
             if (MapOverlayLapList.SelectedItems.Count == 0)
                 return;
 
-            var segments = MapOverlayLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis).ToArray();
+            var segments = MapOverlayLapList.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag as SegmentAnalysis)
+                .ToArray();
             _renderingController.RenderSegments(segments);
             AnalyzeSegments(segments);
 
             var markerIndex = _renderingController.MarkerIndex;
             // Gets the closest entry to the index.
-            var markedEntries = segments.ToDictionary(segment => markerIndex < segment.Segment.Entries.Count ? segment.Segment.Entries[markerIndex] : segment.Segment.Entries.Last());
+            var markedEntries = segments.ToDictionary(segment =>
+                markerIndex < segment.Segment.Entries.Count
+                    ? segment.Segment.Entries[markerIndex]
+                    : segment.Segment.Entries.Last());
             var minDistance = markedEntries.Keys.Min(entry => entry.GetDistance(markedEntries[entry].Segment));
             var maxDistance = markedEntries.Keys.Max(entry => entry.GetDistance(markedEntries[entry].Segment));
             var midPoint = (minDistance + maxDistance) / 2;
@@ -681,6 +696,28 @@ namespace OpenLogAnalyzer
             var configForm = new RiderConfigForm();
             configForm.ShowDialog(this);
             UpdateFormText();
+        }
+
+        private void AnalysisOverviewChart_MouseDown(object sender, MouseEventArgs e)
+        {
+            var clickedObject = AnalysisOverviewChart.HitTest(e.X, e.Y)?.Object;
+
+            if (!(clickedObject is LegendItem legendItem) || e.Button != MouseButtons.Left)
+                return;
+
+            var series = AnalysisOverviewChart.Series[legendItem.SeriesName];
+
+            if (series.GetCustomProperty("CHECK").Equals("☑"))
+            {
+                series.SetCustomProperty("CHECK", "☐");
+                series.Color = Color.FromArgb(0, series.Color);
+            }
+            else
+            {
+                series.SetCustomProperty("CHECK", "☑");
+                series.Color = ColorTranslator.FromHtml(
+                    series.GetCustomProperty("COLOR"));
+            }
         }
     }
 }

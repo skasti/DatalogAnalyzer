@@ -127,21 +127,24 @@ namespace OpenLogger.Analysis.Vehicle.Inputs
             _bufferPosition = 0;
         }
 
-        public List<DataPoint> Extract(LogSegment segment, IInputTransform lastTransform = null)
+        public List<DataPoint> Extract(LogSegment segment, IInputTransform lastTransform = null, InputXAxis xAxisOverride = InputXAxis.Default)
         {
-            var data = ExtractRaw(segment);
+            var data = ExtractRaw(segment, xAxisOverride);
             var smooth = Smooth(data);
             return Transform(smooth, lastTransform);
         }
 
-        public List<DataPoint> ExtractRaw(LogSegment segment)
+        public List<DataPoint> ExtractRaw(LogSegment segment, InputXAxis xAxisOverride = InputXAxis.Default)
         {
-            return segment.Entries.Select(entry => new DataPoint(GetXValue(entry, segment),GetRawValue(entry))).ToList();
+            return segment.Entries.Select(entry => new DataPoint(GetXValue(entry, segment, xAxisOverride),GetRawValue(entry))).ToList();
         }
 
-        private double GetXValue(LogEntry entry, LogSegment segment)
+        private double GetXValue(LogEntry entry, LogSegment segment, InputXAxis axis = InputXAxis.Default)
         {
-            switch (XAxisType)
+            if (axis == InputXAxis.Default)
+                axis = XAxisType;
+
+            switch (axis)
             {
                 case InputXAxis.Time:
                     return entry.GetTimeSpan(segment.LogStart).TotalSeconds;
