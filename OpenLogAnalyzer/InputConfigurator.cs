@@ -29,7 +29,7 @@ namespace OpenLogAnalyzer
         public bool Saved { get; set; }
         public Input Input { get; }
         private Input _editingInput;
-        private LogSegment _segment;
+        private SegmentAnalysis _segment;
         private GMapOverlay _segmentOverlay = new GMapOverlay("Segment");
         private GMapMarker _marker;
         private List<DataPoint> _rawData;
@@ -49,7 +49,7 @@ namespace OpenLogAnalyzer
         public InputConfigurator(LogSegment segment, Input input = null)
         {
             InitializeComponent();
-            _segment = segment;
+            _segment = new SegmentAnalysis(segment,"NewInputAnalysis");
             Input = input ?? new Input
             {
                 Name = "Unnamed"
@@ -76,7 +76,7 @@ namespace OpenLogAnalyzer
                 {
                     var name = inputSource.ToString();
 
-                    for (int i = 0; i < _segment.ValueCount - 6; i++)
+                    for (int i = 0; i < _segment.Segment.ValueCount - 6; i++)
                     {
                         SourceInput.Items.Add($"{name} {i+1}");
                     }
@@ -101,7 +101,7 @@ namespace OpenLogAnalyzer
         {
             InitMap();
 
-            SegmentPosition.Maximum = _segment.Entries.Count - 1;
+            SegmentPosition.Maximum = _segment.Segment.Entries.Count - 1;
 
             InitSourceInput();
             InitXAxisInput();
@@ -221,12 +221,12 @@ namespace OpenLogAnalyzer
 
         private void InitMap()
         {
-            var firstPos = _segment.Entries.First().GetLocation();
+            var firstPos = _segment.Segment.Entries.First().GetLocation();
 
             Map.MapProvider = GMap.NET.MapProviders.BingHybridMapProvider.Instance;
             _marker = new GMarkerGoogle(firstPos, GMarkerGoogleType.red_small);
 
-            var route = _segment.GetRoute("Segment");
+            var route = _segment.Route;
             _segmentOverlay.Markers.Add(_marker);
             _segmentOverlay.Routes.Add(route);
             Map.Overlays.Add(_segmentOverlay);
@@ -255,6 +255,11 @@ namespace OpenLogAnalyzer
         {
             UpdateRawChart();
             UpdateSmoothedChart();
+            var chartArea = RawChart.ChartAreas.FirstOrDefault();
+            
+            chartArea.AxisY.Maximum = double.NaN;
+            chartArea.AxisY.Minimum = double.NaN;
+            chartArea.RecalculateAxesScale();
         }
 
         private void UpdateSmoothedChart()
@@ -266,7 +271,7 @@ namespace OpenLogAnalyzer
 
         private void UpdateRawChart()
         {
-            _rawData = _editingInput.ExtractRaw(_segment);
+            _rawData = _editingInput.ExtractRaw(_segment.Segment);
 
             RawChart.Series[0].Points.Update(_rawData);
         }
@@ -283,7 +288,11 @@ namespace OpenLogAnalyzer
             }
             else
             {
-                _editingInput.Source = InputSource.Analog;
+                if (SourceInput.Text.StartsWith("Analog"))
+                    _editingInput.Source = InputSource.Analog;
+                else
+                    _editingInput.Source = InputSource.Temperature;
+
                 _editingInput.AnalogSource = int.Parse(SourceInput.Text.Split(' ').Last()) - 1;
             }
 
@@ -312,11 +321,11 @@ namespace OpenLogAnalyzer
 
         private void SegmentPosition_Scroll(object sender, EventArgs e)
         {
-            var entryIndex = Math.Min(SegmentPosition.Value, _segment.Entries.Count - 1);
-            var entry = _segment.Entries[entryIndex];
-            var cursorPosition = entry.GetTimeSpan(_segment.LogStart).TotalSeconds;
+            var entryIndex = Math.Min(SegmentPosition.Value, _segment.Segment.Entries.Count - 1);
+            var entry = _segment.Segment.Entries[entryIndex];
+            var cursorPosition = entry.GetTimeSpan(_segment.Segment.LogStart).TotalSeconds;
             var zoomMin = Math.Max(cursorPosition - 10, 0.0);
-            var zoomMax = Math.Min(cursorPosition + 10, _segment.Length.TotalSeconds);
+            var zoomMax = Math.Min(cursorPosition + 10, _segment.Segment.Length.TotalSeconds);
 
             RawChart.ChartAreas[0].Axes[0].ScaleView.Zoom(zoomMin, zoomMax);
             RawChart.ChartAreas[0].CursorX.Position = cursorPosition;
@@ -356,6 +365,7 @@ namespace OpenLogAnalyzer
 
         private void Save()
         {
+            _editingInput.Name = NameInput.Text;
             _editingInput.SaveTo(Input);
             Saved = true;
             OnSave?.Invoke(this, Input);

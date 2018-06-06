@@ -498,6 +498,16 @@ namespace OpenLogAnalyzer
                 return;
 
             var editor = new InputConfigurator(segment.Segment);
+
+            editor.OnSave += (o, input) =>
+            {
+                _currentVehicle.Inputs.Add(input);
+                VehicleRepository.Save(_currentVehicle);
+
+                AddInputTab(input);
+                AnalyzeSegments(singleInput: input);
+            };
+
             editor.ShowDialog(this);
         }
 

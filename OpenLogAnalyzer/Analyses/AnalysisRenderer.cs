@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -20,7 +21,8 @@ namespace OpenLogAnalyzer.Analyses
     {
         public IDataAnalysis Analysis { get; }
         public SegmentAnalysis Segment { get; }
-        
+        private List<DataPoint> _currentData = null;
+        private Thread _renderThread;
         public AnalysisRenderer(IDataAnalysis analysis, SegmentAnalysis segment = null)
         {
             InitializeComponent();
@@ -43,12 +45,29 @@ namespace OpenLogAnalyzer.Analyses
 
         public void Render(List<DataPoint> data)
         {
+            if (_renderThread != null)
+            {
+                if (_renderThread.IsAlive)
+                    _renderThread.Abort();
+
+                _renderThread.Join();
+                _renderThread = null;
+            }
+
+            _currentData = data;
+
+            _renderThread = new Thread(RenderData);
+            _renderThread.Start();
+        }
+
+        public void RenderData()
+        {
             var series = AnalysisChart.Series.FirstOrDefault();
 
             if (series == null)
                 return;
 
-            series.Points.Update(data, (point, dataPoint) =>
+            series.Points.Update(_currentData, (point, dataPoint) =>
             {
                 var customLabel = Analysis.CustomLabel(point);
 
@@ -56,7 +75,7 @@ namespace OpenLogAnalyzer.Analyses
                 {
                     dataPoint.ToolTip = customLabel;
                 }
-            });
+            }, AnalysisChart);
 
             series.ChartType = Analysis.GraphType.ToSeriesChartType();
         }

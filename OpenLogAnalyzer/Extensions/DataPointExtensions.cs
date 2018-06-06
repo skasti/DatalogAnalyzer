@@ -41,7 +41,8 @@ namespace OpenLogAnalyzer.Extensions
         /// <param name="perPoint">Use this if you need to do some processing with the datapoints</param>
         public static void Update(this DataPointCollection dataPointCollection, 
             List<DataPoint> data, 
-            Action<DataPoint, ChartDataPoint> perPoint = null)
+            Action<DataPoint, ChartDataPoint> perPoint = null,
+            Control parent = null)
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -56,13 +57,34 @@ namespace OpenLogAnalyzer.Extensions
                     dataPointCollection.AddXY(data[i].X, data[i].Y);
                 else
                 {
-                    dataPointCollection[i].XValue = data[i].X;
-                    dataPointCollection[i].YValues[0] = data[i].Y;
+                    if (parent?.InvokeRequired ?? false)
+                    {
+                        parent.Invoke((MethodInvoker) delegate()
+                        {
+                            dataPointCollection[i].XValue = data[i].X;
+                            dataPointCollection[i].YValues[0] = data[i].Y;
+                        });
+                    }
+                    else
+                    {
+                        dataPointCollection[i].XValue = data[i].X;
+                        dataPointCollection[i].YValues[0] = data[i].Y;
+                    }
                 }
 
-                perPoint?.Invoke(data[i], dataPointCollection[i]);
-
-                if (timer.ElapsedMilliseconds > 1000)
+                if (parent?.InvokeRequired ?? false)
+                {
+                    parent.Invoke((MethodInvoker)delegate ()
+                    {
+                        perPoint?.Invoke(data[i], dataPointCollection[i]);
+                    });
+                }
+                else
+                {
+                    perPoint?.Invoke(data[i], dataPointCollection[i]);
+                }
+                
+                if (timer.ElapsedMilliseconds > 100)
                 {
                     Application.DoEvents();
                     timer.Restart();

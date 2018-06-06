@@ -5,7 +5,21 @@ using OpenLogger.Core.Extensions;
 
 namespace OpenLogger.Core
 {
-    public class LogEntry
+    public interface IHaveTime
+    {
+        uint Microseconds { get; }
+        TimeSpan GetTimeSpan(LogStart logStart);
+        DateTime GetTimeStamp(LogStart logStart);
+    }
+
+    public interface IHavePosition
+    {
+        double Longitude { get; }
+        double Latitude { get; }
+    }
+    public interface IHavePositionAndTime : IHavePosition, IHaveTime
+    { }
+    public class LogEntry: IHavePositionAndTime
     {
         public LogEntry(uint microseconds, List<double> values, double speed, double speedAccuracy, double longitude, double latitude, double altitude, double horizontalAccuracy, double verticalAccuracy, byte fixType)
         {

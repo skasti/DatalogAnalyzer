@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenLogAnalyzer.Analyses;
@@ -44,7 +45,9 @@ namespace OpenLogAnalyzer
         private readonly Dictionary<IDataAnalysis, TabPage> _analysisTabs = new Dictionary<IDataAnalysis, TabPage>();
         private readonly List<AnalysisRenderer> _analysisRenderers = new List<AnalysisRenderer>();
 
-        private readonly Dictionary<SegmentAnalysis, List<DataPoint>> _segmentData = new Dictionary<SegmentAnalysis, List<DataPoint>>(); 
+        private readonly Dictionary<SegmentAnalysis, List<DataPoint>> _segmentData = new Dictionary<SegmentAnalysis, List<DataPoint>>();
+
+        private Thread _renderThread;
 
         public InputPage(Input input)
         {
@@ -64,6 +67,15 @@ namespace OpenLogAnalyzer
 
         public void Render(IEnumerable<SegmentAnalysis> segments)
         {
+            if (_renderThread != null)
+            {
+                if (_renderThread.IsAlive)
+                    _renderThread.Abort();
+
+                _renderThread.Join();
+                _renderThread = null;
+            }
+
             _currentSegments.Clear();
             _currentSegments.AddRange(segments);
 
@@ -72,10 +84,11 @@ namespace OpenLogAnalyzer
 
             UpdateSegmentData();
 
+            _renderThread = new Thread(RenderSegments);
+            _renderThread.Start();
+
             foreach (var segment in segments)
             {
-                RenderSegmentRawSeries(segment);
-
                 var data = _segmentData[segment];
 
                 foreach (var analysis in Input.Analyses)
@@ -85,7 +98,23 @@ namespace OpenLogAnalyzer
                     renderer.Render(data);
                 }
             }
+        }
 
+        private void RenderSegments()
+        {
+            foreach (var segment in _currentSegments)
+            {
+                RenderSegmentRawSeries(segment);
+            }
+
+            if (RawChart.InvokeRequired)
+                RawChart.Invoke((MethodInvoker) UpdateChartRange);
+            else
+                UpdateChartRange();
+        }
+
+        private void UpdateChartRange()
+        {
             var chartArea = RawChart.ChartAreas.First();
 
             if (Input.AutoGraphRange)
@@ -233,13 +262,25 @@ namespace OpenLogAnalyzer
 
             if (series == null)
             {
-                series = Input.CreateSeries(segment);
-                RawChart.Series.Add(series);
-                series.Points.AddRange(data);
+                if (RawChart.InvokeRequired)
+                {
+                    RawChart.Invoke((MethodInvoker)delegate ()
+                    {
+                        series = Input.CreateSeries(segment);
+                        RawChart.Series.Add(series);
+                        series.Points.AddRange(data);
+                    });
+                }
+                else
+                {
+                    series = Input.CreateSeries(segment);
+                    RawChart.Series.Add(series);
+                    series.Points.AddRange(data);
+                }
             }
             else
             {
-                series.Points.Update(data);
+                series.Points.Update(data, parent: RawChart);
             }
         }
 
