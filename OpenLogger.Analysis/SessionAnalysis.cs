@@ -55,7 +55,7 @@ namespace OpenLogger.Analysis
                     if (previousEntry == null)
                     {
                         LeadIn = new SegmentAnalysis(LogFile.SubSet(LogFile.Entries.First(), entry), "Lead in");
-                        previousEntry = entry;
+                        previousEntry = latestInside;
                         latestInside = null;
                     }
                     else
@@ -63,7 +63,7 @@ namespace OpenLogger.Analysis
                         var lapSegment = LogFile.SubSet(previousEntry, entry);
                         var lapAnalysis = new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}");
                         laps.Add(lapAnalysis);
-                        previousEntry = entry;
+                        previousEntry = latestInside;
                         latestInside = null;
                     }
                 }

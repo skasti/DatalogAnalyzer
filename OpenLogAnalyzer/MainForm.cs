@@ -653,6 +653,7 @@ namespace OpenLogAnalyzer
             var endEntry = segment.GetClosestEntry(selectionEnd);
 
             segment = segment.SubSet(startEntry, endEntry);
+            
 
             var editor = new InputConfigurator(segment, selectedInput);
             editor.OnSave += (o, input) =>

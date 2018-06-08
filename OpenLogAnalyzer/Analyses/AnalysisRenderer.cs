@@ -77,7 +77,15 @@ namespace OpenLogAnalyzer.Analyses
                 }
             }, AnalysisChart);
 
-            series.ChartType = Analysis.GraphType.ToSeriesChartType();
+            if (AnalysisChart.InvokeRequired)
+            {
+                AnalysisChart.Invoke((MethodInvoker) delegate()
+                {
+                    series.ChartType = Analysis.GraphType.ToSeriesChartType();
+                });
+            }
+            else
+                series.ChartType = Analysis.GraphType.ToSeriesChartType();
         }
     }
 }

@@ -50,6 +50,8 @@ namespace OpenLogAnalyzer
         {
             InitializeComponent();
             _segment = new SegmentAnalysis(segment,"NewInputAnalysis");
+            _segment.CalculateRoutes(null);
+
             Input = input ?? new Input
             {
                 Name = "Unnamed"
@@ -390,6 +392,9 @@ namespace OpenLogAnalyzer
 
             if (!_editingInput.AutoGraphRange)
             {
+                if (!ValidateRangeMaxInput()) return;
+                if (!ValidateRangeMaxInput()) return;
+
                 chartArea.AxisY.Maximum = (double) rangeMaxInput.Value;
                 chartArea.AxisY.Minimum = (double) rangeMinInput.Value;
             }
@@ -406,12 +411,8 @@ namespace OpenLogAnalyzer
             if (!_loaded)
                 return;
 
-            if (rangeMaxInput.Value <= rangeMinInput.Value)
-            {
-                rangeMaxInput.Value = rangeMinInput.Value + 1;
-                MessageBox.Show("Max must be larger than Min", "Invalid value", MessageBoxButtons.OK);
+            if (!ValidateRangeMaxInput())
                 return;
-            }
 
             if (autoRangeInput.Checked)
                 return;
@@ -423,17 +424,33 @@ namespace OpenLogAnalyzer
             autoRangeInput.Checked = false;
         }
 
+        private bool ValidateRangeMaxInput()
+        {
+            if (rangeMaxInput.Value <= rangeMinInput.Value)
+            {
+                MessageBox.Show("Max must be larger than Min", "Invalid value", MessageBoxButtons.OK);
+                return false;
+            }
+            return true;
+        }
+
+        private bool ValidateRangeMinInput()
+        {
+            if (rangeMinInput.Value >= rangeMaxInput.Value)
+            {
+                MessageBox.Show("Min must be smaller than Max", "Invalid value", MessageBoxButtons.OK);
+                return false;
+            }
+            return true;
+        }
+
         private void rangeMinInput_ValueChanged(object sender, EventArgs e)
         {
             if (!_loaded)
                 return;
 
-            if (rangeMinInput.Value >= rangeMaxInput.Value)
-            {
-                rangeMinInput.Value = rangeMaxInput.Value - 1;
-                MessageBox.Show("Min must be smaller than Max", "Invalid value", MessageBoxButtons.OK);
+            if (!ValidateRangeMinInput())
                 return;
-            }
 
             if (autoRangeInput.Checked)
                 return;
