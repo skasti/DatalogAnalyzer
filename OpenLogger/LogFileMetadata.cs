@@ -14,6 +14,7 @@ namespace OpenLogger.Core
         public TimeSpan Length { get; set; }
         public TimeSpan Best { get; set; }
         public TimeSpan Average { get; set; }
+        public TimeSpan GpsTimeOffset { get; set; }
         public int Laps { get; set; }
         public string Track { get; set; }
 
@@ -21,16 +22,18 @@ namespace OpenLogger.Core
         {
         }
 
-        public LogFileMetadata(LogFile logFile)
+        public LogFileMetadata(LogFile logFile, TimeSpan gpsTimeOffset)
         {
             LogFilename = logFile.FullFilename;
+            GpsTimeOffset = gpsTimeOffset;
             StartTime = logFile.LogStart.Timestamp;
             Length = logFile.Entries.LastOrDefault()?.GetTimeSpan(logFile.LogStart) ?? TimeSpan.Zero;
         }
 
-        public static LogFileMetadata Load(string filename)
+        public static LogFileMetadata Load(Stream stream)
         {
-            var metaJson = File.ReadAllText(filename);
+            var reader = new StreamReader(stream);
+            var metaJson = reader.ReadToEnd();
             return JsonConvert.DeserializeObject<LogFileMetadata>(metaJson);
         }
     }

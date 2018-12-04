@@ -11,14 +11,16 @@ namespace OpenLogger.Core
     {
         public LogStart LogStart { get; private set; }
         public List<LogEntry> Entries { get; }
-        public int ValueCount { get; }
+        public int ValueCount { get; set; }
         public TimeSpan Length => Entries?.LastOrDefault()?.GetTimeSpan(LogStart) ?? TimeSpan.Zero;
 
         public LogSegment(LogStart logStart, List<LogEntry> entries)
         {
             LogStart = logStart;
             Entries = entries;
-            ValueCount = entries.Select(e => e.Values.Count).Max();
+
+            if (Entries.Any())
+                ValueCount = entries.Select(e => e.Values.Count).Max();
         }
 
         public void WriteToStream(BinaryWriter writer)
@@ -38,6 +40,27 @@ namespace OpenLogger.Core
             {
                 Log.Error("Failed to write to stream: {0}", ex);
             }
+        }
+
+        public static LogSegment ReadFromStream(BinaryReader reader)
+        {
+            try
+            {
+                var segment = new LogSegment(LogStart.ReadFromStream(reader), new List<LogEntry>());
+                segment.ValueCount = reader.ReadUInt16();
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    segment.Entries.Add(LogEntry.ReadFromStream(segment.ValueCount, reader));
+                }
+
+                return segment;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to load logsegment: {ex}");
+            }
+
+            return null;
         }
 
         public LogEntry GetClosestEntry(double timeSpan, int skip = 0)
@@ -91,7 +114,7 @@ namespace OpenLogger.Core
             var entries = Entries.GetRange(startIndex, count);
             var firstEntry = entries.FirstOrDefault();
 
-            var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).ToUnixTimestamp(), TimeSpan.Zero);
+            var logStart = new LogStart(firstEntry.Microseconds, (uint)firstEntry.GetTimeStamp(LogStart).ToUnixTimestamp());
 
             return new LogSegment(logStart, entries.Skip(1).ToList());
         }

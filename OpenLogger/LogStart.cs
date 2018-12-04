@@ -5,10 +5,14 @@ namespace OpenLogger.Core
 {
     public class LogStart
     {
-        public LogStart(uint microseconds, uint timestamp, TimeSpan gpsTimeOffset)
+        public LogStart()
+        {
+        }
+
+        public LogStart(uint microseconds, uint timestamp)
         {
             Microseconds = microseconds;
-            Timestamp = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime.Add(gpsTimeOffset);
+            Timestamp = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
         }
 
         public uint Microseconds { get; }
@@ -19,6 +23,11 @@ namespace OpenLogger.Core
             var unixTime = new DateTimeOffset(Timestamp).ToUnixTimeSeconds();
             writer.Write((UInt32)Microseconds);
             writer.Write((UInt32)unixTime);
+        }
+
+        public static LogStart ReadFromStream(BinaryReader reader)
+        {
+            return new LogStart(reader.ReadUInt32(), reader.ReadUInt32());
         }
     }
 }

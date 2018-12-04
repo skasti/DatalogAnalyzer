@@ -22,10 +22,10 @@ namespace OpenLogger.Analysis.JsonConverter
         {
             var logFile = existingValue as LogFile;
 
-            var readLogFileName = reader.ReadAsString();
+            //var readLogFileName = reader.ReadAsString();
 
-            if ((logFile == null) || (logFile.FullFilename != readLogFileName))
-                return LogFile.Load(readLogFileName, TimeSpan.Zero);
+            //if ((logFile == null) || (logFile.FullFilename != readLogFileName))
+            //    return LogFile.Load(readLogFileName, TimeSpan.Zero);
             
             return logFile;
         }

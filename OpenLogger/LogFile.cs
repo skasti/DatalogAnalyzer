@@ -13,10 +13,10 @@ namespace OpenLogger.Core
         public string Filename { get; set; }
         public string FullFilename => Path.Combine(Location, Filename) + ".LOG";
         public LogFileMetadata Metadata { get; set; }
-        private LogFile(string fileName, LogStart logStart, List<LogEntry> entries, LogFileMetadata metadata = null) : base(logStart, entries)
+        private LogFile(string fileName, LogStart logStart, List<LogEntry> entries, LogFileMetadata metadata) : base(logStart, entries)
         {
             UpdateLocation(fileName);
-            Metadata = metadata ?? new LogFileMetadata(this);
+            Metadata = metadata;
         }
 
         private void UpdateLocation(string fileName)
@@ -28,36 +28,31 @@ namespace OpenLogger.Core
                 Metadata.LogFilename = FullFilename;
         }
 
-        public void Save(string fileName = null)
+        public void Save(Stream logFileStream, Stream metadataStream = null)
         {
-            fileName = fileName ?? FullFilename;
-            UpdateLocation(fileName);
-
-            var stream = File.Create(fileName);
-            var writer = new BinaryWriter(stream);
+            var writer = new BinaryWriter(logFileStream);
 
             WriteToStream(writer);
             writer.Flush();
             writer.Close();
 
-            File.SetCreationTime(fileName, LogStart.Timestamp);
-
-            SaveMetadata();
+            if (metadataStream != null)
+                SaveMetadata(metadataStream);
         }
 
-        public void SaveMetadata()
+        public void SaveMetadata(Stream metadataStream)
         {
-            var fileName = FullFilename + ".meta";
             var json = JsonConvert.SerializeObject(Metadata, Formatting.Indented);
-            File.WriteAllText(fileName, json);
+            var writer = new StreamWriter(metadataStream);
+            writer.Write(json);
+            writer.Flush();
         }
 
-        public static LogFile Load(string fileName, TimeSpan gpsTimeOffset)
+        public static LogFile Load(string fileName, Stream logStream, TimeSpan gpsTimeOffset, LogFileMetadata metadata = null)
         {
-            var stream = File.OpenRead(fileName);
-            var reader = new BinaryReader(stream);
+            var reader = new BinaryReader(logStream);
 
-            var logStart = new LogStart(reader.ReadUInt32(), reader.ReadUInt32(), gpsTimeOffset);
+            var logStart = LogStart.ReadFromStream(reader);
 
             var entries = new List<LogEntry>();
 
@@ -71,11 +66,11 @@ namespace OpenLogger.Core
 
             var valueCount = reader.ReadUInt16();
 
-            while (stream.Position < stream.Length)
+            while (logStream.Position < logStream.Length)
             {
                 try
                 {
-                    var entry = new LogEntry(valueCount, reader);
+                    var entry = LogEntry.ReadFromStream(valueCount, reader);
 
                     var delta = entry.Microseconds - previous;
                     deltaSum += delta;
@@ -104,7 +99,7 @@ namespace OpenLogger.Core
 
             if (entries.Count == 0)
             {
-                Log.Error("File contains no entries: {0}", fileName);
+                Log.Error("Stream contains no entries: {0}", fileName);
                 return null;
             }
 
@@ -119,12 +114,17 @@ namespace OpenLogger.Core
                 ((double)largeDeltas / entries.Count) * 100.0,
                 entries.Last().GetTimeSpan(logStart).TotalSeconds);
 
-            LogFileMetadata metadata = null;
+            var logFile = new LogFile(fileName, logStart, entries, metadata);
 
-            if (File.Exists(fileName + ".meta"))
-                metadata = LogFileMetadata.Load(fileName + ".meta");
+            if (metadata == null)
+                logFile.InitMetadata(gpsTimeOffset);
 
-            return new LogFile(fileName, logStart, entries, metadata);
+            return logFile;
+        }
+
+        private void InitMetadata(TimeSpan gpsTimeOffset)
+        {
+            Metadata = new LogFileMetadata(this, gpsTimeOffset);
         }
     }
 }

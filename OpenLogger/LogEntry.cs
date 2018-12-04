@@ -35,24 +35,35 @@ namespace OpenLogger.Core
             FixType = fixType;
         }
 
-        public LogEntry(int valueCount, BinaryReader reader)
+        public LogEntry()
         {
-            Microseconds = reader.ReadUInt32();
-            Speed = reader.ReadUInt16() * 0.0036; //unit is mm/s, we want km/h
-            SpeedAccuracy = reader.ReadUInt16() * 0.01; //unit is mm/s, we want m/s
-            Longitude = reader.ReadInt32() * 0.0000001; //Scaling is 1e-7
-            Latitude = reader.ReadInt32() * 0.0000001; //Scaling is 1e-7
-            Altitude = reader.ReadInt32();
-            HorizontalAccuracy = reader.ReadUInt32() * 0.001;
-            VerticalAccuracy = reader.ReadUInt32() * 0.001;
-            FixType = reader.ReadByte();
+            
+        }
 
-            Values = new List<double>(valueCount);
+        public static LogEntry ReadFromStream(int valueCount, BinaryReader reader)
+        {
+            var entry = new LogEntry
+            {
+                Microseconds = reader.ReadUInt32(),
+                Speed = reader.ReadUInt16() * 0.0036, //unit is mm/s, we want km/h
+                SpeedAccuracy = reader.ReadUInt16() * 0.01, //unit is mm/s, we want m/s
+                Longitude = reader.ReadInt32() * 0.0000001, //Scaling is 1e-7
+                Latitude = reader.ReadInt32() * 0.0000001, //Scaling is 1e-7
+                Altitude = reader.ReadInt32(),
+                HorizontalAccuracy = reader.ReadUInt32() * 0.001,
+                VerticalAccuracy = reader.ReadUInt32() * 0.001,
+                FixType = reader.ReadByte(),
+
+                Values = new List<double>(valueCount)
+
+            };
 
             for (var i = 0; i < valueCount; i++)
             {
-                Values.Add(reader.ReadUInt16());
+                entry.Values.Add(reader.ReadUInt16());
             }
+
+            return entry;
         }
 
         public void WriteToStream(BinaryWriter writer)
@@ -75,16 +86,16 @@ namespace OpenLogger.Core
             }
         }
 
-        public uint Microseconds { get; }
-        public double Speed { get; }
-        public double SpeedAccuracy { get; }
-        public double Longitude { get; }
-        public double Latitude { get; }
-        public double Altitude { get; }
-        public double HorizontalAccuracy { get; }
-        public double VerticalAccuracy { get; }
-        public byte FixType { get; }
-        public List<double> Values { get; }
+        public uint Microseconds { get; private set; }
+        public double Speed { get; private set; }
+        public double SpeedAccuracy { get; private set; }
+        public double Longitude { get; private set; }
+        public double Latitude { get; private set; }
+        public double Altitude { get; private set; }
+        public double HorizontalAccuracy { get; private set; }
+        public double VerticalAccuracy { get; private set; }
+        public byte FixType { get; private set; }
+        public List<double> Values { get; private set; }
 
         public DateTime GetTimeStamp(LogStart logStart)
         {

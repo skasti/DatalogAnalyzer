@@ -11,19 +11,18 @@ using OpenLogger.Core;
 
 namespace OpenLogAnalyzer
 {
-    public class TrackRepository
+    public class TrackRepository: OpenLogger.Analysis.TrackRepository
     {
-        public List<Track> Tracks { get; }
 
         public TrackRepository()
         {
-            Tracks = new List<Track>();
+
         }
 
         /// <summary>
         /// Load all tracks
         /// </summary>
-        public void Load()
+        public override void Load()
         { 
             var trackFiles = Directory.GetFiles(Paths.TrackLibrary, "*.track");
 
@@ -54,33 +53,6 @@ namespace OpenLogAnalyzer
                 else
                     Tracks.Add(track);
             }
-        }
-
-        public void Add(Track track)
-        {
-            Tracks.Add(track);
-        }
-
-        /// <summary>
-        /// Tries to find a track at the position provided. Returns null if not found
-        /// </summary>
-        public IEnumerable<Track> FindTracksAt(PointLatLng position)
-        {
-            return Tracks.Where(t => t.Area.IsInside(position));
-        }
-
-        public IEnumerable<Track> FindTracks(LogFile logFile)
-        {
-            var tracks = new List<Track>();
-
-            for (int i = 0; i < logFile.Entries.Count; i += 1000)
-            {
-                var matches = FindTracksAt(logFile.Entries[i].GetLocation());
-
-                tracks.AddRange(matches.Where(m => !tracks.Contains(m)));
-            }
-
-            return tracks;
         }
     }
 }

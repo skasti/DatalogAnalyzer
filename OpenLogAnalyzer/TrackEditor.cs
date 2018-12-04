@@ -83,7 +83,7 @@ namespace OpenLogAnalyzer
 
             if (Segment != null)
             {
-                var segmentRoute = Segment.GetRoute("Log");
+                var segmentRoute = Segment.GetRoute("Log", currentTrack: Track);
                 _segmentOverlay.Routes.Add(segmentRoute);
                 trackMap.ZoomAndCenterRoute(segmentRoute);
             }
@@ -153,7 +153,7 @@ namespace OpenLogAnalyzer
             _startFinishOverlay.IsVisibile = !_startFinishOverlay.IsVisibile;
         }
 
-        private void defineToolStripMenuItem_Click(object sender, EventArgs e)
+        private void defineStartFinish_Click(object sender, EventArgs e)
         {
             if (!ValidateActivePolygon())
                 return;
@@ -397,7 +397,7 @@ namespace OpenLogAnalyzer
 
             Track.Changed = DateTime.Now;
 
-            var segmentRoute = Segment.GetRoute("Log");
+            var segmentRoute = Segment.GetRoute("Log", currentTrack: Track);
             _segmentOverlay.Clear();
             _segmentOverlay.Routes.Add(segmentRoute);
 

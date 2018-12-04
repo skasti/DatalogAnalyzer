@@ -23,19 +23,33 @@ namespace OpenLogger.Analysis
         public List<LapAnalysis> Laps { get; private set; }
         public string VehicleName => LogFile.Metadata.Bike;
 
-        public SessionAnalysis(LogFile logFile, Track track)
+        public SessionAnalysis(LogFile logFile, Track track, bool performAnalysis = true, bool calculateRoutes = true, bool calculateAccelerationRoutes = true)
         {
             LogFile = logFile;
             Track = track;
-            Laps = GetLaps();
-            Full = new SegmentAnalysis(LogFile, "Full");
-            
-            CalculateRoutes();
 
-            LogFile.Metadata.UpdateAnalysisData(this);
+            if (performAnalysis)
+            {
+                AnalyzeBaseData();
+                AnalyzeLaps();
+                LogFile.Metadata.UpdateAnalysisData(this);
+            }
+
+            if (calculateRoutes)
+                CalculateRoutes(calculateAccelerationRoutes);
         }
 
-        private List<LapAnalysis> GetLaps()
+        public void AnalyzeBaseData()
+        {
+            Full = new SegmentAnalysis(LogFile, "Full");
+        }
+
+        public void AnalyzeLaps(bool generateGPSData = true)
+        {
+            Laps = GetLaps(generateGPSData);
+        }
+
+        private List<LapAnalysis> GetLaps(bool generateGPSData = true)
         {
             if (Track == null)
                 return new List<LapAnalysis>();
@@ -54,14 +68,14 @@ namespace OpenLogger.Analysis
                 {
                     if (previousEntry == null)
                     {
-                        LeadIn = new SegmentAnalysis(LogFile.SubSet(LogFile.Entries.First(), entry), "Lead in");
+                        LeadIn = new SegmentAnalysis(LogFile.SubSet(LogFile.Entries.First(), entry), "Lead in", generateGPSData);
                         previousEntry = latestInside;
                         latestInside = null;
                     }
                     else
                     {
                         var lapSegment = LogFile.SubSet(previousEntry, entry);
-                        var lapAnalysis = new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}");
+                        var lapAnalysis = new LapAnalysis(lapSegment, $"Lap {laps.Count + 1}", generateGPSData);
                         laps.Add(lapAnalysis);
                         previousEntry = latestInside;
                         latestInside = null;
@@ -71,26 +85,29 @@ namespace OpenLogger.Analysis
 
             if (previousEntry != null)
             {
-                LeadOut = new SegmentAnalysis(LogFile.SubSet(previousEntry, LogFile.Entries.Last()), "Lead out");
+                LeadOut = new SegmentAnalysis(LogFile.SubSet(previousEntry, LogFile.Entries.Last()), "Lead out", generateGPSData);
             }
 
             if (laps.Any())
-                CombinedLaps = new SegmentAnalysis(LogFile.SubSet(laps.First().Segment.Entries.First(), laps.Last().Segment.Entries.Last()), "Combined laps");
+                CombinedLaps = new SegmentAnalysis(LogFile.SubSet(laps.First().Segment.Entries.First(), laps.Last().Segment.Entries.Last()), "Combined laps", generateGPSData);
 
             return laps.ToList();
         }
 
-        public void CalculateRoutes()
+        public void CalculateRoutes(bool calculateAccelerationRoutes = true)
         {
-            Full.CalculateRoutes(Track);
-            LeadIn?.CalculateRoutes(Track);
+            Full?.CalculateRoutes(Track, calculateAccelerationRoutes);
+            LeadIn?.CalculateRoutes(Track, calculateAccelerationRoutes);
 
-            foreach (var lap in Laps)
-                lap.CalculateRoutes(Track);
+            if (Laps != null)
+            {
+                foreach (var lap in Laps)
+                    lap.CalculateRoutes(Track, calculateAccelerationRoutes);
+            }
 
-            CombinedLaps?.CalculateRoutes(Track);
+            CombinedLaps?.CalculateRoutes(Track, calculateAccelerationRoutes);
 
-            LeadOut?.CalculateRoutes(Track);
+            LeadOut?.CalculateRoutes(Track, calculateAccelerationRoutes);
         }
     }
 }

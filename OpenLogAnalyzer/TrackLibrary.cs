@@ -11,6 +11,7 @@ using GMap.NET.WindowsForms;
 using OpenLogAnalyzer;
 using OpenLogger.Analysis;
 using OpenLogger.Core;
+using TrackRepository = OpenLogAnalyzer.TrackRepository;
 
 namespace DatalogAnalyzer
 {

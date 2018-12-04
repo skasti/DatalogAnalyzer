@@ -10,7 +10,7 @@ namespace OpenLogger.Analysis
     public class LapAnalysis: SegmentAnalysis
     {
 
-        public LapAnalysis(LogSegment segment, string name) : base(segment, name)
+        public LapAnalysis(LogSegment segment, string name, bool generateGPSData = true) : base(segment, name, generateGPSData)
         {
         }
 

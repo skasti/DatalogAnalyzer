@@ -187,7 +187,7 @@ namespace OpenLogAnalyzer
         private void UpdateLogLibraryList()
         {
             var libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
-            var metadatas = libraryFiles.Select(LogFileMetadata.Load).OrderByDescending(m => m.StartTime);
+            var metadatas = libraryFiles.Select(filename => LogFileMetadata.Load(File.OpenRead(filename))).OrderByDescending(m => m.StartTime);
 
             LogLibraryList.Items.Clear();
 
@@ -274,13 +274,7 @@ namespace OpenLogAnalyzer
             if (selectedMetadata == null)
                 return;
 
-            var logFile = LogFile.Load(selectedMetadata.LogFilename, TimeSpan.Zero);
-
-            if (logFile.LogStart.Timestamp != selectedMetadata.StartTime)
-            {
-                logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds,
-                    (uint) selectedMetadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
-            }
+            var logFile = selectedMetadata.LoadLog();
 
             var trackMatches = _trackRepository.FindTracks(logFile);
 
@@ -306,8 +300,11 @@ namespace OpenLogAnalyzer
 
             var analysis = new SessionAnalysis(logFile, track);
 
+            using (var metadataStream = File.Create(logFile.FullFilename + ".meta"))
+            {
+                analysis.LogFile.SaveMetadata(metadataStream);
+            }
 
-            analysis.LogFile.SaveMetadata();
             analysis.LogFile.Metadata.UpdateListViewItem(selectedItem);
 
             SetCurrentAnalysis(analysis);
@@ -327,7 +324,11 @@ namespace OpenLogAnalyzer
                 selector.OnSelected += (sender, s) =>
                 {
                     analysis.LogFile.Metadata.Bike = s;
-                    analysis.LogFile.SaveMetadata();
+
+                    using (var metadataStream = File.Create(analysis.LogFile.FullFilename + ".meta"))
+                    {
+                        analysis.LogFile.SaveMetadata(metadataStream);
+                    }
 
                     _currentVehicle = VehicleRepository.Get(analysis.VehicleName);
                 };
@@ -517,6 +518,10 @@ namespace OpenLogAnalyzer
                 return;
 
             var segment = _currentAnalysis?.Full?.Segment;
+
+            if (_renderingController.RenderedSegments.Any())
+                segment = _renderingController.RenderedSegments.First().Segment;
+
             var selectedTrack = _trackRepository.Tracks[TrackLibraryList.SelectedIndices[0]];
 
             var editor = new TrackEditor(track: selectedTrack, segment: segment);

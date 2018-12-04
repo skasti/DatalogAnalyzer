@@ -5,6 +5,7 @@ using System.Linq;
 using GMap.NET.WindowsForms;
 using OpenLogger.Analysis.Config;
 using OpenLogger.Analysis.Extensions;
+using OpenLogger.Analysis.Metadata;
 using OpenLogger.Core;
 
 namespace OpenLogger.Analysis
@@ -14,7 +15,7 @@ namespace OpenLogger.Analysis
         public Color SegmentColor { get; } = RandomColors.GetNext();
         public string Name { get; set; }
         public LogSegment Segment { get; }
-        public List<GPSDataPoint> GPSData { get; }
+        public List<GPSDataPoint> GPSData { get; set; }
         public GMapRoute Route { get; private set; }
         public List<GMapRoute> AccelerationRoutes { get; private set; }
         public double Distance => Route.Distance;
@@ -26,7 +27,7 @@ namespace OpenLogger.Analysis
 
         public event EventHandler<SegmentAnalysis> OnRoutes;
 
-        public SegmentAnalysis(LogSegment segment, string name)
+        public SegmentAnalysis(LogSegment segment, string name, bool generateGPSData = true)
         {
             Name = name;
             Segment = segment;
@@ -44,6 +45,12 @@ namespace OpenLogger.Analysis
                 LowestSpeed = 0;
             }
 
+            if (generateGPSData)
+                GenerateGPSData();
+        }
+
+        public void GenerateGPSData()
+        {
             double prevLat = 0, prevLong = 0, prevSpeed = -1, prevAcceleration = -1000;
             uint prevMicroseconds = 0;
             GPSDataPoint gpsData = null;
@@ -51,7 +58,8 @@ namespace OpenLogger.Analysis
 
             foreach (var entry in Segment.Entries)
             {
-                if ((gpsData != null) && (entry.Latitude == prevLat) && (entry.Longitude == prevLong))
+                // ReSharper disable CompareOfFloatsByEqualityOperator
+                if ((gpsData != null) && (entry.Latitude == prevLat) && (entry.Longitude == prevLong)) // ReSharper restore CompareOfFloatsByEqualityOperator
                 {
                     gpsData.Entries.Add(entry);
                     continue;
@@ -71,6 +79,7 @@ namespace OpenLogger.Analysis
                         gpsData.Acceleration = acceleration;
                         prevAcceleration = acceleration;
                     }
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     else if (prevAcceleration != -1000)
                     {
                         gpsData.Acceleration = prevAcceleration;
@@ -80,6 +89,7 @@ namespace OpenLogger.Analysis
                         gpsData.Acceleration = 0;
                     }
                 }
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 else if (prevAcceleration != -1000)
                 {
                     gpsData.Acceleration = prevAcceleration;
@@ -98,16 +108,24 @@ namespace OpenLogger.Analysis
             }
         }
 
-        public void CalculateRoutes(Track currentTrack)
+        public void CalculateRoutes(Track currentTrack, bool calculateAccelerationRoutes = true)
         {
             Route = GPSData.GetRoute(Name, new Pen(Color.White, 2.0f), currentTrack);
 
+            if (calculateAccelerationRoutes)
+                CalculateAccelerationRoutes(currentTrack);
+
+            OnRoutes?.Invoke(this, this);
+        }
+
+        public void CalculateAccelerationRoutes(Track currentTrack)
+        {
             AccelerationRoutes = new List<GMapRoute>();
 
             GMapRoute currentRoute = null;
             var prevAccelerationState = AccelerationState.Coasting;
 
-            var smoothingBuffer = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            var smoothingBuffer = new[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             var smoothingIndex = 0;
 
             var lineConfig = AccelerationLineConfig.Instance;
@@ -127,6 +145,7 @@ namespace OpenLogger.Analysis
                 {
                     currentRoute?.Points.Add(gpsPoint.GetLocation(currentTrack));
 
+                    // ReSharper disable once UseObjectOrCollectionInitializer
                     currentRoute = new GMapRoute($"Acceleration {AccelerationRoutes.Count}");
                     currentRoute.Stroke = lineConfig.GetPen(accelerationState);
                     currentRoute.Points.Add(gpsPoint.GetLocation(currentTrack));

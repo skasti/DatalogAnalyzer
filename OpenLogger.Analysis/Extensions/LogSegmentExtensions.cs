@@ -13,7 +13,7 @@ namespace OpenLogger.Analysis.Extensions
 {
     public static class LogSegmentExtensions
     {
-        public static GMapRoute GetRoute(this LogSegment segment, string name, Pen stroke = null)
+        public static GMapRoute GetRoute(this LogSegment segment, string name, Pen stroke = null, Track currentTrack = null)
         {
             var route = new GMapRoute(name);
             route.Stroke = stroke ?? route.Stroke;
@@ -22,7 +22,7 @@ namespace OpenLogger.Analysis.Extensions
            
             foreach (var entry in segment.Entries.Where(e => e.HorizontalAccuracy < 10))
             {
-                var entryPos = entry.GetLocation();
+                var entryPos = entry.GetLocation(currentTrack);
 
                 if (entryPos == prevPos)
                     continue;

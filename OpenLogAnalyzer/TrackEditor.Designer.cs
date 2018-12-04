@@ -171,7 +171,7 @@
             this.defineToolStripMenuItem.Name = "defineToolStripMenuItem";
             this.defineToolStripMenuItem.Size = new System.Drawing.Size(184, 30);
             this.defineToolStripMenuItem.Text = "Define";
-            this.defineToolStripMenuItem.Click += new System.EventHandler(this.defineToolStripMenuItem_Click);
+            this.defineToolStripMenuItem.Click += new System.EventHandler(this.defineStartFinish_Click);
             // 
             // areaToolStripMenuItem
             // 

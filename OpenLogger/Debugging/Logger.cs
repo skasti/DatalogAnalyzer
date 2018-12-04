@@ -9,17 +9,11 @@ namespace OpenLogger.Core.Debugging
     }
     public static class Log
     {
-        private static ILogger _instance;
-
-        public static ILogger Instance
-        {
-            get { return _instance; }
-            set { _instance = value; }
-        }
+        public static ILogger Instance { get; set; }
 
         public static void Info(string format, params object[] parameters)
         {
-            if (_instance == null)
+            if (Instance == null)
                 throw new InstanceNotFoundException("Log.Instance has not been initialized!");
 
             Instance.Info(format, parameters);
@@ -27,7 +21,7 @@ namespace OpenLogger.Core.Debugging
 
         public static void Error(string format, params object[] parameters)
         {
-            if (_instance == null)
+            if (Instance == null)
                 throw new InstanceNotFoundException("Log.Instance has not been initialized!");
 
             Instance.Error(format, parameters);

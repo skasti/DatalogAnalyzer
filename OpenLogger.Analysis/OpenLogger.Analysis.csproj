@@ -39,9 +39,8 @@
       <HintPath>..\packages\GMap.NET.WindowsForms.1.7.1\lib\net40\GMap.NET.WindowsForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -63,11 +62,19 @@
     <Compile Include="Extensions\LogEntryExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\LogSegmentExtensions.cs" />
+    <Compile Include="Extensions\MetadataExtensions.cs" />
     <Compile Include="GPSDataPoint.cs" />
+    <Compile Include="GPSPath.cs" />
+    <Compile Include="GPSPosition.cs" />
+    <Compile Include="Metadata\LapMetadata.cs" />
+    <Compile Include="Metadata\SegmentAccelerationPaths.cs" />
+    <Compile Include="Metadata\SegmentMetadata.cs" />
+    <Compile Include="Metadata\SessionMetadata.cs" />
     <Compile Include="RandomColors.cs" />
     <Compile Include="Analyses\IDataAnalysis.cs" />
     <Compile Include="Analyses\YDeltaXAnalysis.cs" />
     <Compile Include="Analyses\YDistributionAnalysis.cs" />
+    <Compile Include="TrackRepository.cs" />
     <Compile Include="Vehicle\Inputs\Input.cs" />
     <Compile Include="GraphType.cs" />
     <Compile Include="Vehicle\Inputs\InputSource.cs" />

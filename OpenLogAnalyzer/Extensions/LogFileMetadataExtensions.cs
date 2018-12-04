@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,12 @@ namespace OpenLogAnalyzer.Extensions
         public static bool MatchesConfig(this LogFileMetadata metadata, RiderConfig config)
         {
             return metadata.Rider == $"#{config.RiderNumber} - {config.RiderName}" && metadata.Bike == config.BikeName;
+        }
+
+        public static LogFile LoadLog(this LogFileMetadata metadata)
+        {
+            var stream = File.OpenRead(metadata.LogFilename);
+            return LogFile.Load(metadata.LogFilename, stream, metadata.GpsTimeOffset, metadata);
         }
     }
 }

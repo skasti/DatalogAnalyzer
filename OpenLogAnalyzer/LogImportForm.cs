@@ -71,9 +71,14 @@ namespace OpenLogAnalyzer
 
                 if (libraryFiles.Contains(libraryFile))
                 {
-                    var libraryMetadata = LogFileMetadata.Load(libraryFile + ".meta");
+                    var cardFileSize = File.ReadAllBytes(cF).LongLength;
+                    var libraryFileSize = File.ReadAllBytes(libraryFile).LongLength;
 
-                    return !libraryMetadata.MatchesConfig(Config);
+                    return cardFileSize != libraryFileSize;
+
+                    //var libraryMetadata = LogFileMetadata.Load(libraryFile + ".meta");
+
+                    //return !libraryMetadata.MatchesConfig(Config);
                 }
 
                 return true;
@@ -116,13 +121,19 @@ namespace OpenLogAnalyzer
                     libraryFile = Path.Combine(Paths.LogLibrary, newFileName);
                 }
 
-                var logFile = LogFile.Load(newFile, TimeSpan.FromHours(2));
+                var stream = File.OpenRead(newFile);
+                var logFile = LogFile.Load(newFile, stream, TimeSpan.FromHours(2));
 
                 if (logFile != null)
                 {
                     logFile.Metadata.Rider = $"#{Config.RiderNumber} - {Config.RiderName}";
                     logFile.Metadata.Bike = Config.BikeName;
-                    logFile.Save(libraryFile);
+
+                    using (var libraryStream = File.Create(libraryFile))
+                    {
+                        logFile.Save(libraryStream);
+                    }
+
                 }
 
                 importedFiles.Add(libraryFile);
