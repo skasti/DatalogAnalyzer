@@ -190,10 +190,42 @@ namespace OpenLogAnalyzer
             var metadatas = libraryFiles.Select(filename => LogFileMetadata.Load(File.OpenRead(filename))).OrderByDescending(m => m.StartTime);
 
             LogLibraryList.Items.Clear();
-
+            var listItems = new List<ListViewItem>();
             foreach (var metadata in metadatas)
             {
-                LogLibraryList.Items.Add(metadata.ToListViewItem());
+                var item = metadata.ToListViewItem();
+                LogLibraryList.Items.Add(item);
+                listItems.Add(item);
+            }
+
+            var notAnalyzed = metadatas.Where(m => string.IsNullOrWhiteSpace(m.Track));
+
+            foreach (var metadata in notAnalyzed)
+            {
+                var logFile = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
+
+                if (logFile.LogStart.Timestamp != metadata.StartTime)
+                {
+                    logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds,
+                        (uint)metadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
+                }
+
+                var trackMatches = _trackRepository.FindTracks(logFile);
+
+                var track = trackMatches.FirstOrDefault();
+
+                if (track == null)
+                    continue;
+
+                var analysis = new SessionAnalysis(logFile, track);
+
+
+                var listItem = listItems.Find(li => li.Tag == metadata);
+
+                analysis.LogFile.SaveMetadata();
+
+                if (listItem != null)
+                    analysis.LogFile.Metadata.UpdateListViewItem(listItem);
             }
         }
 
