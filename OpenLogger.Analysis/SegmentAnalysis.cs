@@ -71,7 +71,7 @@ namespace OpenLogger.Analysis
                 {
                     if (prevSpeed > 0)
                     {
-                        var speedDelta = ((entry.Speed - prevSpeed) / 3.6); // Change in speed in m/s
+                        var speedDelta = ((entry.Speed - prevSpeed) / 3.6); // Change to speed in m/s
                         var timeDelta = TimeSpan.FromMilliseconds((entry.Microseconds - prevMicroseconds) / 1000.0)
                             .TotalSeconds; // Time since last measurement in seconds
                         var acceleration = speedDelta / timeDelta; // Acceleration as m/s^2
@@ -88,6 +88,8 @@ namespace OpenLogger.Analysis
                     {
                         gpsData.Acceleration = 0;
                     }
+
+                    prevSpeed = gpsData.Speed;
                 }
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
                 else if (prevAcceleration != -1000)
@@ -98,8 +100,7 @@ namespace OpenLogger.Analysis
                 {
                     gpsData.Acceleration = 0;
                 }
-
-                prevSpeed = gpsData.Speed;
+                
                 prevLat = entry.Latitude;
                 prevLong = entry.Longitude;
                 prevMicroseconds = entry.Microseconds;

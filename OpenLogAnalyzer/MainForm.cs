@@ -202,12 +202,12 @@ namespace OpenLogAnalyzer
 
             foreach (var metadata in notAnalyzed)
             {
-                var logFile = LogFile.Load(metadata.LogFilename, TimeSpan.Zero);
+                var logFile = metadata.LoadLog();
 
                 if (logFile.LogStart.Timestamp != metadata.StartTime)
                 {
                     logFile.LogStartCorrection(new LogStart(logFile.LogStart.Microseconds,
-                        (uint)metadata.StartTime.ToUnixTimestamp(), TimeSpan.Zero));
+                        (uint)metadata.StartTime.ToUnixTimestamp()));
                 }
 
                 var trackMatches = _trackRepository.FindTracks(logFile);
@@ -222,7 +222,10 @@ namespace OpenLogAnalyzer
 
                 var listItem = listItems.Find(li => li.Tag == metadata);
 
-                analysis.LogFile.SaveMetadata();
+                using (var metadataStream = File.Create(logFile.FullFilename + ".meta"))
+                {
+                    analysis.LogFile.SaveMetadata(metadataStream);
+                }
 
                 if (listItem != null)
                     analysis.LogFile.Metadata.UpdateListViewItem(listItem);
