@@ -184,15 +184,39 @@ namespace OpenLogAnalyzer
             TrackLibraryList.Items.AddRange(_trackRepository.Tracks.Select(track => track.ToListViewItem()).ToArray());
         }
 
+        private LogFileMetadata MetadataLoader(string filename)
+        {
+            LogFileMetadata metadata = null;
+            using (var metaStream = File.OpenRead(filename))
+            {
+                metadata = LogFileMetadata.Load(metaStream);
+                metaStream.Dispose();
+            }
+            return metadata;
+        }
+
         private void UpdateLogLibraryList()
         {
             var libraryFiles = Directory.GetFiles(Paths.LogLibrary, "*.LOG.meta");
-            var metadatas = libraryFiles.Select(filename => LogFileMetadata.Load(File.OpenRead(filename))).OrderByDescending(m => m.StartTime);
+            var metadatas = libraryFiles.Select(MetadataLoader).OrderByDescending(m => m.StartTime);
 
             LogLibraryList.Items.Clear();
             var listItems = new List<ListViewItem>();
             foreach (var metadata in metadatas)
             {
+                if (!metadata.LogFilename.Contains(Paths.LogLibrary))
+                {
+                    var filename = Path.GetFileName(metadata.LogFilename);
+                    metadata.LogFilename = Path.Combine(Paths.LogLibrary, filename);
+
+                    var metaFileName = Path.Combine(Paths.LogLibrary, filename + ".meta");
+
+                    using (var metaStream = File.Create(metaFileName))
+                    {
+                        metadata.Save(metaStream);
+                    }
+                }
+
                 var item = metadata.ToListViewItem();
                 LogLibraryList.Items.Add(item);
                 listItems.Add(item);

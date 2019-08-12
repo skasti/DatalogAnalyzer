@@ -36,5 +36,13 @@ namespace OpenLogger.Core
             var metaJson = reader.ReadToEnd();
             return JsonConvert.DeserializeObject<LogFileMetadata>(metaJson);
         }
+
+        public void Save(Stream metadataStream)
+        {
+            var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            var writer = new StreamWriter(metadataStream);
+            writer.Write(json);
+            writer.Flush();
+        }
     }
 }

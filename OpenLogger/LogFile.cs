@@ -42,10 +42,7 @@ namespace OpenLogger.Core
 
         public void SaveMetadata(Stream metadataStream)
         {
-            var json = JsonConvert.SerializeObject(Metadata, Formatting.Indented);
-            var writer = new StreamWriter(metadataStream);
-            writer.Write(json);
-            writer.Flush();
+            Metadata.Save(metadataStream);
         }
 
         public static LogFile Load(string fileName, Stream logStream, TimeSpan gpsTimeOffset, LogFileMetadata metadata = null)

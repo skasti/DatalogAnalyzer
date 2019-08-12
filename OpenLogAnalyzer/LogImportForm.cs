@@ -134,6 +134,13 @@ namespace OpenLogAnalyzer
                         logFile.Save(libraryStream);
                     }
 
+                    var metaFileName = $"{libraryFile}.meta";
+
+                    using (var libraryStream = File.Create(metaFileName))
+                    {
+                        logFile.SaveMetadata(libraryStream);
+                    }
+
                 }
 
                 importedFiles.Add(libraryFile);
