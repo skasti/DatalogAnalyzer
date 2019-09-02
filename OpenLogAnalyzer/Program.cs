@@ -10,21 +10,21 @@ namespace OpenLogAnalyzer
 {
     static class Program
     {
-        private static string Tenant = "fabrikamb2c.onmicrosoft.com";
-        private static string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
-        public static string PolicySignUpSignIn = "b2c_1_susi";
-        public static string PolicyEditProfile = "b2c_1_edit_profile";
-        public static string PolicyResetPassword = "b2c_1_reset";
+        private static string TenantName = "openlogger";
+        private static string Tenant = "openlogger.onmicrosoft.com";
+        private static string ClientId = "90821ce6-739a-4db4-9ba6-6a544253f406";
+        public static string PolicySignUpSignIn = "B2C_1_SignUpIn";
+        public static string PolicyEditProfile = "B2C_1_EditPolicy";
+        public static string PolicyResetPassword = "B2C_1_PssReset";
 
-        public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
-        public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
+        public static string[] Scopes = { "https://openlogger.onmicrosoft.com/analyzerapi/user_impersonation openid offline_access" };
 
-        private static string BaseAuthority = "https://login.microsoftonline.com/tfp/{tenant}/{policy}/oauth2/v2.0/authorize";
-        public static string Authority = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicySignUpSignIn);
-        public static string AuthorityEditProfile = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
-        public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
+        private static string BaseAuthority = "https://{tenantName}.b2clogin.com/tfp/{tenant}/{policy}/oauth2/v2.0/authorize";
+        public static string Authority = BaseAuthority.Replace("{tenantName}", TenantName).Replace("{tenant}", Tenant).Replace("{policy}", PolicySignUpSignIn);
+        public static string AuthorityEditProfile = BaseAuthority.Replace("{tenantName}", TenantName).Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
+        public static string AuthorityResetPassword = BaseAuthority.Replace("{tenantName}", TenantName).Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
 
-        public static IPublicClientApplication PublicClientApp { get; private set;  }
+        public static IPublicClientApplication PublicClientApp { get; set; }
 
         /// <summary>
         /// The main entry point for the application.

@@ -794,5 +794,11 @@ namespace OpenLogAnalyzer
                     series.GetCustomProperty("COLOR"));
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var b2cDialog = new AzureB2CDIalog();
+            b2cDialog.ShowDialog(this);
+        }
     }
 }
