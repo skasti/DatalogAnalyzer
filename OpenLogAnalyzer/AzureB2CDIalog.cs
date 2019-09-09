@@ -6,6 +6,9 @@ using System.Net.Http.Headers;
 using System.Windows.Forms;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using OpenLogAnalyzer.Extensions;
+using OpenLogger.Analysis.Vehicle;
 
 namespace OpenLogAnalyzer
 {
@@ -137,6 +140,63 @@ namespace OpenLogAnalyzer
 
             var content = await response.Content.ReadAsStringAsync();
             ResultText.Text += $"\n\n{url}\n{content}";
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            serializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthResult.AccessToken);
+
+            var url = $"https://analyzerapi.azurewebsites.net/api/vehicles";
+            var response = await httpClient.GetAsync(url);
+
+            ResultText.Text += response.ToString();
+
+            var vehicles = await response.Content.DeserializeJson<List<Vehicle>>();
+
+            foreach (var vehicle in vehicles)
+            {
+                ResultText.Text += $"\nVehicle in Azure: {vehicle.Name} - {vehicle.Id}";
+            }
+
+            ResultText.Text += $"\n\n";
+
+            var localNames = VehicleRepository.GetNames();
+
+            var onlyLocals = localNames.Where(l => vehicles.All(v => v.Name != l)).Select(VehicleRepository.Get);
+            
+            foreach (var localVehicle in onlyLocals)
+            {
+                localVehicle.Id = Guid.NewGuid();
+
+                var json = JsonConvert.SerializeObject(localVehicle, Formatting.Indented, serializerSettings);
+
+                var v = JsonConvert.DeserializeObject<Vehicle>(json, serializerSettings);
+                ResultText.Text += $"\nUploading Vehicle: {v.Name}";
+
+                var content = new StringContent(json);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var postResponse = await httpClient.PostAsync(url, content);
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    var newLocalVehicle = await postResponse.Content.DeserializeJson<Vehicle>();
+                    VehicleRepository.Save(newLocalVehicle);
+
+                    ResultText.Text += $"\nUploaded Vehicle: {newLocalVehicle.Name} - {newLocalVehicle.Id}";
+                }
+                else
+                {
+                    ResultText.Text += $"\nVehicle Upload Failed: {localVehicle.Name} - {postResponse.StatusCode}: {postResponse.ReasonPhrase}\n{await postResponse.Content.ReadAsStringAsync()}";
+                    break;
+                }
+            }
+
+            //ResultText.Text += $"\n\n{url}\n{content}";
         }
     }
 }

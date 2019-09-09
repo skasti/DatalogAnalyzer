@@ -60,6 +60,9 @@ namespace OpenLogAnalyzer
 
         public static void Save(Vehicle vehicle)
         {
+            if (vehicle == null)
+                return;
+
             var json = JsonConvert.SerializeObject(vehicle, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto

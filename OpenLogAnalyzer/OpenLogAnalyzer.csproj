@@ -114,6 +114,7 @@
     <Compile Include="Extensions\DataPointExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\GraphTypeExtensions.cs" />
+    <Compile Include="Extensions\HttpContentExtensions.cs" />
     <Compile Include="Extensions\SegmentAnalysisExtensions.cs" />
     <Compile Include="Extensions\LogFileMetadataExtensions.cs" />
     <Compile Include="Extensions\RichTextBoxExtensions.cs" />
