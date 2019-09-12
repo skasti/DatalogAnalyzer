@@ -54,6 +54,8 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineCOnfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cloudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LogLibraryList = new System.Windows.Forms.ListView();
             this.DateHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TimeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -91,6 +93,7 @@
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.changedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ExperimentTab = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.ExperimentalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.InputTabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newInputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +101,7 @@
             this.newAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAnalysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderSelector = new System.Windows.Forms.FolderBrowserDialog();
-            this.button1 = new System.Windows.Forms.Button();
+            this.syncVehiclesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.LogLibraryTab.SuspendLayout();
@@ -129,7 +132,8 @@
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.testToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.cloudToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
@@ -206,6 +210,22 @@
             this.lineCOnfigToolStripMenuItem.Text = "Acceleration Line";
             this.lineCOnfigToolStripMenuItem.Click += new System.EventHandler(this.lineConfigToolStripMenuItem_Click);
             // 
+            // cloudToolStripMenuItem
+            // 
+            this.cloudToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loginToolStripMenuItem,
+            this.syncVehiclesToolStripMenuItem});
+            this.cloudToolStripMenuItem.Name = "cloudToolStripMenuItem";
+            this.cloudToolStripMenuItem.Size = new System.Drawing.Size(51, 22);
+            this.cloudToolStripMenuItem.Text = "Cloud";
+            // 
+            // loginToolStripMenuItem
+            // 
+            this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loginToolStripMenuItem.Text = "Login";
+            this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
+            // 
             // LogLibraryList
             // 
             this.LogLibraryList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -222,7 +242,7 @@
             this.LogLibraryList.FullRowSelect = true;
             this.LogLibraryList.HideSelection = false;
             this.LogLibraryList.Location = new System.Drawing.Point(2, 2);
-            this.LogLibraryList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LogLibraryList.Margin = new System.Windows.Forms.Padding(2);
             this.LogLibraryList.Name = "LogLibraryList";
             this.LogLibraryList.Size = new System.Drawing.Size(1037, 614);
             this.LogLibraryList.TabIndex = 1;
@@ -287,7 +307,7 @@
             this.MainTabs.Controls.Add(this.ExperimentTab);
             this.MainTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTabs.Location = new System.Drawing.Point(0, 24);
-            this.MainTabs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MainTabs.Margin = new System.Windows.Forms.Padding(2);
             this.MainTabs.Name = "MainTabs";
             this.MainTabs.SelectedIndex = 0;
             this.MainTabs.Size = new System.Drawing.Size(1049, 644);
@@ -297,9 +317,9 @@
             // 
             this.LogLibraryTab.Controls.Add(this.LogLibraryList);
             this.LogLibraryTab.Location = new System.Drawing.Point(4, 22);
-            this.LogLibraryTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LogLibraryTab.Margin = new System.Windows.Forms.Padding(2);
             this.LogLibraryTab.Name = "LogLibraryTab";
-            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LogLibraryTab.Padding = new System.Windows.Forms.Padding(2);
             this.LogLibraryTab.Size = new System.Drawing.Size(1041, 618);
             this.LogLibraryTab.TabIndex = 0;
             this.LogLibraryTab.Text = "Logs";
@@ -310,10 +330,10 @@
             this.MapTab.Controls.Add(this.MapAnalysisSplitter);
             this.MapTab.Controls.Add(this.TrackBarPanel);
             this.MapTab.Location = new System.Drawing.Point(4, 22);
-            this.MapTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapTab.Margin = new System.Windows.Forms.Padding(2);
             this.MapTab.Name = "MapTab";
-            this.MapTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.MapTab.Size = new System.Drawing.Size(1041, 620);
+            this.MapTab.Padding = new System.Windows.Forms.Padding(2);
+            this.MapTab.Size = new System.Drawing.Size(1041, 618);
             this.MapTab.TabIndex = 2;
             this.MapTab.Text = "Map";
             this.MapTab.UseVisualStyleBackColor = true;
@@ -326,7 +346,7 @@
             this.MapAnalysisSplitter.BackColor = System.Drawing.Color.Transparent;
             this.MapAnalysisSplitter.Cursor = System.Windows.Forms.Cursors.Default;
             this.MapAnalysisSplitter.Location = new System.Drawing.Point(5, 4);
-            this.MapAnalysisSplitter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapAnalysisSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.MapAnalysisSplitter.Name = "MapAnalysisSplitter";
             // 
             // MapAnalysisSplitter.Panel1
@@ -351,7 +371,7 @@
             this.MapLapsSplitter.BackColor = System.Drawing.Color.Transparent;
             this.MapLapsSplitter.Cursor = System.Windows.Forms.Cursors.Default;
             this.MapLapsSplitter.Location = new System.Drawing.Point(0, 0);
-            this.MapLapsSplitter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapLapsSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.MapLapsSplitter.Name = "MapLapsSplitter";
             this.MapLapsSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -365,7 +385,7 @@
             this.MapLapsSplitter.Panel2.Controls.Add(this.Map);
             this.MapLapsSplitter.Panel2MinSize = 500;
             this.MapLapsSplitter.Size = new System.Drawing.Size(333, 650);
-            this.MapLapsSplitter.SplitterDistance = 118;
+            this.MapLapsSplitter.SplitterDistance = 146;
             this.MapLapsSplitter.SplitterWidth = 32;
             this.MapLapsSplitter.TabIndex = 0;
             // 
@@ -384,9 +404,9 @@
             this.MapOverlayLapList.FullRowSelect = true;
             this.MapOverlayLapList.HideSelection = false;
             this.MapOverlayLapList.Location = new System.Drawing.Point(0, 0);
-            this.MapOverlayLapList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapOverlayLapList.Margin = new System.Windows.Forms.Padding(2);
             this.MapOverlayLapList.Name = "MapOverlayLapList";
-            this.MapOverlayLapList.Size = new System.Drawing.Size(333, 118);
+            this.MapOverlayLapList.Size = new System.Drawing.Size(333, 146);
             this.MapOverlayLapList.TabIndex = 0;
             this.MapOverlayLapList.UseCompatibleStateImageBehavior = false;
             this.MapOverlayLapList.View = System.Windows.Forms.View.Details;
@@ -442,7 +462,7 @@
             this.Map.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.Map.LevelsKeepInMemmory = 5;
             this.Map.Location = new System.Drawing.Point(0, 0);
-            this.Map.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Map.Margin = new System.Windows.Forms.Padding(2);
             this.Map.MarkersEnabled = true;
             this.Map.MaxZoom = 20;
             this.Map.MinZoom = 5;
@@ -466,7 +486,7 @@
             this.AnalysisInputTabs.Cursor = System.Windows.Forms.Cursors.Default;
             this.AnalysisInputTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisInputTabs.Location = new System.Drawing.Point(0, 0);
-            this.AnalysisInputTabs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisInputTabs.Margin = new System.Windows.Forms.Padding(2);
             this.AnalysisInputTabs.Name = "AnalysisInputTabs";
             this.AnalysisInputTabs.SelectedIndex = 0;
             this.AnalysisInputTabs.Size = new System.Drawing.Size(671, 550);
@@ -477,9 +497,9 @@
             // 
             this.AnalysisOverviewTab.Controls.Add(this.AnalysisOverviewChart);
             this.AnalysisOverviewTab.Location = new System.Drawing.Point(4, 22);
-            this.AnalysisOverviewTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisOverviewTab.Margin = new System.Windows.Forms.Padding(2);
             this.AnalysisOverviewTab.Name = "AnalysisOverviewTab";
-            this.AnalysisOverviewTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisOverviewTab.Padding = new System.Windows.Forms.Padding(2);
             this.AnalysisOverviewTab.Size = new System.Drawing.Size(663, 524);
             this.AnalysisOverviewTab.TabIndex = 0;
             this.AnalysisOverviewTab.Text = "Overview";
@@ -534,7 +554,7 @@
             legend1.TitleSeparatorColor = System.Drawing.Color.White;
             this.AnalysisOverviewChart.Legends.Add(legend1);
             this.AnalysisOverviewChart.Location = new System.Drawing.Point(2, 2);
-            this.AnalysisOverviewChart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisOverviewChart.Margin = new System.Windows.Forms.Padding(2);
             this.AnalysisOverviewChart.Name = "AnalysisOverviewChart";
             series1.ChartArea = "Overview";
             series1.LabelForeColor = System.Drawing.Color.White;
@@ -552,8 +572,8 @@
             this.TrackBarPanel.Controls.Add(this.MapTrackBar);
             this.TrackBarPanel.Controls.Add(this.MapShowMarkers);
             this.TrackBarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.TrackBarPanel.Location = new System.Drawing.Point(2, 550);
-            this.TrackBarPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TrackBarPanel.Location = new System.Drawing.Point(2, 548);
+            this.TrackBarPanel.Margin = new System.Windows.Forms.Padding(2);
             this.TrackBarPanel.Name = "TrackBarPanel";
             this.TrackBarPanel.Size = new System.Drawing.Size(1037, 68);
             this.TrackBarPanel.TabIndex = 4;
@@ -562,7 +582,7 @@
             // 
             this.MapTrackBar.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.MapTrackBar.Location = new System.Drawing.Point(0, 23);
-            this.MapTrackBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapTrackBar.Margin = new System.Windows.Forms.Padding(2);
             this.MapTrackBar.Maximum = 1;
             this.MapTrackBar.Name = "MapTrackBar";
             this.MapTrackBar.Size = new System.Drawing.Size(1037, 45);
@@ -576,7 +596,7 @@
             this.MapShowMarkers.AutoSize = true;
             this.MapShowMarkers.BackColor = System.Drawing.SystemColors.Control;
             this.MapShowMarkers.Location = new System.Drawing.Point(3, 2);
-            this.MapShowMarkers.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MapShowMarkers.Margin = new System.Windows.Forms.Padding(2);
             this.MapShowMarkers.Name = "MapShowMarkers";
             this.MapShowMarkers.Size = new System.Drawing.Size(94, 17);
             this.MapShowMarkers.TabIndex = 3;
@@ -589,10 +609,10 @@
             this.TrackLibraryTab.Controls.Add(this.TrackLibraryMap);
             this.TrackLibraryTab.Controls.Add(this.TrackLibraryList);
             this.TrackLibraryTab.Location = new System.Drawing.Point(4, 22);
-            this.TrackLibraryTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TrackLibraryTab.Margin = new System.Windows.Forms.Padding(2);
             this.TrackLibraryTab.Name = "TrackLibraryTab";
-            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.TrackLibraryTab.Size = new System.Drawing.Size(1041, 620);
+            this.TrackLibraryTab.Padding = new System.Windows.Forms.Padding(2);
+            this.TrackLibraryTab.Size = new System.Drawing.Size(1041, 618);
             this.TrackLibraryTab.TabIndex = 3;
             this.TrackLibraryTab.Text = "Tracks";
             this.TrackLibraryTab.UseVisualStyleBackColor = true;
@@ -609,7 +629,7 @@
             this.TrackLibraryMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.TrackLibraryMap.LevelsKeepInMemmory = 5;
             this.TrackLibraryMap.Location = new System.Drawing.Point(445, 2);
-            this.TrackLibraryMap.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.TrackLibraryMap.Margin = new System.Windows.Forms.Padding(2);
             this.TrackLibraryMap.MarkersEnabled = true;
             this.TrackLibraryMap.MaxZoom = 20;
             this.TrackLibraryMap.MinZoom = 5;
@@ -636,7 +656,7 @@
             this.TrackLibraryList.HideSelection = false;
             this.TrackLibraryList.Location = new System.Drawing.Point(2, 2);
             this.TrackLibraryList.Name = "TrackLibraryList";
-            this.TrackLibraryList.Size = new System.Drawing.Size(439, 616);
+            this.TrackLibraryList.Size = new System.Drawing.Size(439, 614);
             this.TrackLibraryList.TabIndex = 8;
             this.TrackLibraryList.UseCompatibleStateImageBehavior = false;
             this.TrackLibraryList.View = System.Windows.Forms.View.Details;
@@ -658,13 +678,22 @@
             this.ExperimentTab.Controls.Add(this.button1);
             this.ExperimentTab.Controls.Add(this.ExperimentalChart);
             this.ExperimentTab.Location = new System.Drawing.Point(4, 22);
-            this.ExperimentTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ExperimentTab.Margin = new System.Windows.Forms.Padding(2);
             this.ExperimentTab.Name = "ExperimentTab";
-            this.ExperimentTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ExperimentTab.Padding = new System.Windows.Forms.Padding(2);
             this.ExperimentTab.Size = new System.Drawing.Size(1041, 618);
             this.ExperimentTab.TabIndex = 4;
             this.ExperimentTab.Text = "Experiments";
             this.ExperimentTab.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(180, 485);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // ExperimentalChart
             // 
@@ -675,7 +704,7 @@
             legend2.Name = "Legend1";
             this.ExperimentalChart.Legends.Add(legend2);
             this.ExperimentalChart.Location = new System.Drawing.Point(23, 21);
-            this.ExperimentalChart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ExperimentalChart.Margin = new System.Windows.Forms.Padding(2);
             this.ExperimentalChart.Name = "ExperimentalChart";
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
@@ -734,15 +763,12 @@
             this.editAnalysisToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.editAnalysisToolStripMenuItem.Text = "Edit Analysis";
             // 
-            // button1
+            // syncVehiclesToolStripMenuItem
             // 
-            this.button1.Location = new System.Drawing.Point(180, 485);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.syncVehiclesToolStripMenuItem.Name = "syncVehiclesToolStripMenuItem";
+            this.syncVehiclesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.syncVehiclesToolStripMenuItem.Text = "Sync Vehicles";
+            this.syncVehiclesToolStripMenuItem.Click += new System.EventHandler(this.syncVehiclesToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -752,7 +778,7 @@
             this.Controls.Add(this.MainTabs);
             this.Controls.Add(this.MainMenu);
             this.MainMenuStrip = this.MainMenu;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "OpenLog Analyzer";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -842,6 +868,9 @@
         private System.Windows.Forms.TabPage AnalysisOverviewTab;
         private System.Windows.Forms.DataVisualization.Charting.Chart AnalysisOverviewChart;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripMenuItem cloudToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem syncVehiclesToolStripMenuItem;
     }
 }
 

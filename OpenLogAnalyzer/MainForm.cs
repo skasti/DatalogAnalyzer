@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using GMap.NET.WindowsForms;
+using Microsoft.Identity.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using OpenLogAnalyzer.Configuration;
 using OpenLogAnalyzer.Extensions;
 using OpenLogAnalyzer.Transforms.Editors;
@@ -795,10 +800,103 @@ namespace OpenLogAnalyzer
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var b2cDialog = new AzureB2CDIalog();
-            b2cDialog.ShowDialog(this);
+            AuthenticationResult authResult = null;
+            IEnumerable<IAccount> accounts = await Program.PublicClientApp.GetAccountsAsync();
+            try
+            {
+                authResult = await Program.PublicClientApp.AcquireTokenInteractive(Program.Scopes)
+                    .WithAccount(Program.GetUserByPolicy(accounts, Program.PolicySignUpSignIn))
+                    .WithPrompt(Prompt.SelectAccount)
+                    .WithAuthority(Program.Authority)
+                    .WithParentActivityOrWindow(this).ExecuteAsync();
+            }
+            catch (MsalServiceException ex)
+            {
+                try
+                {
+                    if (ex.Message.Contains("AADB2C90118"))
+                    {
+                        authResult = await Program.PublicClientApp.AcquireTokenInteractive(Program.Scopes)
+                            .WithAccount(Program.GetUserByPolicy(accounts, Program.PolicySignUpSignIn))
+                            .WithPrompt(Prompt.SelectAccount)
+                            .WithAuthority(Program.AuthorityResetPassword)
+                            .WithParentActivityOrWindow(this).ExecuteAsync();
+                    }
+                    else
+                    {
+                        Log.Error($"Error Acquiring Token: {ex}");
+                    }
+                }
+                catch (Exception innerEx)
+                {
+                    Log.Error($"Error Acquiring Token: {innerEx}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(
+                    $"Users:{string.Join(",", accounts.Select(u => u.Username))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}");
+            }
+
+            if (authResult != null)
+            {
+                Program.AuthResult = authResult;
+            }
+        }
+
+        private async void syncVehiclesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            serializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Program.AuthResult.AccessToken);
+
+            var url = $"https://analyzerapi.azurewebsites.net/api/vehicles";
+            var response = await httpClient.GetAsync(url);
+
+            var vehicles = await response.Content.DeserializeJson<List<Vehicle>>();
+            var localNames = VehicleRepository.GetNames().ToList();
+
+            var onlyLocals = localNames.Where(l => vehicles.All(v => v.Name != l)).Select(VehicleRepository.Get);
+
+            foreach (var localVehicle in onlyLocals)
+            {
+                localVehicle.Id = Guid.NewGuid();
+
+                var json = JsonConvert.SerializeObject(localVehicle, Formatting.Indented, serializerSettings);
+
+                var v = JsonConvert.DeserializeObject<Vehicle>(json, serializerSettings);
+                Log.Info($"Uploading Vehicle: {v.Name}");
+
+                var content = new StringContent(json);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var postResponse = await httpClient.PostAsync(url, content);
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    var newLocalVehicle = await postResponse.Content.DeserializeJson<Vehicle>();
+                    VehicleRepository.Save(newLocalVehicle);
+
+                    Log.Info($"Uploaded Vehicle: {newLocalVehicle.Name} - {newLocalVehicle.Id}");
+                }
+                else
+                {
+                    Log.Error($"Vehicle Upload Failed: {localVehicle.Name} - {postResponse.StatusCode}: {postResponse.ReasonPhrase}\n{await postResponse.Content.ReadAsStringAsync()}");
+                    break;
+                }
+            }
+
+            var onlyRemotes = vehicles.Where(v => localNames.All(l => l != v.Name));
+
+            foreach (var vehicle in onlyRemotes)
+            {
+                VehicleRepository.Save(vehicle);
+                Log.Info($"Vehicle saved locally: {vehicle.Name}");
+            }
         }
     }
 }

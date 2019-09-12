@@ -10,6 +10,7 @@ namespace OpenLogAnalyzer
 {
     static class Program
     {
+        public static AuthenticationResult AuthResult { get; set; }
         private static string TenantName = "openlogger";
         private static string Tenant = "openlogger.onmicrosoft.com";
         private static string ClientId = "90821ce6-739a-4db4-9ba6-6a544253f406";
@@ -41,6 +42,17 @@ namespace OpenLogAnalyzer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
+        }
+
+        public static IAccount GetUserByPolicy(IEnumerable<IAccount> accounts, string policy)
+        {
+            foreach (var account in accounts)
+            {
+                string accountIdentifier = account.HomeAccountId.ObjectId.Split('.')[0];
+                if (accountIdentifier.EndsWith(policy.ToLower())) return account;
+            }
+
+            return null;
         }
     }
 }
